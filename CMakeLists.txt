@@ -1,12 +1,12 @@
-# --------------------------------------------------------------
+# ----------------------------------------------------------------------------
 # Top level Hetero project
 # Author		:	Tran Minh Quan
 # Email			: 	quantm@unist.ac.kr,	quantm@kaist.ac.kr
 # Address		: 	High-performance Visual Computing Lab
-# Website		:	http://hvcl.unist.ac.kr/quantm/
-# --------------------------------------------------------------
+# Website		:	http://hvcl.unist.ac.kr/
+# ----------------------------------------------------------------------------
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
-# --------------------------------------------------------------
+# ----------------------------------------------------------------------------
 project(Hetero CXX C)
 
 # ----------------------------------------------------------------------------
@@ -18,6 +18,11 @@ set(EXECUTABLE_OUTPUT_PATH "${PROJECT_BINARY_DIR}/bin")
 # set(CMAKE_RESOURCE_INPUT_DIRECTORY "${PROJECT_BINARY_DIR}/data")
 # set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
 # set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
+
+# set(CMAKE_RESOURCE_INPUT_DIRECTORY "${PROJECT_BINARY_DIR}/data")
+# set(RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
+# set(LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
+
 
 # SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 # set(RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
@@ -39,18 +44,12 @@ add_subdirectory(modules)
 # Generate targets for documentation
 add_subdirectory(doc)
 
-# various data that is used by hetero libraries and/or demo applications.
+# Various data that is used by hetero libraries and/or demo applications.
 add_subdirectory(data)
 
-# examples
+# Examples
 add_subdirectory(samples)
 
-# set_target_properties(
-    # PROPERTIES
-    # ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-    # LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-    # RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-# )
 # ----------------------------------------------------------------------------
 # Clean the output and test logs
 # ----------------------------------------------------------------------------
