@@ -1,0 +1,3 @@
+head.ib.cluster    slots=8 max_slots=12
+node001.ib.cluster slots=8 max_slots=32
+node002.ib.cluster slots=8 max_slots=32

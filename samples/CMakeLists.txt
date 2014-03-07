@@ -1,0 +1,6 @@
+add_subdirectory(cpp)
+add_subdirectory(cuda)
+add_subdirectory(mpi)
+add_subdirectory(openmp)
+add_subdirectory(hybrid)
+add_subdirectory(generator)
