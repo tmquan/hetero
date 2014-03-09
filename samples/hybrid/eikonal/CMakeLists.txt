@@ -33,12 +33,13 @@ else(MPI_FOUND)
     message(FATAL_ERROR "MPI is not installed on this system.")
 endif()
 # ----------------------------------------------------------------------------
-cuda_add_executable(hybrid_eikonal hybrid_eikonal.cu)
-target_link_libraries(hybrid_eikonal ${MPI_LIBRARIES})
+cuda_add_executable(hybrid-golden_eikonal hybrid-golden_eikonal.cu)
+target_link_libraries(hybrid-golden_eikonal ${MPI_LIBRARIES})
 # ----------------------------------------------------------------------------
-add_test(Test_Hybrid_Eikonal
+add_test(Test_Hybrid_Eikonal_Golden
 	${MPIEXEC} 
-	${MPIEXEC_NUMPROC_FLAG} 10
-	${MPIEXEC_PREFLAGS} --host head,node001,node002
-	${EXECUTABLE_OUTPUT_PATH}/hybrid_eikonal
+	${MPIEXEC_NUMPROC_FLAG} 1
+	${MPIEXEC_PREFLAGS} --host node001 # node001 has GPUs
+	# ${MPIEXEC_PREFLAGS} -nolocal  
+	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-golden_eikonal
 	${MPIEXEC_POSTFLAGS} |sort)
