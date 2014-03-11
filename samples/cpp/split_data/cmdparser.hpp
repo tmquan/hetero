@@ -82,7 +82,7 @@ class CommandLineParser
         _Tp res;
         std::stringstream s1(str);
         s1 >> res;
-        return res;
+        return res; 
     }
 
     template<typename _Tp>

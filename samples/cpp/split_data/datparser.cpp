@@ -90,11 +90,13 @@ DatFileParser::DatFileParser(string fileName)
 	vector<string> parts;
 	
 	vector<string>::iterator it;
-	string delimiters(" :");
+	string delimiters(" :\t");
 
     while(getline(fs, line)) // Query the file
 	{
 		parts.clear();
+		// trim the last space
+		line.erase(line.find_last_not_of(" \n\r\t")+1);
 		// cout << parts.size() << endl;
 		// Using boost library to split the string
 		boost::split(parts, line, boost::is_any_of(delimiters));
@@ -109,7 +111,17 @@ DatFileParser::DatFileParser(string fileName)
 		if(parts.at(0) == "ObjectFileName")
 		{
 			// cout << parts.at(1) << endl;
-			objectFileName = parts.at(1);
+			// cout << parts[1] << endl;
+			objectFileName = parts.at(3);
+			// cout << "Debug" << endl;
+			// cout << parts[0] << endl;
+			// cout << parts[1] << endl;
+			// cout << parts[2] << endl;
+			// cout << parts[3] << endl;
+			// cout << parts[4] << endl;
+			objectFileName = fileName.substr(0, fileName.length() - objectFileName.length());
+			cout << objectFileName << endl;
+			objectFileName += parts.at(3);
 		}
 		
 		
@@ -118,24 +130,27 @@ DatFileParser::DatFileParser(string fileName)
 			// cout << parts.at(1) << endl;
 			// cout << parts.at(2) << endl;
 			// cout << parts.at(3) << endl;
-			if(parts.size() == 4)
+			// cout << parts.at(4) << endl;
+			// cout << parts.at(5) << endl;
+			// cout << parts.at(6) << endl;
+			if(parts.size() == 5)
 			{// 2D data
-				dimx = getData<int>(parts.at(1));
-				dimy = getData<int>(parts.at(2));
+				dimx = getData<int>(parts.at(3));
+				dimy = getData<int>(parts.at(4));
 			}
 			
-			if(parts.size() == 5)
-			{// 3D data
-				dimx = getData<int>(parts.at(1));
-				dimy = getData<int>(parts.at(2));
-				dimz = getData<int>(parts.at(3));
+			if(parts.size() == 6)
+			{// 3D data 
+				dimx = getData<int>(parts.at(3));
+				dimy = getData<int>(parts.at(4));
+				dimz = getData<int>(parts.at(5)); //add 1 index
 			}
 			
 		}
 		
 		if(parts.at(0) == "Format")
 		{
-			fileType = getData<string>(parts.at(1));
+			fileType = getData<string>(parts.at(3));
 		}
 	}
 	

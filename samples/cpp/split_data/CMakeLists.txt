@@ -23,7 +23,7 @@ if(CUDA_FOUND)
     message("CUDA is found on this system.")
 else(CUDA_FOUND)
     message("CUDA is not installed on this system.")
-endif()
+endif() 
 # ----------------------------------------------------------------------------
 cuda_add_executable(cpp-split_data 
 					cpp-split_data.cpp
@@ -38,6 +38,7 @@ target_link_libraries(cpp-split_data ${OpenMP_CXX_FLAGS} )
 add_test(Test_CPP_Split_Data
 	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/cpp-split_data
 	# --input	${RESOURCE_INPUT_PATH}/em_medium.dat
-	--input	${RESOURCE_INPUT_PATH}/em_small.dat
-	--halo	2
-	)
+	--input		${RESOURCE_INPUT_PATH}/em_small.dat 
+	--output	${RESOURCE_INPUT_PATH}/
+	--halo	1
+	) 

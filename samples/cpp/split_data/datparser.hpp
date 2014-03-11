@@ -11,7 +11,7 @@ class DatFileParser
 {
     public:
 
-    //! the default constructor
+    //! the default constructor 
     DatFileParser();
     DatFileParser(string fileName);
 	~DatFileParser();
