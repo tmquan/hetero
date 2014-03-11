@@ -126,6 +126,35 @@ int main(int argc, char** argv)
 	}		
 	MPI::COMM_WORLD.Barrier();
 	
+	// // Determine temporal resolution for each process
+	// int halo = 6;
+	// int tmpz = dimz/numWorkers;
+	// if(rank != master)
+	// {
+		// if(numWorkers == 1)
+		// {
+			// tmpz  = mTems;
+			// dTotal = dimx*dimy*dTems;
+		// }
+		// else
+		// {
+			// if(rank == head)
+			// {
+				// dTems  = hTems + mTems;
+				// dTotal = dimx*dimy*dTems;
+			// }
+			// else if(rank == tail)
+			// {
+				// dTems  = mTems + hTems;
+				// dTotal = dimx*dimy*dTems;
+			// }
+			// else
+			// {
+				// dTems  = hTems + mTems + hTems;
+				// dTotal = dimx*dimy*dTems;
+			// }
+		// }
+	// }
 	// // Allocate host memory
 	// float *h_src = new float[total];
 	// float *h_dst = new float[total];

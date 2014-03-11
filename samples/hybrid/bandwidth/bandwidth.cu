@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <cuda.h>
 #include <mpi.h>
-
+#include <iostream>
+using namespace std;
 #define cudaCheckLastError() {                                          			\
 	cudaError_t error = cudaGetLastError();                               			\
 	int id; cudaGetDevice(&id);                                                     \
@@ -71,18 +72,30 @@ int main (int argc, char *argv[])
 	{
 		h_src = new float[elemCount];
 		h_dst = new float[elemCount];
-		cudaMalloc((void**)&d_src, elemCount*sizeof(float));
+		// cudaMalloc((void**)&d_src, elemCount*sizeof(float));
 		cudaMalloc((void**)&d_dst, elemCount*sizeof(float));
 	}
 	////////////////////////////////////////////////////////////////////////////	
 	double start, elapsed;
 	MPI_Status stat;
-	for(int k=1; k<16; k++)
+	for(int k=1; k<12; k++)
 	{
 		////////////////////////////////////////////////////////////////////////////	
 		MPI_Barrier(MPI_COMM_WORLD);
 		start = MPI_Wtime();
-		
+		size_t free = 0, total=0;
+		if(rank == 0)
+		{
+			cudaMemGetInfo(&free, &total);
+			// printf("Before Malloc Free: %u, Total: %u\n", free, total);
+			cout << "Before Malloc: Free: " << free << ", Total: " << total << endl; 
+			
+			cudaMalloc((void**)&d_src, elemCount*sizeof(float));
+			
+			cudaMemGetInfo(&free, &total);
+			// printf("After malloc Free: %u, Total: %u\n", free, total);
+			cout << "After Malloc : Free: " << free << ", Total: " << total << endl; 
+		}
 		for (int i=0; i<100; i++)
 		{
 			if(rank == 0)
@@ -92,9 +105,31 @@ int main (int argc, char *argv[])
 			if(rank == k)
 			{
 				MPI_Recv(d_dst, elemCount, MPI_FLOAT, rank-k, 0, MPI_COMM_WORLD, &stat);
+				// cout << name << "received the data" << endl;
 			}
 		}
 		MPI_Barrier(MPI_COMM_WORLD);
+		
+		if(rank == 0)
+		{
+			cout << "Print k" << k << endl;
+			cudaMemGetInfo(&free, &total);
+			// printf("Before Free: Free: %i, Total: %i\n", free, total);
+			cout << "-------------------------" <<  endl; 
+			cout << "Before Free: Free: " << free << ", Total: " << total << endl; 
+			
+			cudaDeviceSynchronize();
+			cudaFree(d_src);
+			cudaDeviceSynchronize();
+			// sleep(5000);	
+			cudaCheckLastError();
+			cudaMemGetInfo(&free, &total);
+			// printf("After free Free: %u, Total: %u\n\n", free, total);
+			cout << "After Free : Free: " << free << ", Total: " << total << endl; 
+			cout << "-------------------------" <<  endl;
+			cout << endl;
+		}
+		
 		elapsed = MPI_Wtime() - start;
 		////////////////////////////////////////////////////////////////////////////	
 		if(rank == master)

@@ -37,10 +37,10 @@ cuda_add_executable(bandwidth bandwidth.cu)
 target_link_libraries(bandwidth ${MPI_LIBRARIES})
 add_test(Test_Hybrid_Bandwidth
         ${MPIEXEC} 
-        ${MPIEXEC_NUMPROC_FLAG} 8
+        ${MPIEXEC_NUMPROC_FLAG} 6
         ${MPIEXEC_PREFLAGS} --host node001 
         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bandwidth : 
-        ${MPIEXEC_NUMPROC_FLAG} 8
+        ${MPIEXEC_NUMPROC_FLAG} 6
         ${MPIEXEC_PREFLAGS} --host node002 
         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/bandwidth : 
         ${MPIEXEC_NUMPROC_FLAG} 1
