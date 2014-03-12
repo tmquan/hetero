@@ -4,68 +4,55 @@
 #include <time.h>
 #include <mpi.h>
 #include <helper_math.h>
+#include "cmdparser.hpp"
 using namespace std;
 
-// ----------------------------------------------------------------------------
-#define checkLastError() {                                          				\
+// -----------------------------------------------------------------------------------
+#define cudaCheckLastError() {                                          			\
 	cudaError_t error = cudaGetLastError();                               			\
-	int id; 																		\
-	cudaGetDevice(&id);																\
-	if(error != cudaSuccess) {                                         				\
+	int id; cudaGetDevice(&id);                                                     \
+	if(error != cudaSuccess) {                                                      \
 		printf("Cuda failure error in file '%s' in line %i: '%s' at device %d \n",	\
-			__FILE__,__LINE__, cudaGetErrorString(error), id);			      	 	\
-		exit(EXIT_FAILURE);  														\
-	}                                                               				\
+			__FILE__,__LINE__, cudaGetErrorString(error), id);                      \
+		exit(EXIT_FAILURE);                                                         \
+	}                                                                               \
 }
-// ----------------------------------------------------------------------------
-///////////////////////////////////////////////////////////////////////////////
-// Neumann Boundary Condition
-#define at(x, y, z, dimx, dimy, dimz) (clamp(z, 0, dimz-1)*dimy*dimx		\
-									  +clamp(y, 0, dimy-1)*dimx				\
-									  +clamp(x, 0, dimx-1))	 
-// ---------------------------------------------------------------------------- 
-__global__
-void __heatflow(float *src, float *dst, int dimx, int dimy, int dimz)
+// -----------------------------------------------------------------------------------
+int main (int argc, char *argv[])
 {
-	int  index_1d;
-	int3 index_3d;
-	index_3d.x	=	blockIdx.x * blockDim.x + threadIdx.x;
-	index_3d.y	=	blockIdx.y * blockDim.y + threadIdx.y;
-	index_3d.z	=	blockIdx.z * blockDim.z + threadIdx.z;
 	
-	index_1d 	= index_3d.z * dimy * dimx + 
-				  index_3d.y * dimx + 
-				  index_3d.x;
-	
-	
-	
-	// Store back
-	if (index_3d.z < dimz && 
-		index_3d.y < dimy && 
-		index_3d.x < dimx)
-		// dst[index_1d] = src[index_1d];
-		dst[at(index_3d.x, index_3d.y, index_3d.z, dimx, dimy, dimz)] 
-		= (src[at(index_3d.x+1, index_3d.y+0, index_3d.z+0, dimx, dimy, dimz)] +
-		   src[at(index_3d.x-1, index_3d.y+0, index_3d.z+0, dimx, dimy, dimz)] +
-		   
-		   src[at(index_3d.x+0, index_3d.y+1, index_3d.z+0, dimx, dimy, dimz)] +
-		   src[at(index_3d.x+0, index_3d.y-1, index_3d.z+0, dimx, dimy, dimz)] +
-		   
-		   src[at(index_3d.x+0, index_3d.y+0, index_3d.z+1, dimx, dimy, dimz)] +
-		   src[at(index_3d.x+0, index_3d.y+0, index_3d.z-1, dimx, dimy, dimz)]) /6.0f;
-}
-void heatflow(float *src, float *dst, int dimx, int dimy, int dimz)
-{
-	dim3 numBlocks((dimx/8 + ((dimx%8)?1:0)),
-				   (dimy/8 + ((dimy%8)?1:0)),
-				   (dimz/8 + ((dimz%8)?1:0)));
-	dim3 numThreads(8, 8, 8);
-	__heatflow<<<numBlocks, numThreads>>>(src, dst, dimx, dimy, dimz);
-}
-
-// ----------------------------------------------------------------------------
-int main(int argc, char** argv)
-{
+	//================================================================================
+	// To set the GPU using cudaSetDevice, we must set before launching MPI_Init
+	// Determine the MPI local rank per node is doable either in OpenMPI or MVAPICH2
+	int   localRank;
+	char *localRankStr = NULL;
+	//================================================================================
+	// Investigate the number of GPUs per node.
+	int deviceCount = 0;
+	localRankStr = getenv("OMPI_COMM_WORLD_LOCAL_RANK");
+	if (localRankStr != NULL)
+	{
+		localRank = atoi(localRankStr);		
+		cudaGetDeviceCount(&deviceCount);
+		// cudaCheckLastError();	//Don't put this line
+		// printf("There are %02d device(s) at local process %02d\n", 
+			// deviceCount, localRank);
+		cout << "There are " << deviceCount 
+			 <<	" device(s) at local process " 
+			 << endl;
+		if(deviceCount>0)
+		{
+			cudaSetDevice(localRank % deviceCount);	cudaCheckLastError();
+			cudaDeviceReset();	cudaCheckLastError();
+		}
+	}
+	//================================================================================
+	// Information to control the MPI process
+	// We have totally n processes, index from 0 to n-1
+	// master process is indexed at n-1, totally 1
+	// worker processes are indexed from 0 to n-2, totally (n-1)
+	// the head process is indexed at 0
+	// the tail process is indexed at (n-2)
 	int size, rank;
 	char name[MPI_MAX_PROCESSOR_NAME];
 	int length;
@@ -76,123 +63,181 @@ int main(int argc, char** argv)
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
 	MPI_Get_processor_name(name, &length);
 	
-  	printf("Hello World from rank %02d, size %02d, of %s\n", rank, size, name);
+	cout << "Hello World from rank " << rank 
+		 << " out of " << size 
+		 << " at " << name 
+		 << endl;
+							  
 
-  	
-	srand(time(NULL)); // for random number generator
-	// Specify dimensions
-	const int dimx  = 100;
-	const int dimy  = 100;
-	const int dimz  = 100;
-
-	const int total = dimx*dimy*dimz;
-	
-	///
+	//================================================================================
+	int master 		= size-1;
 	int worker;
-	int numMasters = 1;
-	int numWorkers = size-1;
+	int numMasters 	= 1;
+	int numWorkers 	= size-1;
 	
-	const int master = size-1;
-	const int head = 0;
-	const int tail = size-2;
+	int head = 0;
+	int tail = size-2;
 	
-	float *h_src;
-	float *h_dst;
-	//Print out the paramemters
-	if(rank == master)
-	{
-		////////////////////////////////////////////////////////////////////////////
-		printf("Master process is allocating file from %d out of %d\n", rank, size);
-		/// Print out the parameters
-		printf("Size: %dx%dx%d\n", dimx, dimy, dimz);
-		printf("Number of GPUs: %d\n", numWorkers);
-		///  Allocate data from file and store to memory
-		h_src  = new float[total];
-		
-		// Initialize the image source
-		for(int z=0; z<dimz; z++)
-		{
-			for(int y=0; y<dimy; y++)
-			{
-				for(int x=0; x<dimx; x++)
-				{
-					// h_src[z*dimy*dimx+y*dimx+x] = (float)rand();
-					h_src[z*dimy*dimx+y*dimx+x] = (float)(z*dimy*dimx+y*dimx+x);
-				}
-			}
-		}
-		
-		h_dst  = new float[total];
-	}		
-	MPI::COMM_WORLD.Barrier();
-	
-	// // Determine temporal resolution for each process
-	// int halo = 6;
-	// int tmpz = dimz/numWorkers;
-	// if(rank != master)
+	//================================================================================
+	// Parsing the argument
+	const char* key =
+		"{ h   |help      |       | print help message }"
+		"{     |dimx      | 1024  | Number of the columns }"
+		"{     |dimy      | 1024  | Number of the rows }"
+		"{     |dimz      | 1024  | Temporal resolution }";
+	CommandLineParser cmd(argc, argv, key);
+	// if(rank==master)
+	// if (argc == 1)
 	// {
-		// if(numWorkers == 1)
-		// {
-			// tmpz  = mTems;
-			// dTotal = dimx*dimy*dTems;
-		// }
-		// else
-		// {
-			// if(rank == head)
-			// {
-				// dTems  = hTems + mTems;
-				// dTotal = dimx*dimy*dTems;
-			// }
-			// else if(rank == tail)
-			// {
-				// dTems  = mTems + hTems;
-				// dTotal = dimx*dimy*dTems;
-			// }
-			// else
-			// {
-				// dTems  = hTems + mTems + hTems;
-				// dTotal = dimx*dimy*dTems;
-			// }
-		// }
+		// cout << "Usage: " << argv[0] << " [options]" << endl;
+		// cout << "Avaible options:" << endl;
+		// cmd.printParams();
+		// return 0;
 	// }
-	// // Allocate host memory
-	// float *h_src = new float[total];
-	// float *h_dst = new float[total];
-	
-	// // Allocate device memory
-	// float *d_src;
-	// float *d_dst;
-	
-	// cudaMalloc((void**)&d_src, total*sizeof(float));		checkLastError();
-	// cudaMalloc((void**)&d_dst, total*sizeof(float));		checkLastError();
-	
-	// // Initialize the image source
-	// for(int z=0; z<dimz; z++)
-	// {
-		// for(int y=0; y<dimy; y++)
-		// {
-			// for(int x=0; x<dimx; x++)
-			// {
-				// // h_src[z*dimy*dimx+y*dimx+x] = (float)rand();
-				// h_src[z*dimy*dimx+y*dimx+x] = (float)(z*dimy*dimx+y*dimx+x);
-			// }
-		// }
-	// }
-	// // Transferring to the device memory
-	// cudaMemcpy(d_src, h_src, total*sizeof(float), cudaMemcpyHostToDevice); checkLastError();
-	
-	// heatflow(d_src, d_dst, dimx, dimy, dimz);
+	//================================================================================
+	const int dimx    	= cmd.get<int>("dimx", false); //default value has been provide
+	const int dimy    	= cmd.get<int>("dimy", false);
+	const int dimz    	= cmd.get<int>("dimz", false);
+	// if(rank==master)	cmd.printParams();
+	// if(rank==master)	cout << dimx << endl << dimy << endl << dimz << endl;
+	//================================================================================
+	// Determine main problem size and data partition same as CUDA style
+	dim3 blockDim;
+	dim3 gridDim;
+	dim3 haloDim;
 
-	// cudaMemcpy(h_dst, d_dst, total*sizeof(float), cudaMemcpyDeviceToHost); checkLastError();
-// cleanup:
-	// cudaFree(d_src);
-	// cudaFree(d_dst);
-	// free(h_src);
-	// free(h_dst);
+	blockDim.x = dimx;
+	blockDim.y = dimy;
+	blockDim.z = dimz/numWorkers;	// We partition only along z
+	
+	gridDim.x  = dimx/blockDim.x + (dimx%blockDim.x)?1:0;
+	gridDim.y  = dimy/blockDim.y + (dimy%blockDim.y)?1:0;
+	gridDim.z  = dimz/blockDim.z + (dimz%blockDim.z)?1:0;
+	
+	haloDim.x = 1;
+	haloDim.y = 1;
+	haloDim.z = 1;	// Pad 1 
 	
 	
+	if(rank==head) 
+	{
+		cout << blockDim.x << endl << blockDim.y << endl << blockDim.z << endl;
+		cout << gridDim.x  << endl << gridDim.y  << endl << gridDim.z  << endl;
+	}
+	
+	//================================================================================
+	// Master node will handle source and destination data
+	float *h_src, *h_dst;
+	h_src = NULL;
+	h_dst = NULL;
+	//!!! TODO: Preprocess, pad as mirror boundary
+	int total 	= (dimx+2*haloDim.x) * 
+				  (dimy+2*haloDim.y) *  
+				  (dimz+2*haloDim.z);
+				  
+	int partial = (blockDim.x+2*haloDim.x) * 
+				  (blockDim.y+2*haloDim.y) * 
+				  (blockDim.z+2*haloDim.z);
+				  
+	int ghost   = (dimx+2*haloDim.x) * 
+				  (dimy+2*haloDim.y) *  
+				  (1*haloDim.z);
+				  
+	if(rank==master)
+	{
+		h_src = new float[total];
+		h_dst = new float[total];
+	}
+	
+	// Worker or compute node will handle partially the data + 2 halo data
+	
+	float *p_src, *p_dst;
+	p_src = NULL;
+	p_dst = NULL;
+	
+	int3 shared_index_3d{0, 0, 0};
+	int  shared_index_1d = 0;
+	
+	int3 global_index_3d{0, 0, 0};
+	int  global_index_1d = 0;
+	// Memory allocation
+	if(rank!=master)
+	{
+		p_src = new float[partial];
+		p_dst = new float[partial];
+		
+		// int numTrials =  (((blockDim.x+2*haloDim.x) *  (blockDim.y+2*haloDim.y) *  (blockDim.z+2*haloDim.z)) /
+						  // ((blockDim.x+0*haloDim.x) *  (blockDim.y+0*haloDim.y) *  (blockDim.z+0*haloDim.z)))	+ 
+						 // ((((blockDim.x+2*haloDim.x) *  (blockDim.y+2*haloDim.y) *  (blockDim.z+2*haloDim.z)) %
+						  // ((blockDim.x+0*haloDim.x) *  (blockDim.y+0*haloDim.y) *  (blockDim.z+0*haloDim.z)))?0:1);
+		// cout << numTrials << endl;
+		// // #pragma omp parallel 
+		// for(blockIdx.z=0; blockIdx.z<gridDim.z; blockIdx.z++)
+		// {
+			// // #pragma omp parallel 
+			// for(blockIdx.y=0; blockIdx.y<gridDim.y; blockIdx.y++)
+			// {
+				// // #pragma omp parallel 
+				// for(blockIdx.x=0; blockIdx.x<gridDim.x; blockIdx.x++)
+				// {
+					// // #pragma omp parallel 
+					// for(threadIdx.z=0; threadIdx.z<blockDim.z; threadIdx.z++)
+					// {
+						// // #pragma omp parallel 
+						// for(threadIdx.y=0; threadIdx.y<blockDim.y; threadIdx.y++)
+						// {
+							// // #pragma omp parallel 
+							// for(threadIdx.x=0; threadIdx.x<blockDim.x; threadIdx.x++)
+							// {
+								
+								// for(trial=0; trial<numTrials; trial++)
+								// {
+									// shared_index_1d 	= threadIdx.z * blockDim.y * blockDim.x +
+														  // threadIdx.y * blockDim.x + 
+														  // threadIdx.x +
+														  // blockDim.x  * blockDim.y * blockDim.z * trial;  // Next number of loading
+									// shared_index_3d		= make_int3((shared_index_1d % ((blockDim.y+2*haloDim.y) * (blockDim.x+2*haloDim.x))) % (blockDim.x+2*haloDim.x),
+																	// (shared_index_1d % ((blockDim.y+2*haloDim.y) * (blockDim.x+2*haloDim.x))) / (blockDim.x+2*haloDim.x),
+																	// (shared_index_1d / ((blockDim.y+2*haloDim.y) * (blockDim.x+2*haloDim.x))) );
+									// global_index_3d		= make_int3(blockIdx.x * blockDim.x + shared_index_3d.x - haloDim.x,
+																	// blockIdx.y * blockDim.y + shared_index_3d.y - haloDim.y,
+																	// blockIdx.z * blockDim.z + shared_index_3d.z - haloDim.z);
+									// global_index_1d 	= global_index_3d.z * dimy * dimx + 
+														  // global_index_3d.y * dimx + 
+														  // global_index_3d.x;
+									// if (shared_index_3d.z < (blockDim.z + 2*haloDim.z)) 
+									// {
+										// if (global_index_3d.z >= 0 && global_index_3d.z < dimz && 
+											// global_index_3d.y >= 0 && global_index_3d.y < dimy &&
+											// global_index_3d.x >= 0 && global_index_3d.x < dimx )	
+											// sharedMem[shared_index_3d.z][shared_index_3d.y][shared_index_3d.x] = src[global_index_1d];
+										// else
+											// sharedMem[shared_index_3d.z][shared_index_3d.y][shared_index_3d.x] = -1;
+									// }
+									// __syncthreads();
+								// }
+							// }
+						// }
+					// }
+				// }
+			// }
+		// }// End data retrieve
+	}
+	
+	/// Start to distribute
+	if(rank==master)
+	{
+		for(int processIdx=head; processIdx<tail; processIdx++)
+		{
+			MPI_Send(h_src + processIdx*mTotal - hTotal, 
+			// MPI::COMM_WORLD.Send(h_src + link*mTotal - hTotal, 
+				// hTotal + mTotal + hTotal, 
+				// MPI::DOUBLE, 
+				// link, 
+				// 0);
+		}
+	}
+	// Finalize to join all of the MPI processes and terminate the program
 	MPI_Finalize();
 	return 0;
-	
-	
 }

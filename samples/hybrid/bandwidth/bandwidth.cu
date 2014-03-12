@@ -108,8 +108,12 @@ int main (int argc, char *argv[])
 				// cout << name << "received the data" << endl;
 			}
 		}
+		// MPI_Barrier(MPI_COMM_WORLD);
+		if(rank != master)
+		{		
+			cudaDeviceSynchronize();
+		}
 		MPI_Barrier(MPI_COMM_WORLD);
-		
 		if(rank == 0)
 		{
 			cout << "Print k" << k << endl;
