@@ -31,6 +31,33 @@ using namespace std;
 									+clamp(x, 0, dimx-1))				
 // -----------------------------------------------------------------------------------
 __global__
+void __warmup(float *src, float *dst, int dimx, int dimy, int dimz)
+{
+    //3D global index
+	int3 index_3d = make_int3(
+		blockIdx.x*blockDim.x+threadIdx.x,
+		blockIdx.y*blockDim.y+threadIdx.y,
+		blockIdx.z*blockDim.z+threadIdx.z);
+	
+	//Check valid indices
+	if (index_3d.x >= dimx || index_3d.y >= dimy || index_3d.z >= dimz)
+		return;
+	
+	//
+	dst[at(index_3d.x, index_3d.y, index_3d.z, dimx, dimy, dimz)]
+	=  	src[at(index_3d.x, index_3d.y, index_3d.z, dimx, dimy, dimz)];
+}
+// -----------------------------------------------------------------------------------
+void warmup(float *src, float *dst, int dimx, int dimy, int dimz)
+{
+	dim3 numBlocks((dimx/8 + ((dimx%8)?1:0)),
+				(dimy/8 + ((dimy%8)?1:0)),
+				(dimz/8 + ((dimz%8)?1:0)) );
+	dim3 numThreads(8, 8, 8);
+	__warmup<<<numBlocks, numThreads>>>(src, dst, dimx, dimy, dimz);
+}
+// -----------------------------------------------------------------------------------
+__global__
 void __heatflow(float *src, float *dst, int dimx, int dimy, int dimz)
 {
 	//3D global index
@@ -358,35 +385,52 @@ int main (int argc, char *argv[])
 	// }
 	MPI_Sync("");
     //================================================================================
-    for(int k=0; k<2; k++)
-    {
-    // Transfer the halo here
-    // Copy to right, tail cannot perform
-    //  // +-+-+---------+-+-+     +-+-+---------+-+-+     +-+-+---------+-+-+
-    // --> |R| | (i,j-1) |S| | --> |R| |  (i,j)  |S| | --> |R| | (i,j+1) |S| | -->
-    //  // +-+-+---------+-+-+     +-+-+---------+-+-+     +-+-+---------+-+-+
-    if(numWorkers==1)
-        ; // No need
-    else
-    {
-        if(rank<tail)	MPI_Isend(d_dst + procSize - 2*haloSize, haloSize, MPI_FLOAT, rank+1, 0, MPI_COMM_WORLD, &request);
-        if(rank>head)	MPI_Recv (d_dst, 						 haloSize, MPI_FLOAT, rank-1, 0, MPI_COMM_WORLD, &status);					
-    } 
-    MPI_Sync("Transfer to right for warming up");
-    
-    // Copy to left, head cannot perform
-    // // +-+-+---------+-+-+     +-+-+---------+-+-+     +-+-+---------+-+-+
-    //<-- |X|S| (i,j-1) | |R| <-- |X|S|  (i,j)  | |R| <-- |X|S| (i,j+1) | |R| <--
-    // // +-+-+---------+-+-+     +-+-+---------+-+-+     +-+-+---------+-+-+
-    if(numWorkers==1)
-        ; // No need
-    else
-    {
-        if(rank>head)	MPI_Isend(d_dst + 1*haloSize, 			 haloSize, MPI_FLOAT, rank-1, 0, MPI_COMM_WORLD, &request);
-        if(rank<tail)	MPI_Recv (d_dst + procSize - 1*haloSize, haloSize, MPI_FLOAT, rank+1, 0, MPI_COMM_WORLD, &status);					
-    } 
-    MPI_Sync("Transfer to left for warming up");
-    }
+    // for(int loop=0; loop<numLoops; loop++)
+    // {
+        // cudaDeviceSynchronize();		cudaCheckLastError();
+        // MPI_Sync("");
+		// // Launch the kernel
+		// warmup(d_src, d_dst, procDim.x, procDim.y, procDim.z);
+		// // if(numWorkers==1)
+			// // heatflow(d_src, d_dst, procDim.x, procDim.y, procDim.z);
+		// // else
+		// // {
+			// // if(rank==head) 		heatflow(d_src, d_dst, procDim.x, procDim.y, procDim.z+1*haloDim.z);
+			// // else if(rank==tail) 	heatflow(d_src, d_dst, procDim.x, procDim.y, 1*haloDim.z+procDim.z);
+			// // else					heatflow(d_src, d_dst, procDim.x, procDim.y, 1*haloDim.z+procDim.z+1*haloDim.z);
+		// // }
+	
+		// // Device synchronize
+		// cudaDeviceSynchronize();		cudaCheckLastError();
+        // // Transfer the halo here
+        // // Copy to right, tail cannot perform
+        // //  // +-+-+---------+-+-+     +-+-+---------+-+-+     +-+-+---------+-+-+
+        // // --> |R| | (i,j-1) |S| | --> |R| |  (i,j)  |S| | --> |R| | (i,j+1) |S| | -->
+        // //  // +-+-+---------+-+-+     +-+-+---------+-+-+     +-+-+---------+-+-+
+        // if(numWorkers==1)
+            // ; // No need
+        // else
+        // {
+            // if(rank<tail)	MPI_Isend(d_dst + procSize - 2*haloSize, haloSize, MPI_FLOAT, rank+1, 0, MPI_COMM_WORLD, &request);
+            // if(rank>head)	MPI_Recv (d_dst, 						 haloSize, MPI_FLOAT, rank-1, 0, MPI_COMM_WORLD, &status);					
+        // } 
+        // MPI_Sync("Transfer to right for warming up");
+        
+        // // Copy to left, head cannot perform
+        // // // +-+-+---------+-+-+     +-+-+---------+-+-+     +-+-+---------+-+-+
+        // //<-- |X|S| (i,j-1) | |R| <-- |X|S|  (i,j)  | |R| <-- |X|S| (i,j+1) | |R| <--
+        // // // +-+-+---------+-+-+     +-+-+---------+-+-+     +-+-+---------+-+-+
+        // if(numWorkers==1)
+            // ; // No need
+        // else
+        // {
+            // if(rank>head)	MPI_Isend(d_dst + 1*haloSize, 			 haloSize, MPI_FLOAT, rank-1, 0, MPI_COMM_WORLD, &request);
+            // if(rank<tail)	MPI_Recv (d_dst + procSize - 1*haloSize, haloSize, MPI_FLOAT, rank+1, 0, MPI_COMM_WORLD, &status);					
+        // } 
+        // MPI_Sync("Transfer to left for warming up");
+        // cudaDeviceSynchronize();		cudaCheckLastError();
+        // MPI_Sync("");
+    // }
     //================================================================================
     cudaDeviceSynchronize();		cudaCheckLastError();
 	MPI_Sync("");
