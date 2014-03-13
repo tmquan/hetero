@@ -12,19 +12,20 @@ project(Hetero CXX C)
 # ----------------------------------------------------------------------------
 # All binary files will be stored here
 # ----------------------------------------------------------------------------
-set(RESOURCE_INPUT_PATH    "${PROJECT_BINARY_DIR}/data")
-set(EXECUTABLE_OUTPUT_PATH "${PROJECT_BINARY_DIR}/bin")
+set(RESOURCE_INPUT_PATH    "${CMAKE_SOURCE_DIR}/data")
 
-# set(CMAKE_RESOURCE_INPUT_DIRECTORY "${PROJECT_BINARY_DIR}/data")
-# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
-# set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
+# set(EXECUTABLE_OUTPUT_PATH 			"${CMAKE_SOURCE_DIR}/bin")
 
-# set(CMAKE_RESOURCE_INPUT_DIRECTORY "${PROJECT_BINARY_DIR}/data")
-# set(RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin")
-# set(LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/lib")
+# set(CMAKE_RESOURCE_INPUT_DIRECTORY 	"${CMAKE_SOURCE_DIR}/data")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY 	"${CMAKE_SOURCE_DIR}/bin")
+# set(CMAKE_LIBRARY_OUTPUT_DIRECTORY 	"${CMAKE_SOURCE_DIR}/lib")
+
+# set(CMAKE_RESOURCE_INPUT_DIRECTORY 	"${CMAKE_SOURCE_DIR}/data")
+# set(RUNTIME_OUTPUT_DIRECTORY 			"${CMAKE_SOURCE_DIR}/bin")
+# set(LIBRARY_OUTPUT_DIRECTORY 			"${CMAKE_SOURCE_DIR}/lib")
 
 
-# SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
+# SET(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib)
 # set(RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
 # ----------------------------------------------------------------------------
@@ -49,13 +50,27 @@ add_subdirectory(data)
 
 # Examples
 add_subdirectory(samples)
-
+ 
 # ----------------------------------------------------------------------------
 # Clean the output and test logs
 # ----------------------------------------------------------------------------
 add_custom_target(clear 
 	COMMAND rm			
-	`find -iname '*Make*' -not -name CMakeLists.txt` 
-	`find -iname 'bin'`
-	`find -iname 'Testing'`
+	`find ./ -iname '*Make*' -not -name CMakeLists.txt` 
+	`find ./ -iname 'bin'`
+	`find ./ -iname 'Testing'`
 	-rf)    
+# add_custom_target(clear 
+	# COMMAND COMMAND ${CMAKE_COMMAND} -P clear.cmake)    
+# set(cmake_generated ${CMAKE_SOURCE_DIR}/CMakeCache.txt
+                    # ${CMAKE_SOURCE_DIR}/cmake_install.cmake  
+                    # ${CMAKE_SOURCE_DIR}/Makefile
+                    # ${CMAKE_SOURCE_DIR}/CMakeFiles
+                    # # ${CMAKE_SOURCE_DIR}/bin
+# )
+
+# foreach(file ${cmake_generated})
+	# if (EXISTS ${file})
+		# file(REMOVE_RECURSE ${file})
+	# endif()
+# endforeach(file)
