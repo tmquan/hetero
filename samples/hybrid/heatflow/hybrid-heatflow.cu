@@ -90,6 +90,14 @@ int main (int argc, char *argv[])
 		{
 			cudaSetDevice(localRank % deviceCount);	cudaCheckLastError();
 			cudaDeviceReset();	cudaCheckLastError();
+            // cudaDeviceEnablePeerAccess	(localRank % deviceCount, 0);	cudaCheckLastError();
+            for(int d=0; d<deviceCount; d++)
+            {
+                if(d!=(localRank % deviceCount))
+                {
+                    cudaDeviceEnablePeerAccess	(d, 0);	cudaCheckLastError();
+                }                
+            }
 		}
 	}
 	//================================================================================
@@ -134,10 +142,10 @@ int main (int argc, char *argv[])
 	//================================================================================
 	// Parsing the argument
 	const char* key =
-		"{ h   |help      |     | print help message }"
-		"{     |dimx      | 64  | Number of the columns }"
-		"{     |dimy      | 64  | Number of the rows }"
-		"{     |dimz      | 64  | Temporal resolution }";
+		"{ h   |help      |      | print help message }"
+		"{     |dimx      | 512  | Number of the columns }"
+		"{     |dimy      | 512  | Number of the rows }"
+		"{     |dimz      | 512  | Temporal resolution }";
 	CommandLineParser cmd(argc, argv, key);
 	// if(rank==master)
 	// if (argc == 1)
@@ -161,7 +169,7 @@ int main (int argc, char *argv[])
 
 	haloDim.x = 0;
 	haloDim.y = 0;
-	haloDim.z = 3;	// Pad 1 
+	haloDim.z = 1;	// Pad 1 
 	
 	procDim.x = dimx;
 	procDim.y = dimy;
@@ -337,7 +345,7 @@ int main (int argc, char *argv[])
 		// else					cudaMalloc((void**)&d_dst, (middleSize)*sizeof(float));
 	// }
 	MPI_Sync("");
-	
+	//================================================================================
 	// Copy to GPU memory
 	cudaMemcpy(d_src, p_src, (procSize)*sizeof(float), cudaMemcpyHostToDevice);
 	// if(numWorkers==1)
@@ -349,10 +357,46 @@ int main (int argc, char *argv[])
 		// else					cudaMemcpy(d_src, p_src, (middleSize)*sizeof(float), cudaMemcpyHostToDevice);
 	// }
 	MPI_Sync("");
-	
+    //================================================================================
+    for(int k=0; k<2; k++)
+    {
+    // Transfer the halo here
+    // Copy to right, tail cannot perform
+    //  // +-+-+---------+-+-+     +-+-+---------+-+-+     +-+-+---------+-+-+
+    // --> |R| | (i,j-1) |S| | --> |R| |  (i,j)  |S| | --> |R| | (i,j+1) |S| | -->
+    //  // +-+-+---------+-+-+     +-+-+---------+-+-+     +-+-+---------+-+-+
+    if(numWorkers==1)
+        ; // No need
+    else
+    {
+        if(rank<tail)	MPI_Isend(d_dst + procSize - 2*haloSize, haloSize, MPI_FLOAT, rank+1, 0, MPI_COMM_WORLD, &request);
+        if(rank>head)	MPI_Recv (d_dst, 						 haloSize, MPI_FLOAT, rank-1, 0, MPI_COMM_WORLD, &status);					
+    } 
+    MPI_Sync("Transfer to right for warming up");
+    
+    // Copy to left, head cannot perform
+    // // +-+-+---------+-+-+     +-+-+---------+-+-+     +-+-+---------+-+-+
+    //<-- |X|S| (i,j-1) | |R| <-- |X|S|  (i,j)  | |R| <-- |X|S| (i,j+1) | |R| <--
+    // // +-+-+---------+-+-+     +-+-+---------+-+-+     +-+-+---------+-+-+
+    if(numWorkers==1)
+        ; // No need
+    else
+    {
+        if(rank>head)	MPI_Isend(d_dst + 1*haloSize, 			 haloSize, MPI_FLOAT, rank-1, 0, MPI_COMM_WORLD, &request);
+        if(rank<tail)	MPI_Recv (d_dst + procSize - 1*haloSize, haloSize, MPI_FLOAT, rank+1, 0, MPI_COMM_WORLD, &status);					
+    } 
+    MPI_Sync("Transfer to left for warming up");
+    }
+    //================================================================================
+    cudaDeviceSynchronize();		cudaCheckLastError();
+	MPI_Sync("");
+	//================================================================================
+    double start = MPI::Wtime();
 	// Launch the kernel
 	for(int loop=0; loop<numLoops; loop++)
 	{
+        cudaDeviceSynchronize();		cudaCheckLastError();
+        MPI_Sync("");
 		// Launch the kernel
 		heatflow(d_src, d_dst, procDim.x, procDim.y, procDim.z);
 		// if(numWorkers==1)
@@ -397,10 +441,20 @@ int main (int argc, char *argv[])
 		
 		if(loop==(numLoops-1))	break;
 		std::swap(d_src, d_dst);
-		MPI_Sync("");
 	}
-	
-	// Copy to CPU memory
+	MPI_Sync("");
+    //================================================================================
+    double elapsed = MPI::Wtime() - start;
+	if(rank == master)
+		cout << "HeatFlow finish: " << endl
+             << "dimx: " << dimx << endl
+             << "dimy: " << dimy << endl
+             << "dimz: " << dimz << endl
+             << "numProcesses: " << numWorkers << endl
+             << "time: " << elapsed << endl;
+	MPI_Sync("Done");
+	//================================================================================
+    // Copy to CPU memory
 	cudaMemcpy(p_dst, d_dst, (procSize)*sizeof(float), cudaMemcpyDeviceToHost);
 	// if(numWorkers==1)
 		// cudaMemcpy(p_dst, d_dst, (validSize)*sizeof(float), cudaMemcpyDeviceToHost);
@@ -410,8 +464,6 @@ int main (int argc, char *argv[])
 		// else if(rank==tail) 	cudaMemcpy(p_dst, d_dst, (tailSize)*sizeof(float), cudaMemcpyDeviceToHost);
 		// else					cudaMemcpy(p_dst, d_dst, (middleSize)*sizeof(float), cudaMemcpyDeviceToHost);
 	// }
-	MPI_Sync("");
-	MPI_Sync("Done");
 	//================================================================================
 	// Calculate the golden result
 	float *h_src_ref = NULL;
