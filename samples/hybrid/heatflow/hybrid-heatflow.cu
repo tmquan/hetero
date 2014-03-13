@@ -27,8 +27,8 @@ using namespace std;
 // -----------------------------------------------------------------------------------
 /// Mirror effect, acts like Neumann Boundary Condition
 #define at(x, y, z, dimx, dimy, dimz) (clamp(z, 0, dimz-1)*dimy*dimx		\
-									  +clamp(y, 0, dimy-1)*dimx				\
-									  +clamp(x, 0, dimx-1))				
+									+clamp(y, 0, dimy-1)*dimx				\
+									+clamp(x, 0, dimx-1))				
 // -----------------------------------------------------------------------------------
 __global__
 void __heatflow(float *src, float *dst, int dimx, int dimy, int dimz)
@@ -46,20 +46,20 @@ void __heatflow(float *src, float *dst, int dimx, int dimy, int dimz)
 	//
 	dst[at(index_3d.x, index_3d.y, index_3d.z, dimx, dimy, dimz)]
 	=  	(src[at(index_3d.x+1, index_3d.y+0, index_3d.z+0, dimx, dimy, dimz)] +
-		 src[at(index_3d.x-1, index_3d.y+0, index_3d.z+0, dimx, dimy, dimz)] +
-		 
-		 src[at(index_3d.x+0, index_3d.y+1, index_3d.z+0, dimx, dimy, dimz)] +
-		 src[at(index_3d.x+0, index_3d.y-1, index_3d.z+0, dimx, dimy, dimz)] +
-		 
-		 src[at(index_3d.x+0, index_3d.y+0, index_3d.z+1, dimx, dimy, dimz)] +
-		 src[at(index_3d.x+0, index_3d.y+0, index_3d.z-1, dimx, dimy, dimz)]) / 6.0f;
+		src[at(index_3d.x-1, index_3d.y+0, index_3d.z+0, dimx, dimy, dimz)] +
+		
+		src[at(index_3d.x+0, index_3d.y+1, index_3d.z+0, dimx, dimy, dimz)] +
+		src[at(index_3d.x+0, index_3d.y-1, index_3d.z+0, dimx, dimy, dimz)] +
+		
+		src[at(index_3d.x+0, index_3d.y+0, index_3d.z+1, dimx, dimy, dimz)] +
+		src[at(index_3d.x+0, index_3d.y+0, index_3d.z-1, dimx, dimy, dimz)]) / 6.0f;
 }
 // -----------------------------------------------------------------------------------
 void heatflow(float *src, float *dst, int dimx, int dimy, int dimz)
 {
 	dim3 numBlocks((dimx/8 + ((dimx%8)?1:0)),
-				   (dimy/8 + ((dimy%8)?1:0)),
-				   (dimz/8 + ((dimz%8)?1:0)) );
+				(dimy/8 + ((dimy%8)?1:0)),
+				(dimz/8 + ((dimz%8)?1:0)) );
 	dim3 numThreads(8, 8, 8);
 	__heatflow<<<numBlocks, numThreads>>>(src, dst, dimx, dimy, dimz);
 }
@@ -84,8 +84,8 @@ int main (int argc, char *argv[])
 		// printf("There are %02d device(s) at local process %02d\n", 
 			// deviceCount, localRank);
 		cout << "There are " << deviceCount 
-			 <<	" device(s) at local process " 
-			 << endl;
+			<<	" device(s) at local process " 
+			<< endl;
 		if(deviceCount>0)
 		{
 			cudaSetDevice(localRank % deviceCount);	cudaCheckLastError();
@@ -111,10 +111,10 @@ int main (int argc, char *argv[])
 	MPI_Status 	status;
 	MPI_Request request;
 	cout << "Hello World from rank " << rank 
-		 << " out of " << size 
-		 << " at " << name 
-		 << endl;
-							  
+		<< " out of " << size 
+		<< " at " << name 
+		<< endl;
+							
 
 	//================================================================================
 	// int master 		= size-1;
@@ -194,7 +194,7 @@ int main (int argc, char *argv[])
 	int total 		= dimx * dimy * dimz;
 	int validSize	= dimx * dimy * dimz / numWorkers; // Valid data range
 	int haloSize    = dimx * dimy * haloDim.z;
-					  
+					
 	MPI_Sync("Allocating total memory at master");
 	if(rank==master)
 	{
@@ -372,7 +372,7 @@ int main (int argc, char *argv[])
 		// Copy to right, tail cannot perform
 		//  // +-+-+---------+-+-+     +-+-+---------+-+-+     +-+-+---------+-+-+
 		// --> |R| | (i,j-1) |S| | --> |R| |  (i,j)  |S| | --> |R| | (i,j+1) |S| | -->
-		//	// +-+-+---------+-+-+     +-+-+---------+-+-+     +-+-+---------+-+-+
+		//  // +-+-+---------+-+-+     +-+-+---------+-+-+     +-+-+---------+-+-+
 		if(numWorkers==1)
 			; // No need
 		else
@@ -428,11 +428,11 @@ int main (int argc, char *argv[])
 				for(int y=0; y<dimy; y++)
 					for(int x=0; x<dimx; x++)
 						h_dst_ref[at(x, y, z, dimx, dimy, dimz)] =	(h_src_ref[at(x+1, y+0, z+0, dimx, dimy, dimz)] +
-																	 h_src_ref[at(x-1, y+0, z+0, dimx, dimy, dimz)] +
-																	 h_src_ref[at(x+0, y+1, z+0, dimx, dimy, dimz)] +
-																	 h_src_ref[at(x+0, y-1, z+0, dimx, dimy, dimz)] +
-																	 h_src_ref[at(x+0, y+0, z+1, dimx, dimy, dimz)] +
-																	 h_src_ref[at(x+0, y+0, z-1, dimx, dimy, dimz)]) /6.0f;
+																	h_src_ref[at(x-1, y+0, z+0, dimx, dimy, dimz)] +
+																	h_src_ref[at(x+0, y+1, z+0, dimx, dimy, dimz)] +
+																	h_src_ref[at(x+0, y-1, z+0, dimx, dimy, dimz)] +
+																	h_src_ref[at(x+0, y+0, z+1, dimx, dimy, dimz)] +
+																	h_src_ref[at(x+0, y+0, z-1, dimx, dimy, dimz)]) /6.0f;
 			if(loop==(numLoops-1))	break;
 			std::swap(h_src_ref, h_dst_ref);
 		}
