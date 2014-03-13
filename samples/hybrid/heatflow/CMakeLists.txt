@@ -38,12 +38,21 @@ cuda_add_executable(hybrid-heatflow
 					hybrid-heatflow.cu)
 target_link_libraries(hybrid-heatflow ${MPI_LIBRARIES})
 # ----------------------------------------------------------------------------
+# add_test(Test_Hybrid_HeatFlow
+	# ${MPIEXEC} 
+	# ${MPIEXEC_NUMPROC_FLAG} 4 
+	# ${MPIEXEC_PREFLAGS} --host node001
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=512 :
+	# ${MPIEXEC_NUMPROC_FLAG} 4
+	# ${MPIEXEC_PREFLAGS} --host node002
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=512
+	# ${MPIEXEC_POSTFLAGS} |sort)
 add_test(Test_Hybrid_HeatFlow
 	${MPIEXEC} 
-	${MPIEXEC_NUMPROC_FLAG} 2
+	${MPIEXEC_NUMPROC_FLAG} 4   
 	${MPIEXEC_PREFLAGS} --host node001
 	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow :
-	${MPIEXEC_NUMPROC_FLAG} 2
+	${MPIEXEC_NUMPROC_FLAG} 4
 	${MPIEXEC_PREFLAGS} --host node002
 	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow
 	${MPIEXEC_POSTFLAGS} |sort)
