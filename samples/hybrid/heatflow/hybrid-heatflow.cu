@@ -8,14 +8,21 @@
 using namespace std;
 
 // -----------------------------------------------------------------------------------
-#define cudaCheckLastError() {                                          			\
-	cudaError_t error = cudaGetLastError();                               			\
-	int id; cudaGetDevice(&id);                                                     \
-	if(error != cudaSuccess) {                                                      \
-		printf("Cuda failure error in file '%s' in line %i: '%s' at device %d \n",	\
-			__FILE__,__LINE__, cudaGetErrorString(error), id);                      \
-		exit(EXIT_FAILURE);                                                         \
-	}                                                                               \
+#define cudaCheckLastError() {                                          										\
+	cudaError_t error = cudaGetLastError();                               										\
+	int id; cudaGetDevice(&id);                                                     							\
+	if(error != cudaSuccess) {                                                      							\
+		printf("Cuda failure error in file '%s' in line %i: '%s' at device %d \n",								\
+			__FILE__,__LINE__, cudaGetErrorString(error), id);                      							\
+		exit(EXIT_FAILURE);                                                         							\
+	}                                                                               							\
+}
+// -----------------------------------------------------------------------------------
+#define MPI_Sync(message) {                                 			        								\
+	MPI_Barrier(MPI_COMM_WORLD);	                                                							\
+	if(rank==master)		cout << "----------------------------------------------------------"<< endl;		\
+	if(rank==master)		cout << message	<< endl;															\
+	MPI_Barrier(MPI_COMM_WORLD);	                                               					 			\
 }
 // -----------------------------------------------------------------------------------
 int main (int argc, char *argv[])
@@ -62,7 +69,8 @@ int main (int argc, char *argv[])
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);	
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
 	MPI_Get_processor_name(name, &length);
-	
+	MPI_Status 	status;
+	MPI_Request request;
 	cout << "Hello World from rank " << rank 
 		 << " out of " << size 
 		 << " at " << name 
@@ -70,21 +78,27 @@ int main (int argc, char *argv[])
 							  
 
 	//================================================================================
-	int master 		= size-1;
+	// int master 		= size-1;
+	// int worker;
+	// int numMasters 	= 1;
+	// int numWorkers 	= size-1;
+	
+	// int head = 0;
+	// int tail = size-2;
+	int master 		= 0;
 	int worker;
 	int numMasters 	= 1;
-	int numWorkers 	= size-1;
+	int numWorkers 	= size;
 	
 	int head = 0;
-	int tail = size-2;
-	
+	int tail = size-1;
 	//================================================================================
 	// Parsing the argument
 	const char* key =
-		"{ h   |help      |       | print help message }"
-		"{     |dimx      | 1024  | Number of the columns }"
-		"{     |dimy      | 1024  | Number of the rows }"
-		"{     |dimz      | 1024  | Temporal resolution }";
+		"{ h   |help      |     | print help message }"
+		"{     |dimx      | 64  | Number of the columns }"
+		"{     |dimy      | 64  | Number of the rows }"
+		"{     |dimz      | 64  | Temporal resolution }";
 	CommandLineParser cmd(argc, argv, key);
 	// if(rank==master)
 	// if (argc == 1)
@@ -114,8 +128,8 @@ int main (int argc, char *argv[])
 	gridDim.y  = dimy/blockDim.y + (dimy%blockDim.y)?1:0;
 	gridDim.z  = dimz/blockDim.z + (dimz%blockDim.z)?1:0;
 	
-	haloDim.x = 1;
-	haloDim.y = 1;
+	haloDim.x = 0;
+	haloDim.y = 0;
 	haloDim.z = 1;	// Pad 1 
 	
 	
@@ -130,113 +144,163 @@ int main (int argc, char *argv[])
 	float *h_src, *h_dst;
 	h_src = NULL;
 	h_dst = NULL;
-	//!!! TODO: Preprocess, pad as mirror boundary
-	int total 	= (dimx+2*haloDim.x) * 
-				  (dimy+2*haloDim.y) *  
-				  (dimz+2*haloDim.z);
-				  
-	int partial = (blockDim.x+2*haloDim.x) * 
-				  (blockDim.y+2*haloDim.y) * 
-				  (blockDim.z+2*haloDim.z);
-				  
-	int ghost   = (dimx+2*haloDim.x) * 
-				  (dimy+2*haloDim.y) *  
-				  (1*haloDim.z);
-				  
+	
+
+	int total 		= dimx * dimy * dimz;
+	int validSize	= blockDim.x * blockDim.y * blockDim.z; // Valid data range
+	int haloSize    = blockDim.x * blockDim.y * haloDim.z;
+					  
+	MPI_Sync("Allocating total memory at master");
 	if(rank==master)
 	{
 		h_src = new float[total];
+		
 		h_dst = new float[total];
+		for(int k=0; k<total; k++)
+		{
+			h_src[k] = (float)rand();
+			h_dst[k] = 0;
+		}
 	}
-	
-	// Worker or compute node will handle partially the data + 2 halo data
+	//================================================================================
+	MPI_Sync("Done");
+	//================================================================================
+	// Worker or compute node will handle partially the data 
+	// Head: validsize+haloSize
+	// Middle: validsize+2*haloSize
+	// Tail: validsize+haloSize
+	int headSize    = validSize + 1*haloSize;
+	int middleSize  = validSize + 2*haloSize;
+	int tailSize    = validSize + 1*haloSize;
 	
 	float *p_src, *p_dst;
 	p_src = NULL;
 	p_dst = NULL;
-	
-	int3 shared_index_3d{0, 0, 0};
-	int  shared_index_1d = 0;
-	
-	int3 global_index_3d{0, 0, 0};
-	int  global_index_1d = 0;
-	// Memory allocation
-	if(rank!=master)
+	//================================================================================
+	MPI_Sync("");
+	cout << "Allocating src memory at " << rank << endl;
+	MPI_Sync("");
+	//================================================================================
+	if(numWorkers == 1)
+		p_src = new float[validSize];
+	else
 	{
-		p_src = new float[partial];
-		p_dst = new float[partial];
-		
-		// int numTrials =  (((blockDim.x+2*haloDim.x) *  (blockDim.y+2*haloDim.y) *  (blockDim.z+2*haloDim.z)) /
-						  // ((blockDim.x+0*haloDim.x) *  (blockDim.y+0*haloDim.y) *  (blockDim.z+0*haloDim.z)))	+ 
-						 // ((((blockDim.x+2*haloDim.x) *  (blockDim.y+2*haloDim.y) *  (blockDim.z+2*haloDim.z)) %
-						  // ((blockDim.x+0*haloDim.x) *  (blockDim.y+0*haloDim.y) *  (blockDim.z+0*haloDim.z)))?0:1);
-		// cout << numTrials << endl;
-		// // #pragma omp parallel 
-		// for(blockIdx.z=0; blockIdx.z<gridDim.z; blockIdx.z++)
-		// {
-			// // #pragma omp parallel 
-			// for(blockIdx.y=0; blockIdx.y<gridDim.y; blockIdx.y++)
-			// {
-				// // #pragma omp parallel 
-				// for(blockIdx.x=0; blockIdx.x<gridDim.x; blockIdx.x++)
-				// {
-					// // #pragma omp parallel 
-					// for(threadIdx.z=0; threadIdx.z<blockDim.z; threadIdx.z++)
-					// {
-						// // #pragma omp parallel 
-						// for(threadIdx.y=0; threadIdx.y<blockDim.y; threadIdx.y++)
-						// {
-							// // #pragma omp parallel 
-							// for(threadIdx.x=0; threadIdx.x<blockDim.x; threadIdx.x++)
-							// {
-								
-								// for(trial=0; trial<numTrials; trial++)
-								// {
-									// shared_index_1d 	= threadIdx.z * blockDim.y * blockDim.x +
-														  // threadIdx.y * blockDim.x + 
-														  // threadIdx.x +
-														  // blockDim.x  * blockDim.y * blockDim.z * trial;  // Next number of loading
-									// shared_index_3d		= make_int3((shared_index_1d % ((blockDim.y+2*haloDim.y) * (blockDim.x+2*haloDim.x))) % (blockDim.x+2*haloDim.x),
-																	// (shared_index_1d % ((blockDim.y+2*haloDim.y) * (blockDim.x+2*haloDim.x))) / (blockDim.x+2*haloDim.x),
-																	// (shared_index_1d / ((blockDim.y+2*haloDim.y) * (blockDim.x+2*haloDim.x))) );
-									// global_index_3d		= make_int3(blockIdx.x * blockDim.x + shared_index_3d.x - haloDim.x,
-																	// blockIdx.y * blockDim.y + shared_index_3d.y - haloDim.y,
-																	// blockIdx.z * blockDim.z + shared_index_3d.z - haloDim.z);
-									// global_index_1d 	= global_index_3d.z * dimy * dimx + 
-														  // global_index_3d.y * dimx + 
-														  // global_index_3d.x;
-									// if (shared_index_3d.z < (blockDim.z + 2*haloDim.z)) 
-									// {
-										// if (global_index_3d.z >= 0 && global_index_3d.z < dimz && 
-											// global_index_3d.y >= 0 && global_index_3d.y < dimy &&
-											// global_index_3d.x >= 0 && global_index_3d.x < dimx )	
-											// sharedMem[shared_index_3d.z][shared_index_3d.y][shared_index_3d.x] = src[global_index_1d];
-										// else
-											// sharedMem[shared_index_3d.z][shared_index_3d.y][shared_index_3d.x] = -1;
-									// }
-									// __syncthreads();
-								// }
-							// }
-						// }
-					// }
-				// }
-			// }
-		// }// End data retrieve
+		if(rank==head)	 		p_src = new float[headSize];
+		else if (rank==tail)	p_src = new float[tailSize];
+		else 					p_src = new float[middleSize];
 	}
-	
-	/// Start to distribute
-	if(rank==master)
+	//================================================================================
+	MPI_Sync("Done");
+	//================================================================================
+	MPI_Sync("");
+	cout << "Allocating dst memory at " << rank << endl;
+	MPI_Sync("");
+	//================================================================================
+	if(numWorkers == 1)
+		p_dst = new float[validSize];
+	else
 	{
-		for(int processIdx=head; processIdx<tail; processIdx++)
+		if(rank==head)	 		p_dst = new float[headSize];
+		else if (rank==tail)	p_dst = new float[tailSize];
+		else 					p_dst = new float[middleSize];
+	}
+	//================================================================================
+	MPI_Sync("");
+	cout << "Allocated  dst memory at " << rank << endl;
+	MPI_Sync("Done");
+	//================================================================================
+	/// Start to distribute
+	
+	// Scatter the data
+	MPI_Sync("Master is scattering the data");
+	if(rank==master)	//Send
+	{
+		if(numWorkers==1)
+			MPI_Isend(h_src, validSize, MPI_FLOAT, head, 0, MPI_COMM_WORLD, &request);
+		else
 		{
-			MPI_Send(h_src + processIdx*mTotal - hTotal, 
-			// MPI::COMM_WORLD.Send(h_src + link*mTotal - hTotal, 
-				// hTotal + mTotal + hTotal, 
-				// MPI::DOUBLE, 
-				// link, 
-				// 0);
+			// Send to head
+			MPI_Isend(h_src, 							   	headSize, 	MPI_FLOAT, head, 0, MPI_COMM_WORLD, &request);
+			// Send to tail
+			MPI_Isend(h_src + tail*validSize - haloSize,    tailSize, 	MPI_FLOAT, tail, 0, MPI_COMM_WORLD, &request);	
+			// Send to middle
+			for(int mid=head+1; mid<tail; mid++)
+				MPI_Isend(h_src + mid*validSize - haloSize, middleSize, MPI_FLOAT, mid, 0, MPI_COMM_WORLD, &request);
 		}
 	}
+	
+	// Receive data
+	if(numWorkers==1)
+		MPI_Recv(p_src, validSize, MPI_FLOAT, master, 0, MPI_COMM_WORLD, &status);
+	else
+	{
+		// Send to head
+		if(rank==head) 			MPI_Recv(p_src, headSize,   MPI_FLOAT, master, 0, MPI_COMM_WORLD, &status);
+		else if(rank==tail) 	MPI_Recv(p_src, tailSize,   MPI_FLOAT, master, 0, MPI_COMM_WORLD, &status);
+		else					MPI_Recv(p_src, middleSize, MPI_FLOAT, master, 0, MPI_COMM_WORLD, &status);
+	}
+	MPI_Sync("Done");
+	//================================================================================
+	// Processing here, assume processed, copy directly form src to dst
+	MPI_Sync("Processing the data");
+	if(numWorkers==1)
+		memcpy(p_dst, p_src, validSize*sizeof(float));
+	else
+	{
+		// Send to head
+		if(rank==head) 			memcpy(p_dst, p_src, headSize*sizeof(float));
+		else if(rank==tail) 	memcpy(p_dst, p_src, tailSize*sizeof(float));
+		else					memcpy(p_dst, p_src, middleSize*sizeof(float));
+	}
+	MPI_Sync("Done");
+	//================================================================================
+	// Gathering the data
+	MPI_Sync("Master is gathering the data");
+	/// Send data
+	if(numWorkers==1)
+		MPI_Isend(p_dst, validSize, MPI_FLOAT, master, 0, MPI_COMM_WORLD, &request);
+	else
+	{
+		// Send to head
+		if(rank==head) 			MPI_Isend(p_src, 				validSize, MPI_FLOAT, master, 0, MPI_COMM_WORLD, &request);
+		else if(rank==tail) 	MPI_Isend(p_src + haloSize, 	validSize, MPI_FLOAT, master, 0, MPI_COMM_WORLD, &request);
+		else					MPI_Isend(p_src + haloSize, 	validSize, MPI_FLOAT, master, 0, MPI_COMM_WORLD, &request);
+	}
+	/// Receive data
+	if(rank==master)
+	{
+		if(numWorkers==1)
+			MPI_Recv(h_dst, validSize, MPI_FLOAT, head, 0, MPI_COMM_WORLD, &status);
+		else
+		{
+			// Send to head
+			MPI_Recv(h_dst, 				    validSize, 	MPI_FLOAT, head, 0, MPI_COMM_WORLD, &status);
+			// Send to tail
+			MPI_Recv(h_dst + tail*validSize,    validSize, 	MPI_FLOAT, tail, 0, MPI_COMM_WORLD, &status);	
+			// Send to middle
+			for(int mid=head+1; mid<tail; mid++)
+				MPI_Recv(h_dst + mid*validSize, validSize, 	MPI_FLOAT, mid,  0, MPI_COMM_WORLD, &status);
+		}
+	}
+	MPI_Sync("Done");
+	//================================================================================
+	// check
+	MPI_Sync("Master is checking the correctness");
+	if(rank==master)	
+	{
+		for(int k=0; k<total; k++)
+		{
+			if(h_src[k] != h_dst[k])
+			{
+				cout << "Do not match at " << k << endl;
+				goto cleanup;
+			}
+		}
+		cout << "Matched!!!" << endl; 
+		cleanup:
+	}
+	MPI_Sync("Done");
+	//================================================================================
 	// Finalize to join all of the MPI processes and terminate the program
 	MPI_Finalize();
 	return 0;

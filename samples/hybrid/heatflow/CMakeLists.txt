@@ -40,13 +40,10 @@ target_link_libraries(hybrid-heatflow ${MPI_LIBRARIES})
 # ----------------------------------------------------------------------------
 add_test(Test_Hybrid_HeatFlow
 	${MPIEXEC} 
-	${MPIEXEC_NUMPROC_FLAG} 4
+	${MPIEXEC_NUMPROC_FLAG} 2
 	${MPIEXEC_PREFLAGS} --host node001
 	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow :
-	${MPIEXEC_NUMPROC_FLAG} 4
+	${MPIEXEC_NUMPROC_FLAG} 2
 	${MPIEXEC_PREFLAGS} --host node002
-	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow :
-	${MPIEXEC_NUMPROC_FLAG} 1
-	${MPIEXEC_PREFLAGS} --host head
-	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow 
+	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow
 	${MPIEXEC_POSTFLAGS} |sort)
