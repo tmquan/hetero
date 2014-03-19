@@ -9,7 +9,7 @@ else(MPI_FOUND)
     message(FATAL_ERROR "MPI is not installed on this system.")
 endif()
 # ----------------------------------------------------------------------------
-add_executable(mpi-hello_world mpi-hello_world.cpp)
+add_executable(mpi-hello_world hello_world.cpp)
 target_link_libraries(mpi-hello_world ${MPI_LIBRARIES})
 # ----------------------------------------------------------------------------
 

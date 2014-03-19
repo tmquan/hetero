@@ -26,8 +26,8 @@ else(CUDA_FOUND)
 endif() 
 # ----------------------------------------------------------------------------
 cuda_add_executable(cpp-split_data 
-					cpp-split_data.cpp
-					# cpp-split_data.cu
+					split_data.cpp
+					# split_data.cu
 					cmdparser.cpp
 					datparser.cpp
 			   )
@@ -35,10 +35,23 @@ target_link_libraries(cpp-split_data ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_RE
 # target_link_libraries(cpp-split_data ${Boost_LIBRARIES} )
 target_link_libraries(cpp-split_data ${OpenMP_CXX_FLAGS} )
 # ----------------------------------------------------------------------------
+# add_test(Test_CPP_Split_Data
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/cpp-split_data
+	# # --input	${RESOURCE_INPUT_PATH}/em_medium.dat
+	# --inputFile		${RESOURCE_INPUT_PATH}/em_small.dat 
+	# --outputDir     ${RESOURCE_INPUT_PATH}/
+	# --numx  2
+	# --numy 	2
+	# --numz 	2   
+	# --halo	1
+	# ) 
 add_test(Test_CPP_Split_Data
 	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/cpp-split_data
 	# --input	${RESOURCE_INPUT_PATH}/em_medium.dat
-	--input		${RESOURCE_INPUT_PATH}/em_small.dat 
-	--output	${RESOURCE_INPUT_PATH}/
-	--halo	1
+	--inputFile		${RESOURCE_INPUT_PATH}/em_medium.dat 
+	--outputDir     ${RESOURCE_INPUT_PATH}/
+	--numx  1 	
+	--numy 	1
+	--numz 	32   
+	--halo	13
 	) 

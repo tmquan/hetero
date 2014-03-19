@@ -15,16 +15,16 @@ if(CUDA_FOUND)
 		")
 
 	# add -Wextra compiler flag for gcc compilations
-	if (UNIX)
+	# if (UNIX)
 		# set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} "-Xcompiler -Wall;")
-		set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} "--disable-warnings;")
-		set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} "-Xcompiler -Wextra")
-	endif (UNIX)
+		# set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} "--disable-warnings;")
+		# set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS} "-Xcompiler -Wextra")
+	# endif (UNIX)
 else(CUDA_FOUND)
     message(FATAL_ERROR "CUDA is not installed on this system.")
 endif()
 # ----------------------------------------------------------------------------
-cuda_add_executable(cuda-convolution cuda-convolution.cu)
+cuda_add_executable(cuda-convolution convolution.cu)
 # ----------------------------------------------------------------------------
 add_test(Test_CUDA_Convolution
 	${MPIEXEC} 

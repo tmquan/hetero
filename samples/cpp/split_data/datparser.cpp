@@ -59,15 +59,25 @@ string del_space(string name)
 
 void DatFileParser::printContent()
 {
+    cout << "----------------------------------------------------------"<< endl;		
+    cout << "Data file information: " << endl;
 	cout << "ObjectFileName:" << objectFileName << endl;
 	cout << "Resolution:" << dimx << " " 
 						  << dimy << " " 
 						  << dimz << endl;
 	cout << "Format:" << fileType << endl;
+    cout << "----------------------------------------------------------"<< endl;		
 }
 
-DatFileParser::DatFileParser()
-{}
+// DatFileParser::DatFileParser()
+// {
+    // objectFileName = "";
+	// dimx = 1;
+	// dimy = 1;
+	// dimz = 1;
+    // fs = fstream(fs);
+    
+// }
 
 DatFileParser::DatFileParser(string fileName)
 {
