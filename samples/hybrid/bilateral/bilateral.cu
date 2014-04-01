@@ -1,27 +1,13 @@
 #include <iostream>
-#include <fstream>
 #include <stdio.h>
 #include <cuda.h>
 #include <time.h>
 #include <mpi.h>
 #include <helper_math.h>
-#include "cmdparser.hpp"
+
+#include <hetero_cmdparser.hpp>
 using namespace std;
 
-// -----------------------------------------------------------------------------------
-#define checkWriteFile(filename, pData, size) {                    				\
-		fstream *fs = new fstream;												\
-		fs->open(filename, ios::out|ios::binary);								\
-		if (!fs->is_open())														\
-		{																		\
-			fprintf(stderr, "Cannot open file '%s' in file '%s' at line %i\n",	\
-			filename, __FILE__, __LINE__);										\
-			return 1;															\
-		}																		\
-		fs->write(reinterpret_cast<char*>(pData), size);						\
-		fs->close();															\
-		delete fs;																\
-	}
 // -----------------------------------------------------------------------------------
 #define cudaCheckLastError() {                                          										\
 	cudaError_t error = cudaGetLastError();                               										\
@@ -73,7 +59,7 @@ void warmup(float *src, float *dst, int dimx, int dimy, int dimz)
 }
 // -----------------------------------------------------------------------------------
 __global__
-void __heatflow(float *src, float *dst, int dimx, int dimy, int dimz)
+void __bilateral(float *src, float *dst, int dimx, int dimy, int dimz)
 {
 	//3D global index
 	int3 index_3d = make_int3(
@@ -88,49 +74,75 @@ void __heatflow(float *src, float *dst, int dimx, int dimy, int dimz)
     int index_1d = index_3d.z * dimy * dimx +
                    index_3d.y * dimx +
                    index_3d.x;
-	//
-    // float tmp = index_1d * 0.001f; // Prevent optimization
-     
-    float a, b, c, d, e, f, result, center, dt;
-	a = src[at(index_3d.x+1, index_3d.y+0, index_3d.z+0, dimx, dimy, dimz)];
-	b = src[at(index_3d.x-1, index_3d.y+0, index_3d.z+0, dimx, dimy, dimz)];
-
-	c = src[at(index_3d.x+0, index_3d.y+1, index_3d.z+0, dimx, dimy, dimz)];
-	d = src[at(index_3d.x+0, index_3d.y-1, index_3d.z+0, dimx, dimy, dimz)];
-
-	e = src[at(index_3d.x+0, index_3d.y+0, index_3d.z+1, dimx, dimy, dimz)];
-	f = src[at(index_3d.x+0, index_3d.y+0, index_3d.z-1, dimx, dimy, dimz)]; 
-	
-	center = src[at(index_3d.x+0, index_3d.y+0, index_3d.z+0, dimx, dimy, dimz)]; 
-
-	dt = 0.1f; 
-	
-	result = center + dt*(a+b+c+d+e+f-6.0f*center);
-    // for(int k=0; k<40000; k++)
-    // {      
-        // result += (a+b+c+d+e+f)/6.0f;
-    // }   
+    
         
-   
-	dst[at(index_3d.x, index_3d.y, index_3d.z, dimx, dimy, dimz)] = result;
-	// dst[at(index_3d.x, index_3d.y, index_3d.z, dimx, dimy, dimz)]
-	// =  	(src[at(index_3d.x+1, index_3d.y+0, index_3d.z+0, dimx, dimy, dimz)] +
-		// src[at(index_3d.x-1, index_3d.y+0, index_3d.z+0, dimx, dimy, dimz)] +
-		
-		// src[at(index_3d.x+0, index_3d.y+1, index_3d.z+0, dimx, dimy, dimz)] +
-		// src[at(index_3d.x+0, index_3d.y-1, index_3d.z+0, dimx, dimy, dimz)] +
-		
-		// src[at(index_3d.x+0, index_3d.y+0, index_3d.z+1, dimx, dimy, dimz)] +
-		// src[at(index_3d.x+0, index_3d.y+0, index_3d.z-1, dimx, dimy, dimz)]) / 6.0f;
+	int radius = 5;
+	unsigned int count = 0;
+
+	float pixel;
+	float intensityWeight, colorWeight, weight, totalWeight;
+	float id, cd;
+	
+	id = 100.0f; 	// image distance
+	cd = 100.0f;	// color distance
+	
+	totalWeight = 0.0f;
+	for(int z=index_3d.z-radius; z<=index_3d.z+radius; z++)
+	{
+		for(int y=index_3d.y-radius; y<=index_3d.y+radius; y++)
+		{
+			for(int x=index_3d.x-radius; x<=index_3d.x+radius; x++)
+			{
+				count++;//Valid pixel
+				
+				intensityWeight	= expf(-0.5f* ( (z-index_3d.z)*(z-index_3d.z) + (y-index_3d.y)*(y-index_3d.y) + (x-index_3d.x)*(x-index_3d.x) ) /(id*id));
+				colorWeight		= expf(-0.5f* ( 
+												(src[at(x, y, z, dimx, dimy, dimz)] - src[at(index_3d.x, index_3d.y, index_3d.z, dimx, dimy, dimz)]) * 
+												(src[at(x, y, z, dimx, dimy, dimz)] - src[at(index_3d.x, index_3d.y, index_3d.z, dimx, dimy, dimz)])
+												 ) /(cd*cd));
+				weight = intensityWeight * colorWeight;
+
+				pixel += (weight)*src[at(x, y, z, dimx, dimy, dimz)];
+				totalWeight += weight;
+			}
+		}
+	}
+	// for(int i=ty-radius; i<=ty+radius; i++)
+	// {
+		// for(int j=tx-radius; j<=tx+radius; j++)
+		// {
+			// if(i>=0 && j>=0 && i<nRows && j<nCols)
+			// {
+
+				// count++;//Valid pixel
+				// //printf("%d %d\n", i, j);
+				
+				// intensityWeight	= expf(-0.5* ( (i-ty)*(i-ty) + (j-tx)*(j-tx) ) /(id*id));
+				// colorWeight		= expf(-0.5* ( 
+													// (src[i*nCols+j].x-src[ty*nCols+tx].x)*(src[i*nCols+j].x-src[ty*nCols+tx].x)
+												   // +(src[i*nCols+j].y-src[ty*nCols+tx].y)*(src[i*nCols+j].y-src[ty*nCols+tx].y)
+												   // +(src[i*nCols+j].z-src[ty*nCols+tx].z)*(src[i*nCols+j].z-src[ty*nCols+tx].z)
+												 // ) /(cd*cd));
+				// weight = intensityWeight * colorWeight;
+
+				// pixel.x += (weight)*src[i*nCols+j].x;
+				// pixel.y += (weight)*src[i*nCols+j].y;
+				// pixel.z += (weight)*src[i*nCols+j].z;
+				// totalWeight += weight;
+			// }
+		// }
+	// }
+	pixel = pixel/totalWeight;
+	dst[at(index_3d.x, index_3d.y, index_3d.z, dimx, dimy, dimz)] = pixel;
 }
 // -----------------------------------------------------------------------------------
-void heatflow(float *src, float *dst, int dimx, int dimy, int dimz)
+void bilateral(float *src, float *dst, int dimx, int dimy, int dimz)
 {
 	dim3 numBlocks((dimx/8 + ((dimx%8)?1:0)),
 				(dimy/8 + ((dimy%8)?1:0)),
 				(dimz/8 + ((dimz%8)?1:0)) );
 	dim3 numThreads(8, 8, 8);
-	__heatflow<<<numBlocks, numThreads>>>(src, dst, dimx, dimy, dimz);
+	__bilateral<<<numBlocks, numThreads>>>(src, dst, dimx, dimy, dimz);
 }
 // -----------------------------------------------------------------------------------
 int main (int argc, char *argv[])
@@ -216,7 +228,7 @@ int main (int argc, char *argv[])
 		"{     |dimx      | 512  | Number of the columns }"
 		"{     |dimy      | 512  | Number of the rows }"
 		"{     |dimz      | 512  | Temporal resolution }"
-		"{ n   |numLoops  |  50  | Temporal resolution }";
+		"{ n   |numLoops  |  1   | Temporal resolution }";
 	CommandLineParser cmd(argc, argv, key);
 	// if(rank==master)
 	// if (argc == 1)
@@ -241,7 +253,7 @@ int main (int argc, char *argv[])
 
 	haloDim.x = 0;
 	haloDim.y = 0;
-	haloDim.z = 1;	// Pad 1 
+	haloDim.z = 5;	// Pad 1 
 	
 	procDim.x = dimx;
 	procDim.y = dimy;
@@ -437,12 +449,12 @@ int main (int argc, char *argv[])
 		// Launch the kernel
 		warmup(d_src, d_dst, procDim.x, procDim.y, procDim.z);
 		// if(numWorkers==1)
-			// heatflow(d_src, d_dst, procDim.x, procDim.y, procDim.z);
+			// bilateral(d_src, d_dst, procDim.x, procDim.y, procDim.z);
 		// else
 		// {
-			// if(rank==head) 		heatflow(d_src, d_dst, procDim.x, procDim.y, procDim.z+1*haloDim.z);
-			// else if(rank==tail) 	heatflow(d_src, d_dst, procDim.x, procDim.y, 1*haloDim.z+procDim.z);
-			// else					heatflow(d_src, d_dst, procDim.x, procDim.y, 1*haloDim.z+procDim.z+1*haloDim.z);
+			// if(rank==head) 		bilateral(d_src, d_dst, procDim.x, procDim.y, procDim.z+1*haloDim.z);
+			// else if(rank==tail) 	bilateral(d_src, d_dst, procDim.x, procDim.y, 1*haloDim.z+procDim.z);
+			// else					bilateral(d_src, d_dst, procDim.x, procDim.y, 1*haloDim.z+procDim.z+1*haloDim.z);
 		// }
 	
 		// Device synchronize
@@ -482,79 +494,70 @@ int main (int argc, char *argv[])
 	//================================================================================
     MPI_Request requests[2];
     MPI_Status statuses[2];
-	
-	int count = 0;
     double start = MPI_Wtime();
 	// Launch the kernel
 	for(int loop=0; loop<numLoops; loop++)
 	{
-		cudaDeviceSynchronize();		cudaCheckLastError();
 		// Launch the kernel
-		heatflow(d_src, d_dst, procDim.x, procDim.y, procDim.z);
+		bilateral(d_src, d_dst, procDim.x, procDim.y, procDim.z);
 		// if(numWorkers==1)
-			// heatflow(d_src, d_dst, procDim.x, procDim.y, procDim.z);
+			// bilateral(d_src, d_dst, procDim.x, procDim.y, procDim.z);
 		// else
 		// {
-			// if(rank==head) 		heatflow(d_src, d_dst, procDim.x, procDim.y, procDim.z+1*haloDim.z);
-			// else if(rank==tail) 	heatflow(d_src, d_dst, procDim.x, procDim.y, 1*haloDim.z+procDim.z);
-			// else					heatflow(d_src, d_dst, procDim.x, procDim.y, 1*haloDim.z+procDim.z+1*haloDim.z);
+			// if(rank==head) 		bilateral(d_src, d_dst, procDim.x, procDim.y, procDim.z+1*haloDim.z);
+			// else if(rank==tail) 	bilateral(d_src, d_dst, procDim.x, procDim.y, 1*haloDim.z+procDim.z);
+			// else					bilateral(d_src, d_dst, procDim.x, procDim.y, 1*haloDim.z+procDim.z+1*haloDim.z);
 		// }
 	
 		// Device synchronize
 		cudaDeviceSynchronize();		cudaCheckLastError();
 		MPI_Sync("Device Synchronization");	
 		
-		count++;
-		if(count==haloDim.z)
-		{
-		MPI_Sync("Device Synchronization");
-		count = 0;
 		// Transfer the halo here
 		// Copy to right, tail cannot perform
 		//  // +-+-+---------+-+-+     +-+-+---------+-+-+     +-+-+---------+-+-+
 		// --> |R| | (i,j-1) |S| | --> |R| |  (i,j)  |S| | --> |R| | (i,j+1) |S| | -->
 		//  // +-+-+---------+-+-+     +-+-+---------+-+-+     +-+-+---------+-+-+
-		if(numWorkers==1)
-			; // No need
-		else
-		{
-			if(rank<tail)	MPI_Isend(d_dst + procSize - 2*haloSize, haloSize, MPI_FLOAT, rank+1, 0, MPI_COMM_WORLD, &request);
-			if(rank>head)	MPI_Recv (d_dst, 						 haloSize, MPI_FLOAT, rank-1, 0, MPI_COMM_WORLD, &status);					
-			// if(rank>head)	MPI_Irecv(d_dst, 						 haloSize, MPI_FLOAT, rank-1, 0, MPI_COMM_WORLD, &(requests[0]));					
-		} 
-		cudaDeviceSynchronize();		cudaCheckLastError();
-		MPI_Sync("Transfer to right");
+		// if(numWorkers==1)
+			// ; // No need
+		// else
+		// {
+			// if(rank<tail)	MPI_Isend(d_dst + procSize - 2*haloSize, haloSize, MPI_FLOAT, rank+1, 0, MPI_COMM_WORLD, &request);
+			// if(rank>head)	MPI_Recv (d_dst, 						 haloSize, MPI_FLOAT, rank-1, 0, MPI_COMM_WORLD, &status);					
+			// // if(rank>head)	MPI_Irecv(d_dst, 						 haloSize, MPI_FLOAT, rank-1, 0, MPI_COMM_WORLD, &(requests[0]));					
+		// } 
+		// cudaDeviceSynchronize();		cudaCheckLastError();
+		// MPI_Sync("Transfer to right");
 		// MPI_WaitAll();
 		// Copy to left, head cannot perform
 		// // +-+-+---------+-+-+     +-+-+---------+-+-+     +-+-+---------+-+-+
 		//<-- |X|S| (i,j-1) | |R| <-- |X|S|  (i,j)  | |R| <-- |X|S| (i,j+1) | |R| <--
 		// // +-+-+---------+-+-+     +-+-+---------+-+-+     +-+-+---------+-+-+
-		if(numWorkers==1)
-			; // No need
-		else
-		{
-			if(rank>head)	MPI_Isend(d_dst + 1*haloSize, 			 haloSize, MPI_FLOAT, rank-1, 0, MPI_COMM_WORLD, &request);
-			if(rank<tail)	MPI_Recv (d_dst + procSize - 1*haloSize, haloSize, MPI_FLOAT, rank+1, 0, MPI_COMM_WORLD, &status);					
-			// if(rank<tail)	MPI_Irecv(d_dst + procSize - 1*haloSize, haloSize, MPI_FLOAT, rank+1, 0, MPI_COMM_WORLD, &(requests[1]));					
-		} 
-		cudaDeviceSynchronize();		cudaCheckLastError();
-		MPI_Sync("Transfer to left");
+		// if(numWorkers==1)
+			// ; // No need
+		// else
+		// {
+			// if(rank>head)	MPI_Isend(d_dst + 1*haloSize, 			 haloSize, MPI_FLOAT, rank-1, 0, MPI_COMM_WORLD, &request);
+			// if(rank<tail)	MPI_Recv (d_dst + procSize - 1*haloSize, haloSize, MPI_FLOAT, rank+1, 0, MPI_COMM_WORLD, &status);					
+			// // if(rank<tail)	MPI_Irecv(d_dst + procSize - 1*haloSize, haloSize, MPI_FLOAT, rank+1, 0, MPI_COMM_WORLD, &(requests[1]));					
+		// } 
+		// cudaDeviceSynchronize();		cudaCheckLastError();
+		// MPI_Sync("Transfer to left");
 		// int count = 2;
         // MPI_Waitall(count, requests, statuses);
         // MPI_Barrier(MPI_COMM_WORLD);
-        }
-		
-        cudaDeviceSynchronize();		cudaCheckLastError();
-        MPI_Sync("");
+        
+        // cudaDeviceSynchronize();		cudaCheckLastError();
+        // MPI_Sync("");
 		if(loop==(numLoops-1))	break;
 		std::swap(d_src, d_dst);
 	}
-	cudaDeviceSynchronize();		cudaCheckLastError();
-	MPI_Sync("");
+	// cudaDeviceSynchronize();		cudaCheckLastError();
+	// MPI_Sync("");
     //================================================================================
     double elapsed = MPI_Wtime() - start;
 	if(rank == master)
-		cout << "HeatFlow finish: " << endl
+		cout << "Bilateral finish: " << endl
              << "dimx: " << dimx << endl
              << "dimy: " << dimy << endl
              << "dimz: " << dimz << endl
@@ -629,8 +632,6 @@ int main (int argc, char *argv[])
 		}
 	}
 	MPI_Sync("Done");
-	
-	checkWriteFile("result.raw", h_dst, total*sizeof(float));
 	//================================================================================
 	// check
 	// MPI_Sync("Master is checking the correctness");

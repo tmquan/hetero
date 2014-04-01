@@ -69,17 +69,41 @@ void __heatflow(float *src, float *dst, int dimx, int dimy, int dimz)
 	//Check valid indices
 	if (index_3d.x >= dimx || index_3d.y >= dimy || index_3d.z >= dimz)
 		return;
-	
 	//
-	dst[at(index_3d.x, index_3d.y, index_3d.z, dimx, dimy, dimz)]
-	=  	(src[at(index_3d.x+1, index_3d.y+0, index_3d.z+0, dimx, dimy, dimz)] +
-		src[at(index_3d.x-1, index_3d.y+0, index_3d.z+0, dimx, dimy, dimz)] +
+    int index_1d = index_3d.z * dimy * dimx +
+                   index_3d.y * dimx +
+                   index_3d.x;
+	//
+    float tmp = index_1d * 0.001f; // Prevent optimization
+    
+    float a, b, c, d, e, f, result;
+    for(int k=0; k<1000; k++)
+    {   
+        tmp = src[at(index_3d.x, index_3d.y, index_3d.z, dimx, dimy, dimz)];
+        tmp = dst[at(index_3d.x, index_3d.y, index_3d.z, dimx, dimy, dimz)];
+    }   
+        
+    a = src[at(index_3d.x+1, index_3d.y+0, index_3d.z+0, dimx, dimy, dimz)];
+    b = src[at(index_3d.x-1, index_3d.y+0, index_3d.z+0, dimx, dimy, dimz)];
+    
+    c = src[at(index_3d.x+0, index_3d.y+1, index_3d.z+0, dimx, dimy, dimz)];
+    d = src[at(index_3d.x+0, index_3d.y-1, index_3d.z+0, dimx, dimy, dimz)];
+    
+    e = src[at(index_3d.x+0, index_3d.y+0, index_3d.z+1, dimx, dimy, dimz)];
+    f = src[at(index_3d.x+0, index_3d.y+0, index_3d.z-1, dimx, dimy, dimz)]; 
+    
+    
+    result = (a+b+c+d+e+f)/6.0f;
+	dst[at(index_3d.x, index_3d.y, index_3d.z, dimx, dimy, dimz)] = result;
+	// dst[at(index_3d.x, index_3d.y, index_3d.z, dimx, dimy, dimz)]
+	// =  	(src[at(index_3d.x+1, index_3d.y+0, index_3d.z+0, dimx, dimy, dimz)] +
+		// src[at(index_3d.x-1, index_3d.y+0, index_3d.z+0, dimx, dimy, dimz)] +
 		
-		src[at(index_3d.x+0, index_3d.y+1, index_3d.z+0, dimx, dimy, dimz)] +
-		src[at(index_3d.x+0, index_3d.y-1, index_3d.z+0, dimx, dimy, dimz)] +
+		// src[at(index_3d.x+0, index_3d.y+1, index_3d.z+0, dimx, dimy, dimz)] +
+		// src[at(index_3d.x+0, index_3d.y-1, index_3d.z+0, dimx, dimy, dimz)] +
 		
-		src[at(index_3d.x+0, index_3d.y+0, index_3d.z+1, dimx, dimy, dimz)] +
-		src[at(index_3d.x+0, index_3d.y+0, index_3d.z-1, dimx, dimy, dimz)]) / 6.0f;
+		// src[at(index_3d.x+0, index_3d.y+0, index_3d.z+1, dimx, dimy, dimz)] +
+		// src[at(index_3d.x+0, index_3d.y+0, index_3d.z-1, dimx, dimy, dimz)]) / 6.0f;
 }
 // -----------------------------------------------------------------------------------
 void heatflow(float *src, float *dst, int dimx, int dimy, int dimz)
@@ -145,6 +169,7 @@ int main (int argc, char *argv[])
 	MPI_Get_processor_name(name, &length);
 	MPI_Status 	status;
 	MPI_Request request;
+	MPI_Request req;
 	cout << "Hello World from rank " << rank 
 		<< " out of " << size 
 		<< " at " << name 
@@ -172,7 +197,8 @@ int main (int argc, char *argv[])
 		"{ h   |help      |      | print help message }"
 		"{     |dimx      | 512  | Number of the columns }"
 		"{     |dimy      | 512  | Number of the rows }"
-		"{     |dimz      | 512  | Temporal resolution }";
+		"{     |dimz      | 512  | Temporal resolution }"
+		"{ n   |numLoops  | 10   | Temporal resolution }";
 	CommandLineParser cmd(argc, argv, key);
 	// if(rank==master)
 	// if (argc == 1)
@@ -186,6 +212,7 @@ int main (int argc, char *argv[])
 	const int dimx    	= cmd.get<int>("dimx", false); //default value has been provide
 	const int dimy    	= cmd.get<int>("dimy", false);
 	const int dimz    	= cmd.get<int>("dimz", false);
+    const int numLoops  = cmd.get<int>("numLoops", false);
 	// if(rank==master)	cmd.printParams();
 	// if(rank==master)	cout << dimx << endl << dimy << endl << dimz << endl;
 	//================================================================================
@@ -328,7 +355,7 @@ int main (int argc, char *argv[])
 	MPI_Sync("Done");
 	//================================================================================
 	// Processing here, assume processed, copy directly form src to dst
-	int numLoops = 20;
+
 	MPI_Sync("Processing the data");
 	// Common pattern
 	if(numWorkers==1)
@@ -435,12 +462,14 @@ int main (int argc, char *argv[])
     cudaDeviceSynchronize();		cudaCheckLastError();
 	MPI_Sync("");
 	//================================================================================
-    double start = MPI::Wtime();
+    MPI_Request requests[2];
+    MPI_Status statuses[2];
+    double start = MPI_Wtime();
 	// Launch the kernel
 	for(int loop=0; loop<numLoops; loop++)
 	{
         cudaDeviceSynchronize();		cudaCheckLastError();
-        MPI_Sync("");
+        // MPI_Sync("");
 		// Launch the kernel
 		heatflow(d_src, d_dst, procDim.x, procDim.y, procDim.z);
 		// if(numWorkers==1)
@@ -454,7 +483,7 @@ int main (int argc, char *argv[])
 	
 		// Device synchronize
 		cudaDeviceSynchronize();		cudaCheckLastError();
-		MPI_Sync("Device Synchronization");	
+		// MPI_Sync("Device Synchronization");	
 		
 		// Transfer the halo here
 		// Copy to right, tail cannot perform
@@ -467,9 +496,10 @@ int main (int argc, char *argv[])
 		{
 			if(rank<tail)	MPI_Isend(d_dst + procSize - 2*haloSize, haloSize, MPI_FLOAT, rank+1, 0, MPI_COMM_WORLD, &request);
 			if(rank>head)	MPI_Recv (d_dst, 						 haloSize, MPI_FLOAT, rank-1, 0, MPI_COMM_WORLD, &status);					
+			// if(rank>head)	MPI_Irecv(d_dst, 						 haloSize, MPI_FLOAT, rank-1, 0, MPI_COMM_WORLD, &(requests[0]));					
 		} 
 		MPI_Sync("Transfer to right");
-		
+		// MPI_WaitAll();
 		// Copy to left, head cannot perform
 		// // +-+-+---------+-+-+     +-+-+---------+-+-+     +-+-+---------+-+-+
 		//<-- |X|S| (i,j-1) | |R| <-- |X|S|  (i,j)  | |R| <-- |X|S| (i,j+1) | |R| <--
@@ -480,22 +510,26 @@ int main (int argc, char *argv[])
 		{
 			if(rank>head)	MPI_Isend(d_dst + 1*haloSize, 			 haloSize, MPI_FLOAT, rank-1, 0, MPI_COMM_WORLD, &request);
 			if(rank<tail)	MPI_Recv (d_dst + procSize - 1*haloSize, haloSize, MPI_FLOAT, rank+1, 0, MPI_COMM_WORLD, &status);					
+			// if(rank<tail)	MPI_Irecv(d_dst + procSize - 1*haloSize, haloSize, MPI_FLOAT, rank+1, 0, MPI_COMM_WORLD, &(requests[1]));					
 		} 
 		MPI_Sync("Transfer to left");
-		
+		// int count = 2;
+        // MPI_Waitall(count, requests, statuses);
+        // MPI_Barrier(MPI_COMM_WORLD);
+        
 		if(loop==(numLoops-1))	break;
 		std::swap(d_src, d_dst);
 	}
-	MPI_Sync("");
+	// MPI_Sync("");
     //================================================================================
-    double elapsed = MPI::Wtime() - start;
+    double elapsed = MPI_Wtime() - start;
 	if(rank == master)
 		cout << "HeatFlow finish: " << endl
              << "dimx: " << dimx << endl
              << "dimy: " << dimy << endl
              << "dimz: " << dimz << endl
-             << "numProcesses: " << numWorkers << endl
-             << "time: " << elapsed << endl;
+             << "numProcess(es): " << numWorkers << endl
+             << "Execution time (s): " << elapsed << endl;
 	MPI_Sync("Done");
 	//================================================================================
     // Copy to CPU memory

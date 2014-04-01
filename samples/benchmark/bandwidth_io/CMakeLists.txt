@@ -1,4 +1,4 @@
-# hetero/samples/mpi/hello_word
+# hetero/samples/benchmark/bandwidth_io
 # ----------------------------------------------------------------------------
 find_package(MPI REQUIRED)
 # ----------------------------------------------------------------------------
@@ -12,18 +12,19 @@ endif()
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/include)
 LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/lib)
 # ----------------------------------------------------------------------------
-add_executable(mpi-io io.cpp)
+add_executable(hetero_bandwidth_io bandwidth_io.cpp)
 
-target_link_libraries(mpi-io ${MPI_LIBRARIES} 
-	hetero_csv
+target_link_libraries(hetero_bandwidth_io ${MPI_LIBRARIES} 
 	hetero_cmdparser
 	)
 # ----------------------------------------------------------------------------
-add_test(Test_MPI_IO_CMDPARSER
+add_test(Test_Benchmark_Bandwidth_IO
 	${MPIEXEC} 
-	${MPIEXEC_NUMPROC_FLAG} 2
-	${MPIEXEC_PREFLAGS} --host node001 
-	${MPIEXEC_NUMPROC_FLAG} 2
-	${MPIEXEC_PREFLAGS} --host node002 
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/mpi-io 
-    ${RESOURCE_INPUT_PATH}/kiwi.csv)
+	${MPIEXEC_NUMPROC_FLAG} 4
+	${MPIEXEC_PREFLAGS} --host head 
+	# ${MPIEXEC_NUMPROC_FLAG} 2
+	# ${MPIEXEC_PREFLAGS} --host node001 
+	# ${MPIEXEC_NUMPROC_FLAG} 2
+	# ${MPIEXEC_PREFLAGS} --host node002 
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hetero_bandwidth_io 10 10 2 2 
+	)

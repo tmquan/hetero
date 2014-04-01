@@ -1,0 +1,36 @@
+#include <iostream>
+#include <mpi.h>
+
+#include <hetero_cmdparser.hpp>
+
+using namespace std;
+
+int main(int argc, char *argv[])
+{
+	// Initialize MPI
+	int  processDim, processIdx;
+	char name[MPI_MAX_PROCESSOR_NAME];
+	int  length;
+		
+	MPI_Init(&argc, &argv);
+
+	MPI_Comm_rank(MPI_COMM_WORLD, &processIdx);	
+	MPI_Comm_size(MPI_COMM_WORLD, &processDim);
+	MPI_Get_processor_name(name, &length);
+	
+  	printf("This is processIdx %02d, processDim %02d, of %s\n", processIdx, processDim, name);
+
+	// Parsing the arguments
+	const char* key =
+		"{ h   |help      |      | print help message }"
+		"{ i   |srcFile   |      | source of the file }"
+		;
+	CommandLineParser cmd(argc, argv, key);
+	cmd.printParams();
+	
+	// Generate 1D data
+	float *h_data = new float[1024*1024*1024];
+	cout << "Size of data : " << sizeof(h_data) << endl;	
+  	MPI_Finalize();
+	return 0;
+}

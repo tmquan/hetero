@@ -1,4 +1,4 @@
-# hetero/samples/hybrid/heatflow
+	# hetero/samples/hybrid/heatflow
 # ----------------------------------------------------------------------------
 find_package(CUDA REQUIRED)
 # ----------------------------------------------------------------------------
@@ -38,6 +38,94 @@ cuda_add_executable(hybrid-heatflow
 					heatflow.cu)
 target_link_libraries(hybrid-heatflow ${MPI_LIBRARIES})
 
+# ----------------------------------------------------------------------------
+add_test(Test_Hybrid_HeatFlow_Strong_1_processes_Distributed_Memory_System
+	${MPIEXEC} 
+	${MPIEXEC_NUMPROC_FLAG} 1
+	${MPIEXEC_PREFLAGS} --host node001
+	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=1512 
+	${MPIEXEC_POSTFLAGS} |sort)
+add_test(Test_Hybrid_HeatFlow_Strong_2_processes_Distributed_Memory_System
+	${MPIEXEC} 
+	${MPIEXEC_NUMPROC_FLAG} 1
+	${MPIEXEC_PREFLAGS} --host node001
+	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=1512 :
+	${MPIEXEC_NUMPROC_FLAG} 1
+	${MPIEXEC_PREFLAGS} --host node002
+	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=1512 
+	${MPIEXEC_POSTFLAGS} |sort)
+add_test(Test_Hybrid_HeatFlow_Strong_4_processes_Distributed_Memory_System
+	${MPIEXEC} 
+	${MPIEXEC_NUMPROC_FLAG} 2
+	${MPIEXEC_PREFLAGS} --host node001
+	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=1512 :
+	${MPIEXEC_NUMPROC_FLAG} 2
+	${MPIEXEC_PREFLAGS} --host node002
+	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=1512 
+	${MPIEXEC_POSTFLAGS} |sort)
+add_test(Test_Hybrid_HeatFlow_Strong_8_processes_Distributed_Memory_System
+	${MPIEXEC} 
+	${MPIEXEC_NUMPROC_FLAG} 4
+	${MPIEXEC_PREFLAGS} --host node001
+	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=1512 :
+	${MPIEXEC_NUMPROC_FLAG} 4
+	${MPIEXEC_PREFLAGS} --host node002
+	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=1512 
+	${MPIEXEC_POSTFLAGS} |sort)
+add_test(Test_Hybrid_HeatFlow_Strong_12_processes_Distributed_Memory_System
+	${MPIEXEC} 
+	${MPIEXEC_NUMPROC_FLAG} 6
+	${MPIEXEC_PREFLAGS} --host node001
+	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=1512 :
+	${MPIEXEC_NUMPROC_FLAG} 6
+	${MPIEXEC_PREFLAGS} --host node002
+	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=1512 
+	${MPIEXEC_POSTFLAGS} |sort)
+	
+# ----------------------------------------------------------------------------	
+# add_test(Test_Hybrid_HeatFlow_Strong_1_processes_Distributed_Memory_System
+	# ${MPIEXEC} 
+	# ${MPIEXEC_NUMPROC_FLAG} 1
+	# ${MPIEXEC_PREFLAGS} --host node001
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=1512 
+	# ${MPIEXEC_POSTFLAGS} |sort)
+# add_test(Test_Hybrid_HeatFlow_Strong_2_processes_Distributed_Memory_System
+	# ${MPIEXEC} 
+	# ${MPIEXEC_NUMPROC_FLAG} 1
+	# ${MPIEXEC_PREFLAGS} --host node001
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=1512  :
+	# ${MPIEXEC_NUMPROC_FLAG} 1
+	# ${MPIEXEC_PREFLAGS} --host node002
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=1512  
+	# ${MPIEXEC_POSTFLAGS} |sort)
+# add_test(Test_Hybrid_HeatFlow_Strong_4_processes_Distributed_Memory_System
+	# ${MPIEXEC} 
+	# ${MPIEXEC_NUMPROC_FLAG} 2
+	# ${MPIEXEC_PREFLAGS} --host node001
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=1512  :
+	# ${MPIEXEC_NUMPROC_FLAG} 2
+	# ${MPIEXEC_PREFLAGS} --host node002
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=1512  
+	# ${MPIEXEC_POSTFLAGS} |sort)
+# add_test(Test_Hybrid_HeatFlow_Strong_8_processes_Distributed_Memory_System
+	# ${MPIEXEC} 
+	# ${MPIEXEC_NUMPROC_FLAG} 4
+	# ${MPIEXEC_PREFLAGS} --host node001
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=1512  :
+	# ${MPIEXEC_NUMPROC_FLAG} 4
+	# ${MPIEXEC_PREFLAGS} --host node002
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=1512  
+	# ${MPIEXEC_POSTFLAGS} |sort)
+# add_test(Test_Hybrid_HeatFlow_Strong_12_processes_Distributed_Memory_System
+	# ${MPIEXEC} 
+	# ${MPIEXEC_NUMPROC_FLAG} 6
+	# ${MPIEXEC_PREFLAGS} --host node001
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=1512  :
+	# ${MPIEXEC_NUMPROC_FLAG} 6
+	# ${MPIEXEC_PREFLAGS} --host node002
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=1512  
+	# ${MPIEXEC_POSTFLAGS} |sort)
+	
 # cuda_add_executable(hybrid-heatflow_real 
 					# cmdparser.cpp
 					# hybrid-heatflow_real.cu)
@@ -101,61 +189,95 @@ target_link_libraries(hybrid-heatflow ${MPI_LIBRARIES})
 	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow_real --dimx=512 --dimy=512 --dimz=256 :
 	# ${MPIEXEC_POSTFLAGS} |sort)
 # ----------------------------------------------------------------------------
-add_test(Test_Hybrid_HeatFlow_Strong_1_processes
-	${MPIEXEC} 
-	${MPIEXEC_NUMPROC_FLAG} 1
-	${MPIEXEC_PREFLAGS} --host node001
-	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=512 
-	${MPIEXEC_POSTFLAGS} |sort)
-add_test(Test_Hybrid_HeatFlow_Strong_2_processes
-	${MPIEXEC} 
-	${MPIEXEC_NUMPROC_FLAG} 2
-	${MPIEXEC_PREFLAGS} --host node001
-	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=512  
-	${MPIEXEC_POSTFLAGS} |sort)
- add_test(Test_Hybrid_HeatFlow_Strong_4_processes
-	${MPIEXEC} 
-	${MPIEXEC_NUMPROC_FLAG} 4
-	${MPIEXEC_PREFLAGS} --host node001
-	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=512 
-	${MPIEXEC_POSTFLAGS} |sort)
- add_test(Test_Hybrid_HeatFlow_Strong_8_processes
-	${MPIEXEC} 
-	${MPIEXEC_NUMPROC_FLAG} 4   
-	${MPIEXEC_PREFLAGS} --host node001
-	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=512  :
-	${MPIEXEC_NUMPROC_FLAG} 4
-	${MPIEXEC_PREFLAGS} --host node002
-	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=512 
-	${MPIEXEC_POSTFLAGS} |sort)
+# add_test(Test_Hybrid_HeatFlow_Strong_1_processes
+	# ${MPIEXEC} 
+	# ${MPIEXEC_NUMPROC_FLAG} 1
+	# ${MPIEXEC_PREFLAGS} --host node001
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=1512 
+	# ${MPIEXEC_POSTFLAGS} |sort)
+# add_test(Test_Hybrid_HeatFlow_Strong_2_processes
+	# ${MPIEXEC} 
+	# ${MPIEXEC_NUMPROC_FLAG} 2
+	# ${MPIEXEC_PREFLAGS} --host node001
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=1512  
+	# ${MPIEXEC_POSTFLAGS} |sort)
+# add_test(Test_Hybrid_HeatFlow_Strong_4_processes
+	# ${MPIEXEC} 
+	# ${MPIEXEC_NUMPROC_FLAG} 4
+	# ${MPIEXEC_PREFLAGS} --host node001
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=1512 
+	# ${MPIEXEC_POSTFLAGS} |sort)
+# add_test(Test_Hybrid_HeatFlow_Strong_8_processes
+	# ${MPIEXEC} 
+	# ${MPIEXEC_NUMPROC_FLAG} 8
+	# ${MPIEXEC_PREFLAGS} --host node001
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=1512 
+	# ${MPIEXEC_POSTFLAGS} |sort)
+ # add_test(Test_Hybrid_HeatFlow_Strong_8_processes
+	# ${MPIEXEC} 
+	# ${MPIEXEC_NUMPROC_FLAG} 4   
+	# ${MPIEXEC_PREFLAGS} --host node001
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=896  :
+	# ${MPIEXEC_NUMPROC_FLAG} 4
+	# ${MPIEXEC_PREFLAGS} --host node002
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=896 
+	# ${MPIEXEC_POSTFLAGS} |sort)
+ # add_test(Test_Hybrid_HeatFlow_Strong_14_processes
+	# ${MPIEXEC} 
+	# ${MPIEXEC_NUMPROC_FLAG} 7   
+	# ${MPIEXEC_PREFLAGS} --host node001
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=896  :
+	# ${MPIEXEC_NUMPROC_FLAG} 7
+	# ${MPIEXEC_PREFLAGS} --host node002
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=896 
+	# ${MPIEXEC_POSTFLAGS} |sort)
+
 # ----------------------------------------------------------------------------
-add_test(Test_Hybrid_HeatFlow_Weak_1_processes
-	${MPIEXEC} 
-	${MPIEXEC_NUMPROC_FLAG} 1
-	${MPIEXEC_PREFLAGS} --host node001
-	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=32 
-	${MPIEXEC_POSTFLAGS} |sort)
-add_test(Test_Hybrid_HeatFlow_Weak_2_processes
-	${MPIEXEC} 
-	${MPIEXEC_NUMPROC_FLAG} 2
-	${MPIEXEC_PREFLAGS} --host node001
-	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=64 
-	${MPIEXEC_POSTFLAGS} |sort)
- add_test(Test_Hybrid_HeatFlow_Weak_4_processes
-	${MPIEXEC} 
-	${MPIEXEC_NUMPROC_FLAG} 4
-	${MPIEXEC_PREFLAGS} --host node001
-	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=128 
-	${MPIEXEC_POSTFLAGS} |sort)
- add_test(Test_Hybrid_HeatFlow_Weak_8_processes
-	${MPIEXEC} 
-	${MPIEXEC_NUMPROC_FLAG} 4   
-	${MPIEXEC_PREFLAGS} --host node001
-	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=256  :
-	${MPIEXEC_NUMPROC_FLAG} 4
-	${MPIEXEC_PREFLAGS} --host node002
-	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=256 
-	${MPIEXEC_POSTFLAGS} |sort)
+# add_test(Test_Hybrid_HeatFlow_Weak_1_processes
+	# ${MPIEXEC} 
+	# ${MPIEXEC_NUMPROC_FLAG} 1
+	# ${MPIEXEC_PREFLAGS} --host node001
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=256 
+	# ${MPIEXEC_POSTFLAGS} |sort)
+# add_test(Test_Hybrid_HeatFlow_Weak_2_processes
+	# ${MPIEXEC} 
+	# ${MPIEXEC_NUMPROC_FLAG} 2
+	# ${MPIEXEC_PREFLAGS} --host node001
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=512
+	# ${MPIEXEC_POSTFLAGS} |sort)
+# add_test(Test_Hybrid_HeatFlow_Weak_4_processes
+	# ${MPIEXEC} 
+	# ${MPIEXEC_NUMPROC_FLAG} 4
+	# ${MPIEXEC_PREFLAGS} --host node001
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=1024
+	# ${MPIEXEC_POSTFLAGS} |sort)
+# add_test(Test_Hybrid_HeatFlow_Weak_8_processes
+	# ${MPIEXEC} 
+	# ${MPIEXEC_NUMPROC_FLAG} 8
+	# ${MPIEXEC_PREFLAGS} --host node001
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=2048
+	# ${MPIEXEC_POSTFLAGS} |sort)
+	
+# add_test(Test_Hybrid_HeatFlow_Weak_8_processes
+	# ${MPIEXEC} 
+	# ${MPIEXEC_NUMPROC_FLAG} 4   
+	# ${MPIEXEC_PREFLAGS} --host node001
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=4096   :
+	# ${MPIEXEC_NUMPROC_FLAG} 4
+	# ${MPIEXEC_PREFLAGS} --host node002
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=4096 
+	# ${MPIEXEC_POSTFLAGS} |sort)
+# add_test(Test_Hybrid_HeatFlow_Weak_14_processes
+	# ${MPIEXEC} 
+	# ${MPIEXEC_NUMPROC_FLAG} 7   
+	# ${MPIEXEC_PREFLAGS} --host node001
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=7168   :
+	# ${MPIEXEC_NUMPROC_FLAG} 7
+	# ${MPIEXEC_PREFLAGS} --host node002
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-heatflow --dimx=512 --dimy=512 --dimz=7168 
+	# ${MPIEXEC_POSTFLAGS} |sort)
+						
+			
 # ----------------------------------------------------------------------------
 # add_test(Test_Hybrid_HeatFlow
 	# ${MPIEXEC} 

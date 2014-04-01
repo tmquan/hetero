@@ -1,3 +1,3 @@
 # 
 add_subdirectory(split_data)
-add_subdirectory(csv)
+add_subdirectory(labeling)
