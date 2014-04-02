@@ -42,7 +42,7 @@ target_link_libraries(mpi_decompose_2d ${MPI_LIBRARIES}
 	hetero_cmdparser
 	)
 # ----------------------------------------------------------------------------
-add_test(Test_MPI_Decompose_2D_Fittable
+add_test(Test_Hybrid_Decompose_2D_Fittable
 	${MPIEXEC} 
 	# ${MPIEXEC_NUMPROC_FLAG} 4
 	# ${MPIEXEC_PREFLAGS} --host head 
@@ -51,18 +51,18 @@ add_test(Test_MPI_Decompose_2D_Fittable
 	# --dimx 500 
 	# --dimy 450
 	:
-	${MPIEXEC_NUMPROC_FLAG} 8 
+	${MPIEXEC_NUMPROC_FLAG} 2 
 	${MPIEXEC_PREFLAGS} --host node001  
 	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/mpi_decompose_2d
 	--srcFile		${RESOURCE_INPUT_PATH}/barbara_512x512.raw
-	--dimx 500 
-	--dimy 450
+	--dimx 512 
+	--dimy 512
 	:
-	${MPIEXEC_NUMPROC_FLAG} 8 
+	${MPIEXEC_NUMPROC_FLAG} 2 
 	${MPIEXEC_PREFLAGS} --host node002 
     ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/mpi_decompose_2d 
 	--srcFile		${RESOURCE_INPUT_PATH}/barbara_512x512.raw 
-	--dimx 500 
-	--dimy 450
+	--dimx 512 
+	--dimy 512
 	| sort
 	)

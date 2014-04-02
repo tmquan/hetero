@@ -1,0 +1,312 @@
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <iomanip>      // std::setfill, std::setw
+#include <string>
+
+#include <mpi.h>
+#include <cuda.h> 
+
+#include <assert.h>
+#include <hetero_cmdparser.hpp>
+
+using namespace std;
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#define checkReadFile(filename, pData, size) {                    				\
+		fstream *fs = new fstream;												\
+		fs->open(filename.c_str(), ios::in|ios::binary);								\
+		if (!fs->is_open())														\
+		{																		\
+			fprintf(stderr, "Cannot open file '%s' in file '%s' at line %i\n",	\
+			filename, __FILE__, __LINE__);										\
+			return 1;															\
+		}																		\
+		fs->read(reinterpret_cast<char*>(pData), size);							\
+		fs->close();															\
+		delete fs;																\
+	}																			
+////////////////////////////////////////////////////////////////////////////////////////////////////
+#define checkWriteFile(filename, pData, size) {                    				\
+		fstream *fs = new fstream;												\
+		fs->open(filename, ios::out|ios::binary);								\
+		if (!fs->is_open())														\
+		{																		\
+			fprintf(stderr, "Cannot open file '%s' in file '%s' at line %i\n",	\
+			filename, __FILE__, __LINE__);										\
+			return 1;															\
+		}																		\
+		fs->write(reinterpret_cast<char*>(pData), size);						\
+		fs->close();															\
+		delete fs;																\
+	}
+////////////////////////////////////////////////////////////////////////////////////////////////////	
+const char* key =
+	"{ h   |help      |      | print help message }"
+	"{ i   |srcFile   |      | source of the file }"
+	"{ dimx|dimx      |      | dimensionx }"
+	"{ dimy|dimy      |      | dimensiony }"
+	;
+////////////////////////////////////////////////////////////////////////////////////////////////////
+#define grid_side 3
+int main(int argc, char *argv[])
+{
+	
+	MPI_Datatype stype, t[2], vtype;
+    MPI_Aint     displs[2];
+    int          blklen[2];
+    int          sendcount[4], sdispls[4];
+	
+	MPI_Status status;
+	MPI_Request request;
+    int i, j;
+    char buffer[256*256*256];
+    int position = 0;
+	
+	// Initialize MPI
+	int  rank, size;
+	char name[MPI_MAX_PROCESSOR_NAME];
+	int  length;
+		
+	MPI_Init(&argc, &argv);
+
+	MPI_Comm_rank(MPI_COMM_WORLD, &rank);	
+	MPI_Comm_size(MPI_COMM_WORLD, &size);
+	MPI_Get_processor_name(name, &length);
+	
+  	printf("This is rank %02d, size %02d, of %s\n", rank, size, name);
+	MPI_Barrier(MPI_COMM_WORLD);
+	//
+	MPI_Comm comm2d;          		/* Cartesian communicator */
+    int dims[2];// = {0, 0};   		/* allow MPI to choose grid block dimensions */
+    int periodic[2];// = {0, 0};  	/* domain is non-periodic */
+    int reorder;// = 1;          	/* allow processes to be re-ranked */
+    int coords[2];            		/* coordinates of our block in grid */
+    int up, down;             		/* ranks of processes above and below ours */
+    int left, right;          		/* ranks of processes to each side of ours */
+	
+	//
+	int master 		= 0;
+	int worker;
+	int numMasters 	= 1;
+	int numWorkers 	= size;
+	
+	// Parsing the arguments
+	CommandLineParser cmd(argc, argv, key);
+	if(rank==master)	cmd.printParams();
+	MPI_Barrier(MPI_COMM_WORLD);
+	
+	dims[0] = 2;
+	dims[1] = 2;
+	periodic[0] = 0;
+	periodic[1] = 0;
+	reorder = 1;
+	// // Set up Cartesian grid of processors.  A new communicator is
+    // // created we get our rank within it. 
+    // MPI_Dims_create(rank, 2, dims); ///This line will not work
+    MPI_Cart_create(MPI_COMM_WORLD, 2, dims, periodic, reorder, &comm2d );
+    MPI_Cart_get(comm2d, 2, dims, periodic, coords );
+    MPI_Comm_rank(comm2d, &rank );
+	printf("%d, %d, %d\n",coords[0],coords[1],rank);
+	// int i, j;
+	
+	// if(rank == master) 
+	// {    
+		// for(i=0; i<4; i++)
+		// {
+			// for(j=0; j<4; j++)  
+			// {
+				// coords[0] = i;
+				// coords[1] = j;
+				// MPI_Cart_rank(comm2d, coords, &rank);
+				// printf("%d, %d, %d\n",coords[0],coords[1],rank);
+			// }
+		// }
+	// }
+	MPI_Barrier(MPI_COMM_WORLD);
+	
+	// Retrieve the information from cmd
+	const string srcFile  	= cmd.get<string>("srcFile", false);
+	const int dimx  		= cmd.get<int>("dimx", false);
+	const int dimy  		= cmd.get<int>("dimy", false);
+	const int total 		= dimx*dimy;
+	
+	
+	float *h_src 			= new float[total];
+	
+	// Read to pointer in master process
+	if(rank==master)		
+	{
+		checkReadFile(srcFile, h_src, total*sizeof(float)); 	
+	}
+	int2 clusterDim = make_int2(dims[0], dims[1]);
+	int  processIdx_1d = rank;
+	int2 processIdx_2d = make_int2(coords[0], coords[1]);
+	
+	
+	// #include <mpi.h>
+	// int MPI_Scatterv(const void *sendbuf, const int sendcount[], const int displs[],
+		// MPI_Datatype sendtype, void *recvbuf, int recvcount,
+		// MPI_Datatype recvtype, int root, MPI_Comm comm)
+	
+	float *p_src = (float*)malloc(256*256*sizeof(float));
+	float *tmp = (float*)malloc(256*256*sizeof(float));
+	/// Naive approach, copy to another buffer, then send
+	if(rank==1)
+	{
+		MPI_Recv(p_src, 256*256, MPI_FLOAT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+		checkWriteFile("tmp.raw", p_src, 256*256*sizeof(float));
+	}
+	
+	if(rank==master)
+	{
+		for(int i=0; i<256; i++)
+		{
+			memcpy(&tmp[i*256],
+				&h_src[i*512],
+				256*sizeof(float) );
+		}
+		// MPI_Isend(tmp, 256*256, MPI_FLOAT, 1, 0, MPI_COMM_WORLD, &request);		
+		MPI_Send(tmp, 256*256, MPI_FLOAT, 1, 0, MPI_COMM_WORLD);		
+	}
+
+
+	// /// Test Pack/Unpack
+	// // if(rank==master)
+	// // {
+		// // // MPI_Pack(&h_src[0*256+0], 256, MPI_FLOAT, buffer, 256*256, &position, MPI_COMM_WORLD);
+		// // // MPI_Pack(&h_src[1*256+0], 256, MPI_FLOAT, buffer, 256*256, &position, MPI_COMM_WORLD);
+		// // for(int i=0; i<256; i++)
+		// // {
+			// // MPI_Pack(&h_src[i*256+0], 256, MPI_FLOAT, buffer, 256*256*256, &position, MPI_COMM_WORLD);
+		// // }
+		
+		// // checkWriteFile("tmp.raw", buffer, 256*256*sizeof(float));
+		// // // MPI_Send(buffer, 256*256, MPI_PACKED, 1, 0, MPI_COMM_WORLD );
+		// // // for(int recv=0; recv<1; recv++)
+			// // // MPI_Isend(buffer, 256*256, MPI_PACKED, 1, 0, MPI_COMM_WORLD, &request);
+	// // }
+	
+	// // if(rank==0)
+	// // {
+		// // MPI_Recv(buffer, 256*256, MPI_PACKED, 0, 0, MPI_COMM_WORLD, &status );
+		// // // MPI_Irecv(buffer, 256*256, MPI_PACKED, 0, 0, MPI_COMM_WORLD, &request);
+		// // // MPI_Wait( &request, &status);
+		// // // MPI_Waitall();
+		// // for(int i=0; i<256; i++)
+		// // {
+			// // MPI_Unpack(buffer, 256*256*256, &position, &p_src[i*256+0], 256, MPI_FLOAT, MPI_COMM_WORLD);
+		// // }
+	// // }
+	
+	// /// Test MPI_Type_vector
+	// // if(rank==master)		
+	// // {
+		// // /* Form the vector type for the submatrix */
+		// // MPI_Type_vector(4, 256*256, 256, MPI_FLOAT, &vtype ); ////
+		// // /* Set an UB so that we can place this in the matrix */
+		// // t[0] = vtype;
+		// // t[1] = MPI_UB;
+		// // displs[0] = 0;
+		// // displs[1] = 256 * sizeof(float); ///
+		// // blklen[0] = 1;
+		// // blklen[1] = 1;
+		// // MPI_Type_struct( 2, blklen, displs, t, &stype );
+		// // MPI_Type_commit( &stype );
+		// // /* Setup the Scatter values for the send buffer */
+		// // sendcount[0] = 1;
+		// // sendcount[1] = 1;
+		// // sendcount[2] = 1;
+		// // sendcount[3] = 1;
+		// // sdispls[0] = 0;
+		// // sdispls[1] = 1;
+		// // sdispls[2] = 8;
+		// // sdispls[3] = 9;
+		// // MPI_Scatterv(h_src, sendcount, sdispls, stype, 
+			// // p_src, 256*256, MPI_FLOAT, 0, MPI_COMM_WORLD );
+	// // }
+	// // // MPI_Scatterv(h_src, sendcount, displs, MPI_FLOAT, 
+		// // // p_src, 256, MPI_FLOAT, 0, MPI_COMM_WORLD);
+	// // // MPI_Barrier(MPI_COMM_WORLD);
+	
+	// /// Test MPI_Type_create_subarray
+	// // int MPI_Type_create_subarray(int ndims,
+                           // // const int array_of_sizes[],
+                           // // const int array_of_subsizes[],
+                           // // const int array_of_starts[],
+                           // // int order,
+                           // // MPI_Datatype oldtype,
+                           // // MPI_Datatype *newtype)
+	// //Create MPI_Datatype
+	// MPI_Datatype subarray;
+	// int array_size[2] = {512, 512};
+	// int array_subsize[2] = {256, 256};
+	// int array_start[2] = {0, 0};
+	
+	
+	// float array[512][512];
+	// for(i=0; i<array_size[0]; i++)
+		// for(j=0; j<array_size[1]; j++)
+			// array[i][j] = rank;
+	// MPI_Type_create_subarray(2, array_size, array_subsize, array_start, MPI_ORDER_C,
+	                         // MPI_FLOAT, &subarray);
+	// MPI_Type_commit(&subarray);
+	
+	// if(rank==0)
+	// {
+		// // MPI_Recv(array[0], 1, subarray, 1, 123, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+		// // checkWriteFile("tmp.raw", &array[0], 512*512*sizeof(float));
+		// MPI_Recv(&p_src[0], 1, subarray, 1, 123, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+		// checkWriteFile("tmp.raw", p_src, 256*256*sizeof(float));
+	// }
+	// if (rank==1) 
+		// MPI_Send(array[0], 1, subarray, 0, 123, MPI_COMM_WORLD);
+	// // if(rank == 0)
+	// // {
+        // // // MPI_Send(h_src, 1, subarray, 0, 0, MPI_COMM_WORLD);
+        // // MPI_Isend(&h_src[0], 1, subarray, 0, 0, MPI_COMM_WORLD, &request);
+	// // }
+    // // else if(rank==0)
+	// // {
+        // // MPI_Recv(&p_src[0], 1, subarray, 0, 0, MPI_COMM_WORLD, &status);
+		// // checkWriteFile("tmp.raw", p_src, 256*256*sizeof(float));
+	// }
+	
+	/// Debug
+	MPI_Barrier(MPI_COMM_WORLD);
+	char *filename = new char[100];
+	sprintf(filename, "result_%02d_%02d.raw", processIdx_2d.x, processIdx_2d.y);
+	printf("%s\n", filename);
+	
+	
+	// stringstream ss;
+	// string s;
+	
+	// ss << filename;
+	// ss >> s;
+	checkWriteFile(filename, p_src, 256*256*sizeof(float));
+	
+	
+ 	MPI_Finalize();
+	return 0;
+	
+	// int MyRank, NewRank, Root=0, my_coords[2], dim_sizes[2], wrap_around[2], reorder;
+	// MPI_Comm cart_comm;
+
+	// MPI_Init(&argc,&argv);
+	// MPI_Comm_rank(MPI_COMM_WORLD, &MyRank);
+
+	// dim_sizes[0] = dim_sizes[1] = grid_side;
+	// wrap_around[0] = wrap_around[1] = 0; //Non-periodic
+	// reorder = 0; //False
+
+	// MPI_Cart_create(MPI_COMM_WORLD, 2, dim_sizes, wrap_around, reorder, &cart_comm);
+	// MPI_Comm_rank(cart_comm, &NewRank);
+
+	// MPI_Cart_coords (cart_comm, NewRank, 2, my_coords);
+	// printf ("Old Rank=%d, New Rank=%d, Coordinates=(%d,%d)\n", MyRank, NewRank, my_coords[0], my_coords[1]);
+
+	// MPI_Finalize();
+	// return 0;
+}
+	

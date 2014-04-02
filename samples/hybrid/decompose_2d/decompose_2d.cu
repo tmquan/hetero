@@ -29,7 +29,7 @@ using namespace std;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 #define checkWriteFile(filename, pData, size) {                    				\
 		fstream *fs = new fstream;												\
-		fs->open(filename.c_str(), ios::out|ios::binary);								\
+		fs->open(filename, ios::out|ios::binary);								\
 		if (!fs->is_open())														\
 		{																		\
 			fprintf(stderr, "Cannot open file '%s' in file '%s' at line %i\n",	\
@@ -85,8 +85,8 @@ int main(int argc, char *argv[])
 	if(rank==master)	cmd.printParams();
 	MPI_Barrier(MPI_COMM_WORLD);
 	
-	dims[0] = 4;
-	dims[1] = 4;
+	dims[0] = 2;
+	dims[1] = 2;
 	periodic[0] = 0;
 	periodic[1] = 0;
 	reorder = 1;
@@ -97,21 +97,7 @@ int main(int argc, char *argv[])
     MPI_Cart_get(comm2d, 2, dims, periodic, coords );
     MPI_Comm_rank(comm2d, &rank );
 	printf("%d, %d, %d\n",coords[0],coords[1],rank);
-	// int i, j;
-	
-	// if(rank == master) 
-	// {    
-		// for(i=0; i<4; i++)
-		// {
-			// for(j=0; j<4; j++)  
-			// {
-				// coords[0] = i;
-				// coords[1] = j;
-				// MPI_Cart_rank(comm2d, coords, &rank);
-				// printf("%d, %d, %d\n",coords[0],coords[1],rank);
-			// }
-		// }
-	// }
+
 	MPI_Barrier(MPI_COMM_WORLD);
 	
 	// Retrieve the information from cmd
@@ -124,84 +110,75 @@ int main(int argc, char *argv[])
 	float *h_src 			= new float[total];
 	
 	// Read to pointer in master process
-	if(rank==master)		checkReadFile(srcFile, h_src, total*sizeof(float)); 	
-	
-	int2 clusterDim = make_int2(dims[0], dims[1]);
-	int  processIdx_1d = rank;
-	int2 processIdx_2d = make_int2(coords[0], coords[1]);
-	
-	
-	// #include <mpi.h>
-	// int MPI_Scatterv(const void *sendbuf, const int sendcount[], const int displs[],
-		// MPI_Datatype sendtype, void *recvbuf, int recvcount,
-		// MPI_Datatype recvtype, int root, MPI_Comm comm)
-	int *sendcount;    // array describing how many elements to send to each process
-    int *displs;        // array describing the displacements where each segment begins
-	
-	sendcount 	= (int*)malloc(sizeof(int)*size);
-    displs 		= (int*)malloc(sizeof(int)*size);
-	
-	 // calculate send counts and displacements
-	int sum = 0;                // Sum of counts. Used to calculate displacements
-    for (int i = 0; i < size; i++) {
-        sendcount[i] = (dimx)/4;
-        // if (rem > 0) {
-            // sendcount[i]++;
-            // rem--;
-        // }
- 
-        displs[i] = sum;
-        sum += sendcount[i];
-    }
-	
-	// print calculated send counts and displacements for each process
-    if(rank==master) 
+	if(rank==master)		
 	{
-        for (int i = 0; i < size; i++) 
+		checkReadFile(srcFile, h_src, total*sizeof(float)); 	
+	}
+	// int3 clusterDim 	= make_int3(dims[0], dims[1], 1);
+	int  processIdx_1d 	= rank;
+	int3 processIdx_2d 	= make_int3(coords[0], coords[1], 1);
+	
+	
+
+	/// Mimic Pack and Unpack MPI
+	int dimz = 1;
+
+	int3 featureIdx		{  0,   0,	0};
+	int3 processIdx		{  0,   0,	0};
+	int3 processDim		{256, 256, 1};
+	int3 clusterDim    	{(dimx/processDim.x + ((dimx%processDim.x)?1:0)),
+						 (dimy/processDim.y + ((dimy%processDim.y)?1:0)),
+						 (dimz/processDim.z + ((dimz%processDim.z)?1:0))};
+	float *tmp = NULL;
+	MPI_Request request;
+	
+	float *p_src = (float*)malloc(processDim.x*processDim.y*sizeof(float));
+	//Start packing
+	/// Naive approach, copy to another buffer, then send
+	if(rank==master)
+	{
+		for(processIdx.y=0; processIdx.y<clusterDim.y; processIdx.y++)
 		{
-            printf("sendcount[%d] = %d\tdispls[%d] = %d\n", i, sendcount[i], i, displs[i]);
-        }
-    }
-	MPI_Barrier(MPI_COMM_WORLD);
+			for(processIdx.x=0; processIdx.x<clusterDim.x; processIdx.x++)
+			{
+				tmp = (float*)malloc(processDim.x*processDim.y * sizeof(float));
+				for(featureIdx.y=0; featureIdx.y<processDim.y; featureIdx.y++)
+				{					
+					for(featureIdx.x=0; featureIdx.x<processDim.x; featureIdx.x++)
+					{
+						if(featureIdx.x == 0) // First position of first block
+						{
+							//3D global index
+							int2 index_2d = make_int2(
+								processIdx.x*processDim.x+featureIdx.x,
+								processIdx.y*processDim.y+featureIdx.y);
+							
+							memcpy(
+								&tmp[featureIdx.y * processDim.x],
+								&h_src[index_2d.y*dimx + index_2d.x],
+								processDim.x*sizeof(float));
+						}						
+					}
+				}
+				
+				processIdx_1d = processIdx.y * clusterDim.x + processIdx.x;
+				cout << processIdx_1d << endl;
+				MPI_Isend(tmp, processDim.x*processDim.y, MPI_FLOAT, processIdx_1d, 0, MPI_COMM_WORLD, &request);	
+			}
+		}
+	}
 	
-	float *p_src = (float*)malloc(128*128*sizeof(float));
-	MPI_Scatterv(h_src, sendcount, displs, MPI_FLOAT, 
-		p_src, 128*128, MPI_FLOAT, 0, MPI_COMM_WORLD);
-	MPI_Barrier(MPI_COMM_WORLD);
-	
+	MPI_Recv(p_src, processDim.x*processDim.y, MPI_FLOAT, master, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 	/// Debug
+	MPI_Barrier(MPI_COMM_WORLD);
 	char *filename = new char[100];
 	sprintf(filename, "result_%02d_%02d.raw", processIdx_2d.x, processIdx_2d.y);
 	printf("%s\n", filename);
+	checkWriteFile(filename, p_src, processDim.x*processDim.y*sizeof(float));
 	
-	stringstream ss;
-	string s;
-	
-	ss << filename;
-	ss >> s;
-	checkWriteFile(s, p_src, 128*128*sizeof(float));
 	
 	
  	MPI_Finalize();
 	return 0;
-	
-	// int MyRank, NewRank, Root=0, my_coords[2], dim_sizes[2], wrap_around[2], reorder;
-	// MPI_Comm cart_comm;
-
-	// MPI_Init(&argc,&argv);
-	// MPI_Comm_rank(MPI_COMM_WORLD, &MyRank);
-
-	// dim_sizes[0] = dim_sizes[1] = grid_side;
-	// wrap_around[0] = wrap_around[1] = 0; //Non-periodic
-	// reorder = 0; //False
-
-	// MPI_Cart_create(MPI_COMM_WORLD, 2, dim_sizes, wrap_around, reorder, &cart_comm);
-	// MPI_Comm_rank(cart_comm, &NewRank);
-
-	// MPI_Cart_coords (cart_comm, NewRank, 2, my_coords);
-	// printf ("Old Rank=%d, New Rank=%d, Coordinates=(%d,%d)\n", MyRank, NewRank, my_coords[0], my_coords[1]);
-
-	// MPI_Finalize();
-	// return 0;
 }
 	
