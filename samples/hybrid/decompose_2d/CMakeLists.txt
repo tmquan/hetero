@@ -24,6 +24,14 @@ else(CUDA_FOUND)
     message(FATAL_ERROR "CUDA is not installed on this system.")
 endif()
 # ----------------------------------------------------------------------------
+find_package(OpenMP REQUIRED)
+# ----------------------------------------------------------------------------
+if(OPENMP_FOUND)
+    message("OPENMP is found on this system.")
+else(OPENMP_FOUND)
+    message("OPENMP is not installed on this system.")
+endif()
+# ----------------------------------------------------------------------------
 find_package(MPI REQUIRED)
 # ----------------------------------------------------------------------------
 if(MPI_FOUND)
@@ -38,7 +46,9 @@ LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/lib)
 # ----------------------------------------------------------------------------
 cuda_add_executable(mpi_decompose_2d decompose_2d.cu)
 
-target_link_libraries(mpi_decompose_2d ${MPI_LIBRARIES} 
+target_link_libraries(mpi_decompose_2d 
+	${MPI_LIBRARIES} 
+	${OpenMP_CXX_FLAGS}
 	hetero_cmdparser
 	)
 # ----------------------------------------------------------------------------
@@ -51,18 +61,23 @@ add_test(Test_Hybrid_Decompose_2D_Fittable
 	# --dimx 500 
 	# --dimy 450
 	:
-	${MPIEXEC_NUMPROC_FLAG} 2 
-	${MPIEXEC_PREFLAGS} --host node001  
+	${MPIEXEC_NUMPROC_FLAG} 4 
+	${MPIEXEC_PREFLAGS} --host node001,node002  
 	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/mpi_decompose_2d
 	--srcFile		${RESOURCE_INPUT_PATH}/barbara_512x512.raw
 	--dimx 512 
 	--dimy 512
-	:
-	${MPIEXEC_NUMPROC_FLAG} 2 
-	${MPIEXEC_PREFLAGS} --host node002 
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/mpi_decompose_2d 
-	--srcFile		${RESOURCE_INPUT_PATH}/barbara_512x512.raw 
-	--dimx 512 
-	--dimy 512
+	| sort
+	)
+	
+add_test(Test_Hybrid_Decompose_2D_Undersubcribe
+	${MPIEXEC} 
+
+	${MPIEXEC_NUMPROC_FLAG} 4 
+	${MPIEXEC_PREFLAGS} --host node001,node002  
+	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/mpi_decompose_2d
+	--srcFile		${RESOURCE_INPUT_PATH}/barbara_500x450.raw
+	--dimx 500 
+	--dimy 450
 	| sort
 	)

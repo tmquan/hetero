@@ -4,25 +4,28 @@
 #include <iomanip>      // std::setfill, std::setw
 #include <string>
 
+#include <omp.h>
 #include <mpi.h>
 #include <cuda.h>
 
 #include <assert.h>
 #include <hetero_cmdparser.hpp>
 
+
 using namespace std;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define checkReadFile(filename, pData, size) {                    				\
 		fstream *fs = new fstream;												\
-		fs->open(filename.c_str(), ios::in|ios::binary);								\
+		fs->open(filename.c_str(), ios::in|ios::binary);						\
 		if (!fs->is_open())														\
 		{																		\
-			fprintf(stderr, "Cannot open file '%s' in file '%s' at line %i\n",	\
+			printf("Cannot open file '%s' in file '%s' at line %i\n",			\
 			filename, __FILE__, __LINE__);										\
-			return 1;															\
+			goto cleanup;														\
 		}																		\
 		fs->read(reinterpret_cast<char*>(pData), size);							\
+cleanup :																		\
 		fs->close();															\
 		delete fs;																\
 	}																			
@@ -112,7 +115,9 @@ int main(int argc, char *argv[])
 	// Read to pointer in master process
 	if(rank==master)		
 	{
+		cout << "Here" << endl;
 		checkReadFile(srcFile, h_src, total*sizeof(float)); 	
+		cout << "Here" << endl;
 	}
 	// int3 clusterDim 	= make_int3(dims[0], dims[1], 1);
 	int  processIdx_1d 	= rank;
@@ -126,49 +131,101 @@ int main(int argc, char *argv[])
 	int3 featureIdx		{  0,   0,	0};
 	int3 processIdx		{  0,   0,	0};
 	int3 processDim		{256, 256, 1};
+	int3 subDataDim		{0, 0, 0};
 	int3 clusterDim    	{(dimx/processDim.x + ((dimx%processDim.x)?1:0)),
 						 (dimy/processDim.y + ((dimy%processDim.y)?1:0)),
 						 (dimz/processDim.z + ((dimz%processDim.z)?1:0))};
-	float *tmp = NULL;
+						 
+	float *tmp = new float[processDim.x * processDim.y]; // Create process beyond the sub problem size
 	MPI_Request request;
 	
 	float *p_src = (float*)malloc(processDim.x*processDim.y*sizeof(float));
 	//Start packing
 	/// Naive approach, copy to another buffer, then send
+	int2 index_2d;
+	double start = MPI_Wtime();
+	int caught = 0;
 	if(rank==master)
 	{
 		for(processIdx.y=0; processIdx.y<clusterDim.y; processIdx.y++)
 		{
 			for(processIdx.x=0; processIdx.x<clusterDim.x; processIdx.x++)
 			{
-				tmp = (float*)malloc(processDim.x*processDim.y * sizeof(float));
+				// First step: Determine size of buffer
+				
 				for(featureIdx.y=0; featureIdx.y<processDim.y; featureIdx.y++)
-				{					
+				{
+					for(featureIdx.x=0; featureIdx.x<processDim.x; featureIdx.x++)
+					{
+						//2D global index
+						index_2d = make_int2(
+							processIdx.x*processDim.x+featureIdx.x,
+							processIdx.y*processDim.y+featureIdx.y);	
+						if(index_2d.x==dimx) break;
+					}
+					if(index_2d.y==dimy) break;
+				}				
+				subDataDim = make_int3(featureIdx.x, featureIdx.y, 1);
+				cout << "Sub problem size: " << subDataDim.x << " "  << subDataDim.y << endl;
+				// tmp = (float*)malloc(subDataDim.x*subDataDim.y * sizeof(float));
+				// float *tmp;
+				// tmp = (float*)realloc(tmp, subDataDim.x*subDataDim.y * sizeof(float));
+				// tmp = (float*)realloc(tmp, subDataDim.x*subDataDim.y * sizeof(float));
+				// tmp = new float[subDataDim.x*subDataDim.y];
+				
+				//Second step: copy subdataSize
+				for(featureIdx.y=0; featureIdx.y<processDim.y; featureIdx.y++)
+				{
 					for(featureIdx.x=0; featureIdx.x<processDim.x; featureIdx.x++)
 					{
 						if(featureIdx.x == 0) // First position of first block
 						{
-							//3D global index
-							int2 index_2d = make_int2(
+							//2D global index
+							index_2d = make_int2(
 								processIdx.x*processDim.x+featureIdx.x,
-								processIdx.y*processDim.y+featureIdx.y);
-							
-							memcpy(
-								&tmp[featureIdx.y * processDim.x],
-								&h_src[index_2d.y*dimx + index_2d.x],
-								processDim.x*sizeof(float));
+								processIdx.y*processDim.y+featureIdx.y);		
+							if(index_2d.y<dimy)
+							{
+								// cout << "Caught " << ++caught << endl;
+								memcpy(
+									// &tmp[featureIdx.y * processDim.x],
+									&tmp[featureIdx.y * subDataDim.x],
+									&h_src[index_2d.y*dimx + index_2d.x],
+									// processDim.x*sizeof(float));
+									subDataDim.x*sizeof(float));
+									
+								// std::swap(
+									// tmp[featureIdx.y * processDim.x],
+									// h_src[index_2d.y*dimx + index_2d.x]
+									// );
+							}
 						}						
 					}
 				}
 				
+
 				processIdx_1d = processIdx.y * clusterDim.x + processIdx.x;
 				cout << processIdx_1d << endl;
-				MPI_Isend(tmp, processDim.x*processDim.y, MPI_FLOAT, processIdx_1d, 0, MPI_COMM_WORLD, &request);	
+				
+				// Send to worker process
+				// MPI_Isend(tmp, processDim.x*processDim.y, MPI_FLOAT, processIdx_1d, 0, MPI_COMM_WORLD, &request);	
+				// Send the size of message
+				MPI_Isend(&subDataDim, 1, MPI_DOUBLE, processIdx_1d, 0, MPI_COMM_WORLD, &request);	
+				// Send the message
+				MPI_Isend(tmp, subDataDim.x *  subDataDim.y, MPI_FLOAT, processIdx_1d, 1, MPI_COMM_WORLD, &request);	
+			
+				cout << "Sent" << endl;
+				// free(tmp);
 			}
 		}
 	}
+	MPI_Barrier(MPI_COMM_WORLD);
+	// MPI_Recv(p_src, processDim.x*processDim.y, MPI_FLOAT, master, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+	MPI_Recv(&subDataDim, 1, MPI_DOUBLE, master, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+	MPI_Recv(p_src, subDataDim.x *  subDataDim.y, MPI_FLOAT, master, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 	
-	MPI_Recv(p_src, processDim.x*processDim.y, MPI_FLOAT, master, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+	double elapsed = MPI_Wtime() - start;
+	if(rank==master) cout << "Time : " << elapsed << " s " << endl;
 	/// Debug
 	MPI_Barrier(MPI_COMM_WORLD);
 	char *filename = new char[100];
