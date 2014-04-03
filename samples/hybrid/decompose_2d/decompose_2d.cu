@@ -14,6 +14,16 @@
 
 using namespace std;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+#define cudaCheckLastError() {                                          			\
+	cudaError_t error = cudaGetLastError();                               			\
+	int id; cudaGetDevice(&id);                                                     \
+	if(error != cudaSuccess) {                                                      \
+		printf("Cuda failure error in file '%s' in line %i: '%s' at device %d \n",	\
+			__FILE__,__LINE__, cudaGetErrorString(error), id);                      \
+		exit(EXIT_FAILURE);                                                         \
+	}                                                                               \
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #define checkReadFile(filename, pData, size) {                    				\
 		fstream *fs = new fstream;												\
@@ -54,7 +64,40 @@ const char* key =
 #define grid_side 3
 int main(int argc, char *argv[])
 {
-	
+	//================================================================================
+	// To set the GPU using cudaSetDevice, we must set before launching MPI_Init
+	// Determine the MPI local rank per node is doable either in OpenMPI or MVAPICH2
+	int   localRank;
+	char *localRankStr = NULL;
+	//================================================================================
+	// Investigate the number of GPUs per node.
+	int deviceCount = 0;
+	localRankStr = getenv("OMPI_COMM_WORLD_LOCAL_RANK");
+	if (localRankStr != NULL)
+	{
+		localRank = atoi(localRankStr);		
+		cudaGetDeviceCount(&deviceCount);
+		// cudaCheckLastError();	//Don't put this line
+		// printf("There are %02d device(s) at local process %02d\n", 
+			// deviceCount, localRank);
+		cout << "There are " << deviceCount 
+			<<	" device(s) at local process " 
+			<< endl;
+		if(deviceCount>0)
+		{
+			cudaSetDevice(localRank % deviceCount);	cudaCheckLastError();
+			cudaDeviceReset();	cudaCheckLastError();
+            // cudaDeviceEnablePeerAccess	(localRank % deviceCount, 0);	cudaCheckLastError();
+            for(int d=0; d<deviceCount; d++)
+            {
+                if(d!=(localRank % deviceCount))
+                {
+                    cudaDeviceEnablePeerAccess	(d, 0);	cudaCheckLastError();
+                }                
+            }
+		}
+	}
+	//================================================================================
 	// Initialize MPI
 	int  rank, size;
 	char name[MPI_MAX_PROCESSOR_NAME];
@@ -139,7 +182,10 @@ int main(int argc, char *argv[])
 	float *tmp = new float[processDim.x * processDim.y]; // Create process beyond the sub problem size
 	MPI_Request request;
 	
-	float *p_src = (float*)malloc(processDim.x*processDim.y*sizeof(float));
+	float *p_src;
+	// p_src = (float*)malloc(processDim.x*processDim.y*sizeof(float));
+	cudaMalloc((void**)&p_src, (processDim.x*processDim.y)*sizeof(float));
+	
 	//Start packing
 	/// Naive approach, copy to another buffer, then send
 	int2 index_2d;
@@ -151,8 +197,7 @@ int main(int argc, char *argv[])
 		{
 			for(processIdx.x=0; processIdx.x<clusterDim.x; processIdx.x++)
 			{
-				// First step: Determine size of buffer
-				
+				/// !!! First step: Determine size of buffer				
 				for(featureIdx.y=0; featureIdx.y<processDim.y; featureIdx.y++)
 				{
 					for(featureIdx.x=0; featureIdx.x<processDim.x; featureIdx.x++)
@@ -167,11 +212,6 @@ int main(int argc, char *argv[])
 				}				
 				subDataDim = make_int3(featureIdx.x, featureIdx.y, 1);
 				cout << "Sub problem size: " << subDataDim.x << " "  << subDataDim.y << endl;
-				// tmp = (float*)malloc(subDataDim.x*subDataDim.y * sizeof(float));
-				// float *tmp;
-				// tmp = (float*)realloc(tmp, subDataDim.x*subDataDim.y * sizeof(float));
-				// tmp = (float*)realloc(tmp, subDataDim.x*subDataDim.y * sizeof(float));
-				// tmp = new float[subDataDim.x*subDataDim.y];
 				
 				//Second step: copy subdataSize
 				for(featureIdx.y=0; featureIdx.y<processDim.y; featureIdx.y++)
@@ -193,22 +233,15 @@ int main(int argc, char *argv[])
 									&h_src[index_2d.y*dimx + index_2d.x],
 									// processDim.x*sizeof(float));
 									subDataDim.x*sizeof(float));
-									
-								// std::swap(
-									// tmp[featureIdx.y * processDim.x],
-									// h_src[index_2d.y*dimx + index_2d.x]
-									// );
 							}
 						}						
 					}
-				}
-				
+				}		
 
 				processIdx_1d = processIdx.y * clusterDim.x + processIdx.x;
 				cout << processIdx_1d << endl;
 				
-				// Send to worker process
-				// MPI_Isend(tmp, processDim.x*processDim.y, MPI_FLOAT, processIdx_1d, 0, MPI_COMM_WORLD, &request);	
+				/// !!! Send to worker process
 				// Send the size of message
 				MPI_Isend(&subDataDim, 1, MPI_DOUBLE, processIdx_1d, 0, MPI_COMM_WORLD, &request);	
 				// Send the message
@@ -226,12 +259,17 @@ int main(int argc, char *argv[])
 	
 	double elapsed = MPI_Wtime() - start;
 	if(rank==master) cout << "Time : " << elapsed << " s " << endl;
+	
 	/// Debug
 	MPI_Barrier(MPI_COMM_WORLD);
 	char *filename = new char[100];
 	sprintf(filename, "result_%02d_%02d.raw", processIdx_2d.x, processIdx_2d.y);
 	printf("%s\n", filename);
-	checkWriteFile(filename, p_src, processDim.x*processDim.y*sizeof(float));
+	float *h_tmp;
+	h_tmp = (float*)malloc(processDim.x*processDim.y*sizeof(float));
+	cudaMemcpy(h_tmp, p_src, processDim.x*processDim.y*sizeof(float), cudaMemcpyDeviceToHost); cudaCheckLastError();
+	checkWriteFile(filename, h_tmp, processDim.x*processDim.y*sizeof(float));
+	// checkWriteFile(filename, p_src, processDim.x*processDim.y*sizeof(float));
 	
 	
 	
