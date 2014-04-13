@@ -44,38 +44,38 @@ endif()
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/include)
 LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/lib)
 # ----------------------------------------------------------------------------
-cuda_add_executable(mpi_decompose_2d decompose_2d.cu)
+cuda_add_executable(mpi_io_2d io_2d.cu)
 
-target_link_libraries(mpi_decompose_2d 
+target_link_libraries(mpi_io_2d 
 	${MPI_LIBRARIES} 
 	${OpenMP_CXX_FLAGS}
 	hetero_cmdparser
 	)
 # ----------------------------------------------------------------------------
-add_test(Test_Hybrid_Decompose_2D_Fittable
+add_test(Test_Hybrid_IO_2D_Fittable
 	${MPIEXEC} 
 	# ${MPIEXEC_NUMPROC_FLAG} 4
 	# ${MPIEXEC_PREFLAGS} --host head 
-	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/mpi_decompose_2d
+	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/mpi_io_2d
 	# --srcFile		${RESOURCE_INPUT_PATH}/barbara_512x512.raw
 	# --dimx 500 
 	# --dimy 450
 	:
 	${MPIEXEC_NUMPROC_FLAG} 4 
-	${MPIEXEC_PREFLAGS} --host node001,node002  
-	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/mpi_decompose_2d
+	${MPIEXEC_PREFLAGS} --host node002  
+	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/mpi_io_2d
 	--srcFile		${RESOURCE_INPUT_PATH}/barbara_512x512.raw
 	--dimx 512 
 	--dimy 512
 	| sort
 	)
 	
-add_test(Test_Hybrid_Decompose_2D_Oversubcribe
+add_test(Test_Hybrid_IO_2D_Oversubcribe
 	${MPIEXEC} 
 
 	${MPIEXEC_NUMPROC_FLAG} 4 
-	${MPIEXEC_PREFLAGS} --host node001#,node002  
-	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/mpi_decompose_2d
+	${MPIEXEC_PREFLAGS} --host node002  
+	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/mpi_io_2d
 	--srcFile		${RESOURCE_INPUT_PATH}/barbara_500x450.raw
 	--dimx 500 
 	--dimy 450
