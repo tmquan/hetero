@@ -183,7 +183,7 @@ int main(int argc, char *argv[])
 
 	int3 featureIdx		{  0,   0,	0};
 	int3 processIdx		{  0,   0,	0};
-	int3 processDim		{256, 256, 1};
+	int3 processDim		{256, 256,  1};
 	int3 subDataDim		{0, 0, 0};
 	int3 clusterDim    	{(dimx/processDim.x + ((dimx%processDim.x)?1:0)),
 						 (dimy/processDim.y + ((dimy%processDim.y)?1:0)),
@@ -301,12 +301,12 @@ int main(int argc, char *argv[])
 	MPI_Datatype etype;
 	etype = MPI_FLOAT;
 	
-	// index_2d = make_int2(
-		// (rank%2)*processDim.x+0,
-		// (rank/2)*processDim.y+0);	
 	index_2d = make_int2(
-		(rank%2)*subDataDim.x+0,
-		(rank/2)*subDataDim.y+0);
+		(rank%2)*processDim.x+0,
+		(rank/2)*processDim.y+0);	
+	// index_2d = make_int2(
+		// (rank%2)*subDataDim.x+0,
+		// (rank/2)*subDataDim.y+0);
 		
 	cout << "Start read from " << rank << endl;
 	int bigsizes[2]  = {dimy, dimx}; ///!Order is very important
@@ -314,34 +314,27 @@ int main(int argc, char *argv[])
 	// int subsizes[2]  = {processDim.y, processDim.x}; ///!Order is very important
 	int starts[2] 	 = {index_2d.y, index_2d.x}; ///!Order is very important
 	
+	MPI_Barrier(MPI_COMM_WORLD);
+	cout << "Start indices \t" << index_2d.x << " \t" << index_2d.y << " \t at " << rank << endl;
+	MPI_Barrier(MPI_COMM_WORLD);
 	
 	MPI_Datatype subarray;
 	MPI_Type_create_subarray(2, bigsizes, subsizes, starts,
         MPI_ORDER_C, MPI_FLOAT, &subarray);
 	
 	MPI_Type_commit(&subarray);
-	// // // MPI_File_delete(ch, MPI_INFO_NULL);
-	errCode = MPI_File_open(MPI_COMM_WORLD, ch,
-	// errCode = MPI_File_open(MPI_COMM_WORLD, "/home/tmquan/hetero/data/barbara_512x512.raw",
-	// MPI_File_open(MPI_COMM_WORLD, srcFile.c_str(),
-		MPI_MODE_RDONLY,  MPI_INFO_NULL, &fh);
+	errCode = MPI_File_open(MPI_COMM_WORLD, ch,	MPI_MODE_RDONLY,  MPI_INFO_NULL, &fh);
 	cout << "Debug at " << __FILE__ << " " << __LINE__ << endl;		
 	if (errCode != MPI_SUCCESS) handle_error(errCode, "MPI_File_open");
 	
-	// MPI_File_set_view(fh, disp, etype, subarray,
-	MPI_File_set_view(fh, 0, etype, subarray,
-		"native", MPI_INFO_NULL);
+	// MPI_File_set_view(fh, disp, etype, subarray, "native", MPI_INFO_NULL);
+	MPI_File_set_view(fh, 0, etype, subarray, "native", MPI_INFO_NULL);
 	cout << "Debug at " << __FILE__ << " " << __LINE__ << endl;	
-	// // // MPI_File_read(fh, buf, N, etype, MPI_STATUS_IGNORE);
-	// // // MPI_File_read(fh, p_src, subDataDim.x *  subDataDim.y, etype, MPI_STATUS_IGNORE);
 	
-	// // MPI_Offset offset = sizeof(float)*(index_2d.y*dimx + index_2d.x);
-	// // MPI_File_seek(fh, offset, MPI_SEEK_SET);
-	
-	// // MPI_File_read(fh, p_src, 1, subarray, MPI_STATUS_IGNORE); //This line has problem
-	// MPI_File_read_all(fh, p_src, 1, subarray, MPI_STATUS_IGNORE); //This line has problem
-	MPI_File_read_all(fh, p_src, subDataDim.x*subDataDim.y, MPI_FLOAT, MPI_STATUS_IGNORE); 
-	// MPI_File_read_all(fh, p_src, processDim.x*processDim.y, MPI_FLOAT, MPI_STATUS_IGNORE); 
+	MPI_File_read(fh, p_src, subDataDim.x*subDataDim.y, MPI_FLOAT, MPI_STATUS_IGNORE); 
+	// MPI_File_read_all(fh, p_src, subDataDim.x*subDataDim.y, MPI_FLOAT, MPI_STATUS_IGNORE); 
+	// MPI_File_read_ordered(fh, p_src, subDataDim.x*subDataDim.y, MPI_FLOAT, MPI_STATUS_IGNORE); 
+	MPI_File_close(&fh);
 	// MPI_Barrier(MPI_COMM_WORLD);	cout << "Debug at " << __FILE__ << " " << __LINE__ << endl;		
 	if(p_src[0] !=0)
 		cout << "Caught " << endl;
@@ -350,8 +343,8 @@ int main(int argc, char *argv[])
 	// fstream fs;		
 	// // if(rank==0)
 	// // {
-	// // cout << "Start read from " << rank << endl;
 	// fs.open(srcFile.c_str(), ios::in|ios::binary);						
+	// // cout << "Start read from " << rank << endl;
 	// if (!fs.is_open())														
 	// {																		
 		// printf("Cannot open file '%s' in file '%s' at line %i\n",			
@@ -412,7 +405,20 @@ int main(int argc, char *argv[])
 	// checkWriteFile(filename, p_src, processDim.x*processDim.y*sizeof(float));
 	checkWriteFile(filename, p_src, subDataDim.x*subDataDim.y*sizeof(float));
 	
+	errCode = MPI_File_open(MPI_COMM_WORLD, "test.raw",	MPI_MODE_RDWR|MPI_MODE_CREATE,  MPI_INFO_NULL, &fh);
+	cout << "Debug at " << __FILE__ << " " << __LINE__ << endl;		
+	if (errCode != MPI_SUCCESS) handle_error(errCode, "MPI_File_open");
 	
+	// MPI_File_set_view(fh, disp, etype, subarray,
+	MPI_File_set_view(fh, 0, etype, subarray, "native", MPI_INFO_NULL);
+	// MPI_File_set_view(fh, disp, etype, subarray, "native", MPI_INFO_NULL);
+	cout << "Debug at " << __FILE__ << " " << __LINE__ << endl;	
+	
+	// MPI_File_write(fh, p_src, subDataDim.x*subDataDim.y, MPI_FLOAT, MPI_STATUS_IGNORE); 
+	MPI_File_write_all(fh, p_src, subDataDim.x*subDataDim.y, MPI_FLOAT, MPI_STATUS_IGNORE); 
+	// MPI_File_write_all(fh, p_src, 1, subarray, MPI_STATUS_IGNORE); 
+	// MPI_File_write_ordered(fh, p_src, subDataDim.x*subDataDim.y, MPI_FLOAT, MPI_STATUS_IGNORE); 
+	MPI_File_close(&fh);
 	
  	MPI_Finalize();
 	return 0;
