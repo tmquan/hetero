@@ -52,6 +52,15 @@ using namespace std;
 		fs->close();															\
 		delete fs;																\
 	}
+////////////////////////////////////////////////////////////////////////////////////////////////////
+static void handle_error(int errcode, const char *str)
+{
+        char msg[MPI_MAX_ERROR_STRING];
+        int resultlen;
+        MPI_Error_string(errcode, msg, &resultlen);
+        fprintf(stderr, "%s: %s\n", str, msg);
+        MPI_Abort(MPI_COMM_WORLD, 1);
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////	
 const char* key =
 	"{ h   |help      |      | print help message }"
@@ -101,6 +110,7 @@ int main(int argc, char *argv[])
 	int  rank, size;
 	char name[MPI_MAX_PROCESSOR_NAME];
 	int  length;
+	int errCode;
 	MPI_File fh;
 	MPI_Init(&argc, &argv);
 
@@ -158,9 +168,9 @@ int main(int argc, char *argv[])
 	// Read to pointer in master process
 	if(rank==master)		
 	{
-		cout << "Here" << endl;
-		checkReadFile(srcFile, h_src, total*sizeof(float)); 	
-		cout << "Here" << endl;
+		// cout << "Here" << endl;
+		// checkReadFile(srcFile, h_src, total*sizeof(float)); 	
+		// cout << "Here" << endl;
 	}
 	// int3 clusterDim 	= make_int3(dims[0], dims[1], 1);
 	int  processIdx_1d 	= rank;
@@ -179,13 +189,11 @@ int main(int argc, char *argv[])
 						 (dimy/processDim.y + ((dimy%processDim.y)?1:0)),
 						 (dimz/processDim.z + ((dimz%processDim.z)?1:0))};
 	cout << "Cluster Dimension: " << clusterDim.x << " "  << clusterDim.y << endl;					 
-	float *tmp = new float[processDim.x * processDim.y]; // Create process beyond the sub problem size
-	cudaHostRegister(h_src, processDim.x * processDim.y *sizeof(float), cudaHostRegisterPortable);
+	// float *tmp = new float[processDim.x * processDim.y]; // Create process beyond the sub problem size
+	// cudaHostRegister(h_src, processDim.x * processDim.y *sizeof(float), cudaHostRegisterPortable);
 	MPI_Request request;
 	
-	float *p_src;
-	p_src = (float*)malloc(processDim.x*processDim.y*sizeof(float));
-	// cudaMalloc((void**)&p_src, (processDim.x*processDim.y)*sizeof(float));
+
 	
 	//Start packing
 	/// Naive approach, copy to another buffer, then send
@@ -276,92 +284,115 @@ int main(int argc, char *argv[])
 	cout << "Receive preamble read from " << rank << endl;
 	cout << "Sub problem size: " << subDataDim.x << " "  << subDataDim.y << endl;
 	MPI_Barrier(MPI_COMM_WORLD);
-	// // // char *ch = strdup(srcFile.c_str());
-	// // // MPI_File_open(MPI_COMM_WORLD, ch,
-		// // // MPI_MODE_RDWR | MPI_MODE_CREATE, MPI_INFO_NULL, &fh);
-	// // // // cout << ch << endl;
 	
-	// // // MPI_Offset disp;
-	// // // disp = rank*sizeof(float)*processDim.x*processDim.y; 
-	// // // MPI_Datatype etype;
-	// // // etype = MPI_FLOAT;
+	float *p_src;
+	p_src = (float*)malloc(subDataDim.x*subDataDim.y*sizeof(float));
+	// cudaMalloc((void**)&p_src, (subDataDim.x*subDataDim.y)*sizeof(float));
 	
-	// // // index_2d = make_int2(
-		// // // (rank%2)*processDim.x+0,
-		// // // (rank/2)*processDim.y+0);	
 	
-	// // // cout << "Start read from " << rank << endl;
-	// // // int starts[2] 	 = {index_2d.y, index_2d.x}; ///!Order is very important
-	// // // int subsizes[2]  = {subDataDim.y, subDataDim.x}; ///!Order is very important
-	// // // int bigsizes[2]  = {dimy, dimx}; ///!Order is very important
+	//---------------------------------------------------------------------------------
+	char *ch = strdup(srcFile.c_str());
+
+	cout << ch << endl;
 	
-	// // // MPI_Datatype subarray;
-	// // // MPI_Type_create_subarray(2, bigsizes, subsizes, starts,
-        // // // MPI_ORDER_C, MPI_FLOAT, &subarray);
+	// MPI_Offset disp;
+	// disp = sizeof(float)*rank*processDim.x*processDim.y; 
+	// disp = sizeof(float)*rank*subDataDim.x*subDataDim.y; 
+	MPI_Datatype etype;
+	etype = MPI_FLOAT;
 	
-	// // // MPI_Type_commit(&subarray);
-				
-	// // // // MPI_File_set_view(fh, disp, etype, subarray,
-		// // // // "native", MPI_INFO_NULL);
+	// index_2d = make_int2(
+		// (rank%2)*processDim.x+0,
+		// (rank/2)*processDim.y+0);	
+	index_2d = make_int2(
+		(rank%2)*subDataDim.x+0,
+		(rank/2)*subDataDim.y+0);
+		
+	cout << "Start read from " << rank << endl;
+	int bigsizes[2]  = {dimy, dimx}; ///!Order is very important
+	int subsizes[2]  = {subDataDim.y, subDataDim.x}; ///!Order is very important
+	// int subsizes[2]  = {processDim.y, processDim.x}; ///!Order is very important
+	int starts[2] 	 = {index_2d.y, index_2d.x}; ///!Order is very important
 	
-	// // // // MPI_File_read(fh, buf, N, etype, MPI_STATUS_IGNORE);
-	// // // // MPI_File_read(fh, p_src, subDataDim.x *  subDataDim.y, etype, MPI_STATUS_IGNORE);
-	// // // MPI_Offset offset = index_2d.y*dimx + index_2d.x;
-	// // // MPI_File_seek(fh, offset, MPI_SEEK_SET);
-	// // // MPI_File_read(fh, p_src, 1, subarray, MPI_STATUS_IGNORE);
-	fstream fs;		
-	// if(rank==0)
-	// {
-	// cout << "Start read from " << rank << endl;
-	fs.open(srcFile.c_str(), ios::in|ios::binary);						
-	if (!fs.is_open())														
-	{																		
-		printf("Cannot open file '%s' in file '%s' at line %i\n",			
-		srcFile, __FILE__, __LINE__);										
-		return 1;															
-	}																		
+	
+	MPI_Datatype subarray;
+	MPI_Type_create_subarray(2, bigsizes, subsizes, starts,
+        MPI_ORDER_C, MPI_FLOAT, &subarray);
+	
+	MPI_Type_commit(&subarray);
+	// // // MPI_File_delete(ch, MPI_INFO_NULL);
+	errCode = MPI_File_open(MPI_COMM_WORLD, ch,
+	// errCode = MPI_File_open(MPI_COMM_WORLD, "/home/tmquan/hetero/data/barbara_512x512.raw",
+	// MPI_File_open(MPI_COMM_WORLD, srcFile.c_str(),
+		MPI_MODE_RDONLY,  MPI_INFO_NULL, &fh);
+	cout << "Debug at " << __FILE__ << " " << __LINE__ << endl;		
+	if (errCode != MPI_SUCCESS) handle_error(errCode, "MPI_File_open");
+	
+	// MPI_File_set_view(fh, disp, etype, subarray,
+	MPI_File_set_view(fh, 0, etype, subarray,
+		"native", MPI_INFO_NULL);
+	cout << "Debug at " << __FILE__ << " " << __LINE__ << endl;	
+	// // // MPI_File_read(fh, buf, N, etype, MPI_STATUS_IGNORE);
+	// // // MPI_File_read(fh, p_src, subDataDim.x *  subDataDim.y, etype, MPI_STATUS_IGNORE);
+	
+	// // MPI_Offset offset = sizeof(float)*(index_2d.y*dimx + index_2d.x);
+	// // MPI_File_seek(fh, offset, MPI_SEEK_SET);
+	
+	// // MPI_File_read(fh, p_src, 1, subarray, MPI_STATUS_IGNORE); //This line has problem
+	// MPI_File_read_all(fh, p_src, 1, subarray, MPI_STATUS_IGNORE); //This line has problem
+	MPI_File_read_all(fh, p_src, subDataDim.x*subDataDim.y, MPI_FLOAT, MPI_STATUS_IGNORE); 
+	// MPI_File_read_all(fh, p_src, processDim.x*processDim.y, MPI_FLOAT, MPI_STATUS_IGNORE); 
+	// MPI_Barrier(MPI_COMM_WORLD);	cout << "Debug at " << __FILE__ << " " << __LINE__ << endl;		
+	if(p_src[0] !=0)
+		cout << "Caught " << endl;
+	cout << "Debug at " << __FILE__ << " " << __LINE__ << endl;	
+	//------------------------------------------------------------------------------
+	// fstream fs;		
+	// // if(rank==0)
+	// // {
+	// // cout << "Start read from " << rank << endl;
+	// fs.open(srcFile.c_str(), ios::in|ios::binary);						
+	// if (!fs.is_open())														
+	// {																		
+		// printf("Cannot open file '%s' in file '%s' at line %i\n",			
+		// srcFile, __FILE__, __LINE__);										
+		// return 1;															
+	// }																		
 																
-	// cout << "File opened from " << rank << endl;
-	// cout << "Sub problem size: " << subDataDim.x << " "  << subDataDim.y << endl;
-	// cout << "Dimension size: " << dimx << " "  << dimy << endl;
+	// // cout << "File opened from " << rank << endl;
+	// // cout << "Sub problem size: " << subDataDim.x << " "  << subDataDim.y << endl;
+	// // cout << "Dimension size: " << dimx << " "  << dimy << endl;
 	
-	processIdx.x = rank%clusterDim.x;
-	processIdx.y = rank/clusterDim.x;
+	// processIdx.x = rank%clusterDim.x;
+	// processIdx.y = rank/clusterDim.x;
 	
-	for(featureIdx.y=0; featureIdx.y<subDataDim.y; featureIdx.y++)
-	{
-		for(featureIdx.x=0; featureIdx.x<subDataDim.x; featureIdx.x++)
-		{
-			if(featureIdx.x == 0) // First position of row
-			{
-				//2D global index
-				index_2d = make_int2(
-					processIdx.x*subDataDim.x+featureIdx.x,
-					processIdx.y*subDataDim.y+featureIdx.y);	
-				// cout << "Global Index 2d: " << index_2d.x << " "  << index_2d.y << endl;
-				if(index_2d.y<dimy) //For handling the boundary problem
-				{					
-					// memcpy(
-						// &tmp[featureIdx.y * subDataDim.x],
-						// &h_src[index_2d.y*dimx + index_2d.x],
-						// subDataDim.x*sizeof(float));
-					// checkReadFile(srcFile, &p_src[featureIdx.y * subDataDim.x],
-						// subDataDim.x*sizeof(float));
-					// fs.seekg(0, ios::begin);
-					fs.seekg((index_2d.y*dimx + index_2d.x)*sizeof(float), ios::beg);
-					// fs.read(reinterpret_cast<char*>(&p_src[featureIdx.y * subDataDim.x]), subDataDim.x);							
-					fs.read(reinterpret_cast<char*>(&p_src[featureIdx.y * subDataDim.x]), subDataDim.x*sizeof(float));						
-					// if(p_src[featureIdx.y * subDataDim.x] !=0)
-						// cout << "Caught " << ++caught << endl;
-				}
-			}						
-		}
-	}	
+	// for(featureIdx.y=0; featureIdx.y<subDataDim.y; featureIdx.y++)
+	// {
+		// for(featureIdx.x=0; featureIdx.x<subDataDim.x; featureIdx.x++)
+		// {
+			// if(featureIdx.x == 0) // First position of row
+			// {
+				// //2D global index
+				// index_2d = make_int2(
+					// processIdx.x*subDataDim.x+featureIdx.x,
+					// processIdx.y*subDataDim.y+featureIdx.y);	
+				// // cout << "Global Index 2d: " << index_2d.x << " "  << index_2d.y << endl;
+				// if(index_2d.y<dimy) //For handling the boundary problem
+				// {					
+					// fs.seekg((index_2d.y*dimx + index_2d.x)*sizeof(float), ios::beg);					
+					// fs.read(reinterpret_cast<char*>(&p_src[featureIdx.y * subDataDim.x]), subDataDim.x*sizeof(float));
+					// // if(p_src[featureIdx.y * subDataDim.x] !=0)
+						// // cout << "Caught " << ++caught << endl;
+				// }
+			// }						
+		// }
+	// }	
 	
-	fs.close();			
-	// }
-	// checkReadFile(srcFile, p_src,
-		// subDataDim.y*subDataDim.x*sizeof(float));
+	// fs.close();			
+	//------------------------------------------------------------------------------
+	
+	
+	
 		
 	MPI_Barrier(MPI_COMM_WORLD);	
 	cout << "Finish read from " << rank << endl;
@@ -374,11 +405,12 @@ int main(int argc, char *argv[])
 	sprintf(filename, "result_%02d_%02d.raw", processIdx_2d.x, processIdx_2d.y);
 	printf("%s\n", filename);
 	// float *h_tmp;
-	// h_tmp = (float*)malloc(processDim.x*processDim.y*sizeof(float));
-	// cudaHostRegister(h_tmp, processDim.x * processDim.y *sizeof(float), cudaHostRegisterPortable);
-	// cudaMemcpy(h_tmp, p_src, processDim.x*processDim.y*sizeof(float), cudaMemcpyDeviceToHost); cudaCheckLastError();
-	// checkWriteFile(filename, h_tmp, processDim.x*processDim.y*sizeof(float));
-	checkWriteFile(filename, p_src, processDim.x*processDim.y*sizeof(float));
+	// h_tmp = (float*)malloc(subDataDim.x*subDataDim.y*sizeof(float));
+	// cudaHostRegister(h_tmp, subDataDim.x*subDataDim.y *sizeof(float), cudaHostRegisterPortable);
+	// cudaMemcpy(h_tmp, p_src, subDataDim.x*subDataDim.y*sizeof(float), cudaMemcpyDeviceToHost); cudaCheckLastError();
+	// checkWriteFile(filename, h_tmp, subDataDim.x*subDataDim.y*sizeof(float));
+	// checkWriteFile(filename, p_src, processDim.x*processDim.y*sizeof(float));
+	checkWriteFile(filename, p_src, subDataDim.x*subDataDim.y*sizeof(float));
 	
 	
 	
