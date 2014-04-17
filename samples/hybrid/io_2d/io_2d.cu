@@ -295,8 +295,8 @@ int main(int argc, char *argv[])
 
 	cout << ch << endl;
 	
-	// MPI_Offset disp;
-	// disp = sizeof(float)*rank*processDim.x*processDim.y; 
+	MPI_Offset disp;
+	disp = sizeof(float)*rank*processDim.x*processDim.y; 
 	// disp = sizeof(float)*rank*subDataDim.x*subDataDim.y; 
 	MPI_Datatype etype;
 	etype = MPI_FLOAT;
@@ -332,8 +332,9 @@ int main(int argc, char *argv[])
 	cout << "Debug at " << __FILE__ << " " << __LINE__ << endl;	
 	
 	MPI_File_read(fh, p_src, subDataDim.x*subDataDim.y, MPI_FLOAT, MPI_STATUS_IGNORE); 
-	// MPI_File_read_all(fh, p_src, subDataDim.x*subDataDim.y, MPI_FLOAT, MPI_STATUS_IGNORE); 
+	// MPI_File_read_all(fh, p_src, subDataDim.x*subDataDim.y, MPI_FLOAT, MPI_STATUS_IGNORE); // Process spawn and fail
 	// MPI_File_read_ordered(fh, p_src, subDataDim.x*subDataDim.y, MPI_FLOAT, MPI_STATUS_IGNORE); 
+	MPI_Type_free(&subarray);
 	MPI_File_close(&fh);
 	// MPI_Barrier(MPI_COMM_WORLD);	cout << "Debug at " << __FILE__ << " " << __LINE__ << endl;		
 	if(p_src[0] !=0)
@@ -392,7 +393,7 @@ int main(int argc, char *argv[])
 	double elapsed = MPI_Wtime() - start;
 	if(rank==master) cout << "Time : " << elapsed << " s " << endl;
 	
-	/// Debug
+	/// Debug, write partially
 	MPI_Barrier(MPI_COMM_WORLD);
 	char *filename = new char[100];
 	sprintf(filename, "result_%02d_%02d.raw", processIdx_2d.x, processIdx_2d.y);
@@ -405,22 +406,68 @@ int main(int argc, char *argv[])
 	// checkWriteFile(filename, p_src, processDim.x*processDim.y*sizeof(float));
 	checkWriteFile(filename, p_src, subDataDim.x*subDataDim.y*sizeof(float));
 	
+	
+	///!!! Write globally
+	MPI_Type_create_subarray(2, bigsizes, subsizes, starts,
+        MPI_ORDER_C, MPI_FLOAT, &subarray);
+	
+	MPI_Type_commit(&subarray);
+	// errCode = MPI_File_delete("test.raw", MPI_INFO_NULL);
+	// if (errCode != MPI_SUCCESS) handle_error(errCode, "MPI_File_delete");
 	errCode = MPI_File_open(MPI_COMM_WORLD, "test.raw",	MPI_MODE_RDWR|MPI_MODE_CREATE,  MPI_INFO_NULL, &fh);
-	cout << "Debug at " << __FILE__ << " " << __LINE__ << endl;		
+	// cout << "Debug at " << __FILE__ << " " << __LINE__ << endl;		
 	if (errCode != MPI_SUCCESS) handle_error(errCode, "MPI_File_open");
 	
 	// MPI_File_set_view(fh, disp, etype, subarray,
 	MPI_File_set_view(fh, 0, etype, subarray, "native", MPI_INFO_NULL);
+	MPI_Type_free(&subarray);
 	// MPI_File_set_view(fh, disp, etype, subarray, "native", MPI_INFO_NULL);
-	cout << "Debug at " << __FILE__ << " " << __LINE__ << endl;	
+	// cout << "Debug at " << __FILE__ << " " << __LINE__ << endl;	
+	cout << "At rank " << rank << endl;
+	cout << "Sub problem size will be written: " << subDataDim.x << " "  << subDataDim.y << endl;
 	
 	// MPI_File_write(fh, p_src, subDataDim.x*subDataDim.y, MPI_FLOAT, MPI_STATUS_IGNORE); 
+	// MPI_File_write(fh, p_src, 1, subarray, MPI_STATUS_IGNORE); 
 	MPI_File_write_all(fh, p_src, subDataDim.x*subDataDim.y, MPI_FLOAT, MPI_STATUS_IGNORE); 
 	// MPI_File_write_all(fh, p_src, 1, subarray, MPI_STATUS_IGNORE); 
 	// MPI_File_write_ordered(fh, p_src, subDataDim.x*subDataDim.y, MPI_FLOAT, MPI_STATUS_IGNORE); 
 	MPI_File_close(&fh);
 	
+	// check identical
+	// if(rank==0)
+	// {
+		// float *ref = new float[dimx*dimy];
+		// float *arr = new float[dimx*dimy];
+		
+		// checkReadFile(srcFile, ref, dimx*dimy*sizeof(float));
+		// // char file[10];
+		// string file = "test.raw";
+		// checkReadFile(file, arr, dimx*dimy*sizeof(float));
+		// // for(int y=0; y<dimy; y++)
+		// // {
+			// // for(int x=0; x<dimx; x++)
+			// // {
+				// // if(
+			// // }
+		// // }
+		// for(int k=0; k<total; k++)
+		// {
+			// if(ref[k] != arr[k])
+			// {
+				// cout << "Do not match at " << k << endl;
+				// goto cleanup;
+			// }
+		// }
+		// cout << "Matched!!!" << endl; 
+		// cleanup:
+		// free(ref);
+		// free(arr);
+	// }
+	
+	
  	MPI_Finalize();
+	
+	
 	return 0;
 }
 	

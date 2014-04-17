@@ -62,7 +62,7 @@ add_test(Test_Hybrid_IO_2D_Fittable
 	# --dimy 450
 	:
 	${MPIEXEC_NUMPROC_FLAG} 4 
-	${MPIEXEC_PREFLAGS} --host head  
+	${MPIEXEC_PREFLAGS} --host head
 	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/mpi_io_2d
 	--srcFile		${RESOURCE_INPUT_PATH}/barbara_512x512.raw
 	--dimx 512 
@@ -74,7 +74,7 @@ add_test(Test_Hybrid_IO_2D_Oversubcribe
 	${MPIEXEC} 
 
 	${MPIEXEC_NUMPROC_FLAG} 4 
-	${MPIEXEC_PREFLAGS} --host head  
+	${MPIEXEC_PREFLAGS} --host head
 	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/mpi_io_2d
 	--srcFile		${RESOURCE_INPUT_PATH}/barbara_500x450.raw
 	--dimx 500 
