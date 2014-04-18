@@ -64,7 +64,7 @@ int main(int argc, char **argv)
 	// Transferring to the device memory
 	cudaMemcpy(d_src, h_src, total*sizeof(float), cudaMemcpyHostToDevice); checkLastError();
 	
-	stencil_2d(d_src, d_dst, dimx, dimy);
+	stencil_2d(d_src, d_dst, dimx, dimy, 1);
 
 	cudaMemcpy(h_dst, d_dst, total*sizeof(float), cudaMemcpyDeviceToHost); checkLastError();
 	

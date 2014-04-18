@@ -17,8 +17,8 @@ void stencil_2d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int halo
      (deviceSrc, deviceDst, dimx, dimy, halo);
 }
 
-#define at(x, y, dimx, dimy) ( clamp(y, 0, dimy-1)*dimx +     \
-                               clamp(x, 0, dimx-1) )            
+#define at(x, y, dimx, dimy) ( clamp((int)y, 0, dimy-1)*dimx +     \
+                               clamp((int)x, 0, dimx-1) )            
 __global__ 
 void __stencil_2d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int halo)
 {
@@ -60,7 +60,7 @@ void __stencil_2d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int ha
     }                                                                                     
                                                                                           
     // Stencil  processing here                                                           
-    float result = sharedMemSrc[at(shared_index_2d.x + halo, shared_index_2d.y + halo, sharedMemDim.x, sharedMemDim.y)];                         
+    float result = sharedMemSrc[at(threadIdx.x + halo, threadIdx.y + halo, sharedMemDim.x, sharedMemDim.y)];                         
 	                                                                                       
     // Single pass writing here                                                           
     index_2d       =  make_int2(blockIdx.x * blockDim.x + threadIdx.x,                    

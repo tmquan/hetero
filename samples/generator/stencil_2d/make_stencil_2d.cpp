@@ -200,8 +200,8 @@ for( map<string, string>::iterator it=_attributeList.begin(); it!=_attributeList
 	fs	<< "}\n\n";
 	
 	/// Flattern indices to 1d
-	fs	<<	"#define at(x, y, dimx, dimy) ( clamp(y, 0, dimy-1)*dimx +     \\\n";	
-	fs	<<	"                               clamp(x, 0, dimx-1) )            \n";	
+	fs	<<	"#define at(x, y, dimx, dimy) ( clamp((int)y, 0, dimy-1)*dimx +     \\\n";	
+	fs	<<	"                               clamp((int)x, 0, dimx-1) )            \n";	
 	
 	/// "Implement" the kernel
 
@@ -275,7 +275,7 @@ while(it1!=_sharedMemList.end() && it2!=_srcArrayList.end())
 	it2 = _sharedMemList.begin(); 	
 while(it1!=_registerList.end() && it2!=_sharedMemList.end()) 
 {
-	fs  <<  "    "+it1->second+" "+it1->first+" = "+it2->first+"[at(shared_index_2d.x + halo, shared_index_2d.y + halo, sharedMemDim.x, sharedMemDim.y)];                         \n";
+	fs  <<  "    "+it1->second+" "+it1->first+" = "+it2->first+"[at(threadIdx.x + halo, threadIdx.y + halo, sharedMemDim.x, sharedMemDim.y)];                         \n";
 	++it1; ++it2;
 }
 	fs	<<  "	                                                                                       \n";

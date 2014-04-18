@@ -18,9 +18,9 @@ void stencil_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dimz
      (deviceSrc, deviceDst, dimx, dimy, dimz, halo);
 }
 
-#define at(x, y, z, dimx, dimy, dimz) ( clamp(z, 0, dimz-1)*dimy*dimx +       \
-                                        clamp(y, 0, dimy-1)*dimx +            \
-                                        clamp(x, 0, dimx-1) )                   
+#define at(x, y, z, dimx, dimy, dimz) ( clamp((int)z, 0, dimz-1)*dimy*dimx +       \
+                                        clamp((int)y, 0, dimy-1)*dimx +            \
+                                        clamp((int)x, 0, dimx-1) )                   
 __global__ 
 void __stencil_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dimz, int halo)
 {
@@ -43,9 +43,9 @@ void __stencil_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int di
                             threadIdx.y * blockDim.x +                                    										
                             threadIdx.x +                                                 										
                             blockSize*batch; //Magic is here quantm@unist.ac.kr           										
-        shared_index_3d  =  make_int3((shared_index_1d % ((blockDim.x+2*halo)*(blockDim.x+2*halo))) % (blockDim.x+2*halo),		
-                                      (shared_index_1d % ((blockDim.x+2*halo)*(blockDim.x+2*halo))) / (blockDim.x+2*halo),		
-                                      (shared_index_1d / ((blockDim.x+2*halo)*(blockDim.x+2*halo))) );      					
+        shared_index_3d  =  make_int3((shared_index_1d % ((blockDim.y+2*halo)*(blockDim.x+2*halo))) % (blockDim.x+2*halo),		
+                                      (shared_index_1d % ((blockDim.y+2*halo)*(blockDim.x+2*halo))) / (blockDim.x+2*halo),		
+                                      (shared_index_1d / ((blockDim.y+2*halo)*(blockDim.x+2*halo))) );      					
         global_index_3d  =  make_int3(blockIdx.x * blockDim.x + shared_index_3d.x - halo, 										
                                       blockIdx.y * blockDim.y + shared_index_3d.y - halo, 										
                                       blockIdx.z * blockDim.z + shared_index_3d.z - halo);										
@@ -69,7 +69,7 @@ void __stencil_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int di
     }                                                                                     
                                                                                           
     // Stencil  processing here                                                           
-    float result = sharedMemSrc[at(shared_index_3d.x + halo, shared_index_3d.y + halo, shared_index_3d.z + halo, sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)];                         
+    float result = sharedMemSrc[at(threadIdx.x + halo, threadIdx.y + halo, threadIdx.z + halo, sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)];                         
 	                                                                                       
     // Single pass writing here                                                           
     index_3d       =  make_int3(blockIdx.x * blockDim.x + threadIdx.x,                    
@@ -80,7 +80,7 @@ void __stencil_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int di
                       index_3d.x;                                                         
 	                                                                                       
     if (index_3d.z < dimz &&                                                              
-        index_3d.y < dimy &&                                                                
+        index_3d.y < dimy &&                                                              
         index_3d.x < dimx)                                                                
     {                                                                                     
         deviceDst[index_1d] = result;                                        

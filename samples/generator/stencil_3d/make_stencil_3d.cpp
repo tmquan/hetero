@@ -202,9 +202,9 @@ for( map<string, string>::iterator it=_attributeList.begin(); it!=_attributeList
 	fs	<< "}\n\n";
 	
 	/// Flattern indices to 1d
-	fs	<<	"#define at(x, y, z, dimx, dimy, dimz) ( clamp(z, 0, dimz-1)*dimy*dimx +       \\\n";	
-	fs	<<	"                                        clamp(y, 0, dimy-1)*dimx +            \\\n";	
-	fs	<<	"                                        clamp(x, 0, dimx-1) )                   \n";	
+	fs	<<	"#define at(x, y, z, dimx, dimy, dimz) ( clamp((int)z, 0, dimz-1)*dimy*dimx +       \\\n";	
+	fs	<<	"                                        clamp((int)y, 0, dimy-1)*dimx +            \\\n";	
+	fs	<<	"                                        clamp((int)x, 0, dimx-1) )                   \n";	
 	
 	/// "Implement" the kernel
 
@@ -241,9 +241,9 @@ for( map<string, string>::iterator it=_sharedMemList.begin(); it!=_sharedMemList
 	fs	<< 	"                            threadIdx.y * blockDim.x +                                    										\n";
 	fs	<< 	"                            threadIdx.x +                                                 										\n";
 	fs	<< 	"                            blockSize*batch; //Magic is here quantm@unist.ac.kr           										\n";
-	fs	<< 	"        shared_index_3d  =  make_int3((shared_index_1d % ((blockDim.x+2*halo)*(blockDim.x+2*halo))) % (blockDim.x+2*halo),		\n";
-	fs	<< 	"                                      (shared_index_1d % ((blockDim.x+2*halo)*(blockDim.x+2*halo))) / (blockDim.x+2*halo),		\n";
-	fs	<< 	"                                      (shared_index_1d / ((blockDim.x+2*halo)*(blockDim.x+2*halo))) );      					\n";
+	fs	<< 	"        shared_index_3d  =  make_int3((shared_index_1d % ((blockDim.y+2*halo)*(blockDim.x+2*halo))) % (blockDim.x+2*halo),		\n";
+	fs	<< 	"                                      (shared_index_1d % ((blockDim.y+2*halo)*(blockDim.x+2*halo))) / (blockDim.x+2*halo),		\n";
+	fs	<< 	"                                      (shared_index_1d / ((blockDim.y+2*halo)*(blockDim.x+2*halo))) );      					\n";
 	fs	<< 	"        global_index_3d  =  make_int3(blockIdx.x * blockDim.x + shared_index_3d.x - halo, 										\n";
 	fs	<< 	"                                      blockIdx.y * blockDim.y + shared_index_3d.y - halo, 										\n";
 	fs	<< 	"                                      blockIdx.z * blockDim.z + shared_index_3d.z - halo);										\n";
@@ -284,7 +284,7 @@ while(it1!=_sharedMemList.end() && it2!=_srcArrayList.end())
 	it2 = _sharedMemList.begin(); 	
 while(it1!=_registerList.end() && it2!=_sharedMemList.end()) 
 {
-	fs  <<  "    "+it1->second+" "+it1->first+" = "+it2->first+"[at(shared_index_3d.x + halo, shared_index_3d.y + halo, shared_index_3d.z + halo, sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)];                         \n";
+	fs  <<  "    "+it1->second+" "+it1->first+" = "+it2->first+"[at(threadIdx.x + halo, threadIdx.y + halo, threadIdx.z + halo, sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)];                         \n";
 	++it1; ++it2;
 }
 	fs	<<  "	                                                                                       \n";
@@ -297,7 +297,7 @@ while(it1!=_registerList.end() && it2!=_sharedMemList.end())
 	fs	<< 	"                      index_3d.x;                                                         \n";	
 	fs	<<  "	                                                                                       \n";
 	fs	<<  "    if (index_3d.z < dimz &&                                                              \n";
-	fs	<<  "        index_3d.y < dimy &&                                                                \n";
+	fs	<<  "        index_3d.y < dimy &&                                                              \n";
 	fs	<<  "        index_3d.x < dimx)                                                                \n";
 	fs	<<  "    {                                                                                     \n";
 	it1 = _dstArrayList.begin(); 	
