@@ -56,6 +56,7 @@ void __stencil_2d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int ha
                 sharedMemSrc[at(shared_index_2d.x, shared_index_2d.y, sharedMemDim.x, sharedMemDim.y)] = -1;                                                     
             }                                                                             
         }                                                                                 
+        __syncthreads();                                                                  
     }                                                                                     
                                                                                           
     // Stencil  processing here                                                           

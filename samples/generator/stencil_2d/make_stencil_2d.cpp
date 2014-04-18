@@ -267,6 +267,7 @@ while(it1!=_sharedMemList.end() && it2!=_srcArrayList.end())
 }
 	fs  <<  "            }                                                                             \n";
 	fs	<< 	"        }                                                                                 \n";
+	fs	<< 	"        __syncthreads();                                                                  \n";
 	fs	<< 	"    }                                                                                     \n";	
 	fs	<<  "                                                                                          \n";	
 	fs	<< 	"    // Stencil  processing here                                                           \n";

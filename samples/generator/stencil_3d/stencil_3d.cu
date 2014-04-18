@@ -65,7 +65,7 @@ void __stencil_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int di
                 sharedMemSrc[at(shared_index_3d.x, shared_index_3d.y, shared_index_3d.z, sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)] = -1;                                                     
             }                                                                             
         }                                                                                 
-        __synchthreads();                                                                 
+        __syncthreads();                                                                  
     }                                                                                     
                                                                                           
     // Stencil  processing here                                                           
