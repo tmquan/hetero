@@ -334,7 +334,7 @@ int main(int argc, char *argv[])
 	MPI_File_read(fh, p_src, subDataDim.x*subDataDim.y, MPI_FLOAT, MPI_STATUS_IGNORE); 
 	// MPI_File_read_all(fh, p_src, subDataDim.x*subDataDim.y, MPI_FLOAT, MPI_STATUS_IGNORE); // Process spawn and fail
 	// MPI_File_read_ordered(fh, p_src, subDataDim.x*subDataDim.y, MPI_FLOAT, MPI_STATUS_IGNORE); 
-	MPI_Type_free(&subarray);
+	// MPI_Type_free(&subarray);
 	MPI_File_close(&fh);
 	// MPI_Barrier(MPI_COMM_WORLD);	cout << "Debug at " << __FILE__ << " " << __LINE__ << endl;		
 	if(p_src[0] !=0)
@@ -408,12 +408,19 @@ int main(int argc, char *argv[])
 	
 	
 	///!!! Write globally
-	MPI_Type_create_subarray(2, bigsizes, subsizes, starts,
-        MPI_ORDER_C, MPI_FLOAT, &subarray);
+	// MPI_Type_create_subarray(2, bigsizes, subsizes, starts,
+        // MPI_ORDER_C, MPI_FLOAT, &subarray);
+	// MPI_Type_commit(&subarray);
 	
-	MPI_Type_commit(&subarray);
-	// errCode = MPI_File_delete("test.raw", MPI_INFO_NULL);
-	// if (errCode != MPI_SUCCESS) handle_error(errCode, "MPI_File_delete");
+	// Delete the file before using that
+	MPI_Barrier(MPI_COMM_WORLD);	
+	if(rank == master)
+	{
+		errCode = MPI_File_delete("test.raw", MPI_INFO_NULL);
+		if (errCode != MPI_SUCCESS) handle_error(errCode, "MPI_File_delete");
+	}
+	MPI_Barrier(MPI_COMM_WORLD);	
+	
 	errCode = MPI_File_open(MPI_COMM_WORLD, "test.raw",	MPI_MODE_RDWR|MPI_MODE_CREATE,  MPI_INFO_NULL, &fh);
 	// cout << "Debug at " << __FILE__ << " " << __LINE__ << endl;		
 	if (errCode != MPI_SUCCESS) handle_error(errCode, "MPI_File_open");

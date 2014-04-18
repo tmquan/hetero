@@ -1,12 +1,12 @@
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Weffc++ -pedantic -std=c++0x")
 # ----------------------------------------------------------------------------
-find_package(Boost COMPONENTS program_options REQUIRED)
-if(Boost_FOUND)
-    message("Boost is found on this system.")
-	include_directories(${Boost_INCLUDE_DIRS})
-else(Boost_FOUND)
-    message(FATAL_ERROR "Boost is not installed on this system.")
-endif()
+# find_package(Boost COMPONENTS program_options REQUIRED)
+# if(Boost_FOUND)
+    # message("Boost is found on this system.")
+	# include_directories(${Boost_INCLUDE_DIRS})
+# else(Boost_FOUND)
+    # message(FATAL_ERROR "Boost is not installed on this system.")
+# endif()
 # ----------------------------------------------------------------------------
 find_package(OpenMP REQUIRED)
 if (OPENMP_FOUND)
@@ -31,7 +31,7 @@ cuda_add_executable(cpp-split_data
 					cmdparser.cpp
 					datparser.cpp
 			   )
-target_link_libraries(cpp-split_data ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_REGEX_LIBRARY} )
+# target_link_libraries(cpp-split_data ${Boost_PROGRAM_OPTIONS_LIBRARY} ${Boost_REGEX_LIBRARY} )
 # target_link_libraries(cpp-split_data ${Boost_LIBRARIES} )
 target_link_libraries(cpp-split_data ${OpenMP_CXX_FLAGS} )
 # ----------------------------------------------------------------------------
