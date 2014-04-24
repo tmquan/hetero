@@ -66,7 +66,7 @@ srand(time(NULL)); // for random number generator
 	// Transferring to the device memory
 	cudaMemcpy(d_src, h_src, total*sizeof(float), cudaMemcpyHostToDevice); checkLastError();
 	
-	stencil_3d(d_src, d_dst, dimx, dimy, dimz, 1);
+	stencil_3d(d_src, d_dst, dimx, dimy, dimz, 5);
 
 	cudaMemcpy(h_dst, d_dst, total*sizeof(float), cudaMemcpyDeviceToHost); checkLastError();
 	

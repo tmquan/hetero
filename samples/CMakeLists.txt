@@ -1,3 +1,4 @@
+message(${CMAKE_CURRENT_SOURCE_DIR})
 add_subdirectory(cpp)
 add_subdirectory(cuda)
 add_subdirectory(mpi)

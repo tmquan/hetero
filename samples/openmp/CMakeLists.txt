@@ -1,1 +1,5 @@
-#
+message(${CMAKE_CURRENT_SOURCE_DIR})
+add_subdirectory(hello_world)
+add_subdirectory(host_query)
+add_subdirectory(for_loop)
+add_subdirectory(scheduler_1d)

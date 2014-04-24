@@ -54,13 +54,6 @@ target_link_libraries(hybrid-io_2d
 # ----------------------------------------------------------------------------
 add_test(Test_Hybrid_IO_2D_Fittable
 	${MPIEXEC} 
-	# ${MPIEXEC_NUMPROC_FLAG} 4
-	# ${MPIEXEC_PREFLAGS} --host head 
-	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-io_2d
-	# --srcFile		${RESOURCE_INPUT_PATH}/barbara_512x512.raw
-	# --dimx 500 
-	# --dimy 450
-	:
 	${MPIEXEC_NUMPROC_FLAG} 4 
 	${MPIEXEC_PREFLAGS} --host head
 	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-io_2d
