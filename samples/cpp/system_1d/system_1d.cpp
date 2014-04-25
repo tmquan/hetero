@@ -20,6 +20,7 @@ public:
 	// void configureMaxProcesses();
 	// void setMaxProcess(int); //should be less than or equal to maxProcesses
 	void setNumProcess(int); //should be less than or equal to maxProcesses
+	void setNumTasks(int); // Can be greater than maxProcesses
 	void printInfo(); 
 	void addApplication(string); 
 	void run(); 
@@ -29,10 +30,16 @@ private:
 	int numNodes;
 	int numTasks;
 	
+	string command; 	// For application
+	string application; // For application
+	
 	// For query the file
+	string hostFile;
 	vector<string> nodeList;
 	int numSlots;
 	int maxSlots; 
+	// int chunkDim;
+	// int chunkIdx;
 };
 
 heteroSystem1D::heteroSystem1D()
@@ -42,6 +49,8 @@ heteroSystem1D::heteroSystem1D()
 	this->maxProcesses 	= 0;
 	this->numProcesses	= -1;
 	this->nodeList.resize(this->numNodes);
+	// this->chunkDim		= this->numProcesses;
+	// this->chunkIdx		= 0;
 }
 
 
@@ -71,7 +80,7 @@ heteroSystem1D::heteroSystem1D(string hostFile)
 		cout << "Cannot open the hostfile: " << hostFile << endl;
 		return;
 	}
-	cout << hostFile << endl;
+	cout << "Location of Host file  :	" << hostFile << endl;
 	
 	// Read the hostfile and decode to system parameters
 	string line;
@@ -81,6 +90,7 @@ heteroSystem1D::heteroSystem1D(string hostFile)
 	this->maxProcesses 	= 0;
 	this->numProcesses	= -1;
 	
+	cout << "Content of Host file   :	"  << endl;
 	getline(ifs,line);
 	
 	// First get the front end
@@ -89,15 +99,17 @@ heteroSystem1D::heteroSystem1D(string hostFile)
 	{
 		getline(ifs,line);
 		cout << line << endl;
-		vector<string> vecLine = split(line, ' ');
-		for(vector<string>::iterator i=vecLine.begin(); i!=vecLine.end(); ++i)
+		vector<string> lines = split(line, ' ');
+		for(vector<string>::iterator i=lines.begin(); i!=lines.end(); ++i)
 		{
 			// cout << (*i) << endl;
 			vector<string> component = split((*i), '=');
 			if((*component.begin()) != "slots" && (*component.begin()) != "max_slots")
 			{
 				// cout << *component.begin() << endl;
-				nodeList.push_back(*component.begin());
+				vector<string> names = split(*component.begin(), '.');
+				// nodeList.push_back(*component.begin());
+				nodeList.push_back(*names.begin());
 				this->numNodes++;
 			}
 			if((*component.begin()) == "max_slots")
@@ -107,6 +119,7 @@ heteroSystem1D::heteroSystem1D(string hostFile)
 				int slots = 0;
 				// Query the slot
 				stringstream ss;
+				// ss << *(component.end());
 				ss << *(++component.begin());
 				ss >> slots;
 				this->maxProcesses += slots;
@@ -116,6 +129,9 @@ heteroSystem1D::heteroSystem1D(string hostFile)
 
 	// Indicate that the number of processes will be the maxProcesses (full GPU utilizations)
 	this->numProcesses = this->maxProcesses;
+	// this->chunkDim	   = this->numProcesses;
+	// this->chunkIdx	   = 0;
+	this->hostFile     = hostFile;
 	ifs.close();
 }
 
@@ -129,27 +145,81 @@ void heteroSystem1D::printInfo()
 	cout << "Number of maxProcesses :	" << maxProcesses << endl;
 	cout << "Number of Processes    :	" << numProcesses << endl;
 	cout << "Number of Nodes        :	" << numNodes << endl;
+	
 	if(numNodes>0)
 		for(vector<string>::iterator it = nodeList.begin(); it!=nodeList.end(); ++it)
-			cout << *(it) << endl;
+			cout << "- " << *(it) << endl;
 }
 
-// void heteroSystem1D::addApplication(string application)
-// {
-	// stringstream ss;
-	// ss << "mpirun " << "-np " << numProcesses << " "
-					// << application 
-					// << endl;
-	// // ss >> command;
-	// command = ss.str(); //Convert string stream to string
-	// cout << command << endl; // Debug
-	// // system(command.c_str());
-// }
+void heteroSystem1D::addApplication(string application)
+{
+	cout << "Command line Application has been added :" << endl;
+	cout << "#" << application << endl;
+	this->application =  application;
+}
 
-// void heteroSystem1D::run()
-// {
-	// system(command.c_str());
-// }
+void heteroSystem1D::setNumTasks(int numTasks)
+{
+	cout << "Number of tasks :" << numTasks << endl;
+	this->numTasks =  numTasks;
+}
+
+void heteroSystem1D::run()
+{
+	// Declare hyper rank indices
+	// int global_rank_index = 0;
+	// int local_rank_index = 0;
+	int rankIdx  = 0;
+	int chunkDim = this->numProcesses;
+	
+	//Round up the chunk Dimension
+	int hyperDim = (numTasks/chunkDim + ((numTasks%chunkDim)?1:0));
+	// cout << "Hyper Dimension : " << hyperDim << endl;
+	
+	// int thisNumTasks=0;
+	int taskIdx = 0;
+	int chunkIdx = 0;
+	//
+	for(chunkIdx=0; chunkIdx<hyperDim; chunkIdx++)
+	{
+		for(rankIdx=0; rankIdx<chunkDim; rankIdx++)
+		{
+			//chunkIdx*chunkDim will be the offset to pass into the application
+			taskIdx = chunkIdx*chunkDim + rankIdx;
+			if(taskIdx==(numTasks-1)) break;
+		}
+		// cout << "Task Index " << taskIdx << endl;
+		// Count how many processes we need to launch
+		// thisNumTasks = ((taskIdx+1)%chunkDim)?((taskIdx+1)%chunkDim):chunkDim;
+		// cout << thisNumTasks << endl;
+		numProcesses = ((taskIdx+1)%chunkDim)?((taskIdx+1)%chunkDim):chunkDim;
+		//////////////////////////////////////////////////////////
+		stringstream ss;
+		ss << "mpirun ";
+		// ss << "  /cm/shared/custom/apps/openmpi-gpudirect/gcc/64/1.7.2/bin/mpirun ";
+		ss << " --np " << numProcesses;
+		// ss << " --np " << thisNumTasks;
+		ss << " --host ";
+		for(vector<string>::iterator it = nodeList.begin(); it!=nodeList.end(); ++it)
+		{
+			ss <<  *(it);
+			if(it!=nodeList.end()-1)
+			ss << ",";
+		}
+		// ss << " --byslot ";
+		// ss << " --machinefile " << hostFile;
+		ss << " " << application;
+		ss << " |sort";
+		
+		
+		ss >> command;
+		command = ss.str(); //Convert string stream to string
+		cout << "MPI Command Line :" << endl;
+		cout << "#" << command << endl; // Debug
+		// // system(command.c_str());
+		system(command.c_str());
+	}
+}
 //----------------------------------------------------------------------------
 int main(int argc, char **argv)
 {
@@ -158,5 +228,14 @@ int main(int argc, char **argv)
 	string hostFile = argv[1];
 	heteroSystem1D system(hostFile);
 	system.printInfo();
+	// system.setNumTasks(18);
+	// // system.addApplication("echo $(hostname)");
+	// system.addApplication("/home/tmquan/hetero/build/bin/mpi-hello_world");
+	// system.run();
+	
+	system.setNumTasks(13);
+	// system.addApplication("echo $(hostname)");
+	system.addApplication("/home/tmquan/hetero/build/bin/mpi-hello_world");
+	system.run();
 	return 0;
 }
