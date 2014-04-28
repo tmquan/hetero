@@ -33,24 +33,46 @@ else(MPI_FOUND)
     message(FATAL_ERROR "MPI is not installed on this system.")
 endif()
 # ----------------------------------------------------------------------------
+# find_package(OpenCV REQUIRED)
+# if(OpenCV_FOUND)
+    # message("OPENCV is found on this system.")
+	# include_directories(${OpenCV_INCLUDE_DIR})
+# else(OpenCV_FOUND)
+    # message("OPENCV is not installed on this system.")
+# endif()
+# ----------------------------------------------------------------------------
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/include)
 LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/lib)
 # ----------------------------------------------------------------------------
 cuda_add_executable(hybrid-exchange_2d exchange_2d.cu)
-# add_executable(hybrid-exchange_2d exchange_2d.cu)
+# add_executable(hybrid-exchange_2d exchange_2d.cpp)
 
 target_link_libraries(hybrid-exchange_2d ${MPI_LIBRARIES} 
 	hetero_cmdparser
+	# ${OpenCV_LIBS}
 	)
 # ----------------------------------------------------------------------------
 add_test(Test_Hybrid_Exchange_2D_Fittable
 	${MPIEXEC} 
-	${MPIEXEC_NUMPROC_FLAG} 4 
-	${MPIEXEC_PREFLAGS} --host head
+	${MPIEXEC_NUMPROC_FLAG} 16 
+	${MPIEXEC_PREFLAGS} --host node001
 	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-exchange_2d
 	--srcFile		${RESOURCE_INPUT_PATH}/barbara_512x512.raw
+	# --srcFile		${RESOURCE_INPUT_PATH}/ocean.raw
 	--dimx 512 
 	--dimy 512
+	| sort
+
+	)
+	
+add_test(Test_Hybrid_Exchange_2D_Oversubcribe
+	${MPIEXEC} 
+	${MPIEXEC_NUMPROC_FLAG} 16 
+	${MPIEXEC_PREFLAGS} --host node001
+	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-exchange_2d
+	--srcFile		${RESOURCE_INPUT_PATH}/barbara_500x450.raw
+	--dimx 500 
+	--dimy 450
 	| sort
 
 	)

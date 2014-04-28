@@ -120,11 +120,14 @@ int main(int argc, char *argv[])
 	int errCode;
 	MPI_File fh;
 	MPI_Init(&argc, &argv);
+
+	cout << "Terminate at " << __FILE__ << " " << __LINE__ << endl;	MPI_Finalize(); return 0;
+	MPI_Comm_rank(MPI_COMM_WORLD, &rank);	
+	MPI_Comm_size(MPI_COMM_WORLD, &size);
+	MPI_Get_processor_name(name, &length);
 	
-	// cout << "Terminate at " << __FILE__ << " " << __LINE__ << endl;	
-	// MPI_Finalize(); return 0;
-	
-	//================================================================================
+  	printf("This is rank %02d, size %02d, of %s\n", rank, size, name);
+	MPI_Barrier(MPI_COMM_WORLD);
 	//
 	MPI_Comm comm2d;          		/* Cartesian communicator */
     int dims[2];// = {0, 0};   		/* allow MPI to choose grid block dimensions */
@@ -179,7 +182,7 @@ int main(int argc, char *argv[])
 	}
 	// int3 clusterDim 	= make_int3(dims[0], dims[1], 1);
 	int  processIdx_1d 	= rank;
-	int3 processIdx_2d 	= make_int3(coords[1], coords[0], 1);
+	int3 processIdx_2d 	= make_int3(coords[0], coords[1], 1);
 	
 	/// Data type primitives
 	int starts[2];
@@ -203,10 +206,95 @@ int main(int argc, char *argv[])
 	MPI_Request request;
 	
 
-	// cout << "Terminate at " << __FILE__ << " " << __LINE__ << endl;	MPI_Finalize(); return 0;
+	cout << "Terminate at " << __FILE__ << " " << __LINE__ << endl;	MPI_Finalize(); return 0;
 	
-	//================================================================================
+	// //Start packing
+	// /// Naive approach, copy to another buffer, then send
+	// int2 index_2d;
+	double start = MPI_Wtime();
+	// int caught = 0;
+	// if(rank==master)
+	// {
+		// for(processIdx.y=0; processIdx.y<clusterDim.y; processIdx.y++)
+		// {
+			// for(processIdx.x=0; processIdx.x<clusterDim.x; processIdx.x++)
+			// {
+				// /// !!! First step: Determine size of buffer				
+				// for(featureIdx.y=0; featureIdx.y<processDim.y; featureIdx.y++)
+				// {
+					// for(featureIdx.x=0; featureIdx.x<processDim.x; featureIdx.x++)
+					// {
+						// //2D global index
+						// index_2d = make_int2(
+							// processIdx.x*processDim.x+featureIdx.x,
+							// processIdx.y*processDim.y+featureIdx.y);	
+						// if(index_2d.x==dimx) break;
+					// }
+					// if(index_2d.y==dimy) break;
+				// }				
+				// subDataDim = make_int3(featureIdx.x, featureIdx.y, 1);
+				// cout << "Sub problem size: " << subDataDim.x << " "  << subDataDim.y << endl;
+				
+				// //Second step: copy subdataSize
+				// index_2d = make_int2(
+					// processIdx.x*processDim.x+0,
+					// processIdx.y*processDim.y+0);	
+				// MPI_Datatype mysubarray;
+				// int starts[2] 	 = {index_2d.y, index_2d.x}; ///!Order is very important
+				// int subsizes[2]  = {subDataDim.y, subDataDim.x}; ///!Order is very important
+				// int bigsizes[2]  = {dimy, dimx}; ///!Order is very important
+				// MPI_Type_create_subarray(2, bigsizes, subsizes, starts,
+                                 // MPI_ORDER_C, MPI_FLOAT, &mysubarray);
+				// MPI_Type_commit(&mysubarray);
+				
+				
+				// // for(featureIdx.y=0; featureIdx.y<processDim.y; featureIdx.y++)
+				// // {
+					// // for(featureIdx.x=0; featureIdx.x<processDim.x; featureIdx.x++)
+					// // {
+						// // if(featureIdx.x == 0) // First position of first block
+						// // {
+							// // //2D global index
+							// // index_2d = make_int2(
+								// // processIdx.x*processDim.x+featureIdx.x,
+								// // processIdx.y*processDim.y+featureIdx.y);		
+							// // if(index_2d.y<dimy)
+							// // {
+								// // // cout << "Caught " << ++caught << endl;
+								// // memcpy(
+									// // // &tmp[featureIdx.y * processDim.x],
+									// // &tmp[featureIdx.y * subDataDim.x],
+									// // &h_src[index_2d.y*dimx + index_2d.x],
+									// // // processDim.x*sizeof(float));
+									// // subDataDim.x*sizeof(float));
+							// // }
+						// // }						
+					// // }
+				// // }		
 
+				// processIdx_1d = processIdx.y * clusterDim.x + processIdx.x;
+				// cout << processIdx_1d << endl;
+				
+				// /// !!! Send to worker process
+				// // Send the size of message
+				// MPI_Isend(&subDataDim, 1, MPI_DOUBLE, processIdx_1d, 0, MPI_COMM_WORLD, &request);	
+				// // Send the message
+				// // MPI_Isend(tmp, subDataDim.x *  subDataDim.y, MPI_FLOAT, processIdx_1d, 1, MPI_COMM_WORLD, &request);	
+				// // MPI_Isend(h_src, 1, mysubarray, processIdx_1d, 1, MPI_COMM_WORLD, &request);	
+				// // MPI_Send(&(bigarray[0][0]), 1, mysubarray, receiver, ourtag, MPI_COMM_WORLD);
+				// cout << "Sent" << endl;
+				// // free(tmp);
+				
+				
+				// MPI_Type_free(&mysubarray);
+			// }
+		// }
+	// }
+	// MPI_Barrier(MPI_COMM_WORLD);
+	// // MPI_Recv(p_src, processDim.x*processDim.y, MPI_FLOAT, master, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+	// MPI_Recv(&subDataDim, 1, MPI_DOUBLE, master, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+	// //MPI_Recv(p_src, subDataDim.x *  subDataDim.y, MPI_FLOAT, master, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+	
 	///!!!Do not need to pack, calculate per-process directly
 	/// !! First step: Determine size of buffer		
 	processIdx = processIdx_2d;
@@ -230,8 +318,8 @@ int main(int argc, char *argv[])
 	cout << "Sub problem size: " << subDataDim.x << " "  << subDataDim.y << " at " << rank << " " << coords[1] << " " << coords[0] << endl;
 	MPI_Barrier(MPI_COMM_WORLD);
 	
-	cout << "Terminate at " << __FILE__ << " " << __LINE__ << endl;
-	// MPI_Finalize(); return 0;
+	
+	MPI_Finalize(); return 0;
 	
 	
 	float *p_src;
@@ -279,10 +367,7 @@ int main(int argc, char *argv[])
 	cout << "bigsizes \t" << bigsizes[1] << " \t" << bigsizes[0] << " \t at " << rank << "("<<coords[1]<<", "<<coords[0] <<")"<<endl;
 	cout << "subsizes \t" << subsizes[1] << " \t" << subsizes[0] << " \t at " << rank << "("<<coords[1]<<", "<<coords[0] <<")"<<endl;
 	cout << "startsId \t" << starts[1] << " \t" << starts[0] << " \t at " << rank << "("<<coords[1]<<", "<<coords[0] <<")"<< endl;
-	// MPI_Finalize(); return 0;
-	
-	//-------------------------------------------------------------------------------------
-	
+	MPI_Finalize(); return 0;
 	
 	
 	
@@ -309,8 +394,58 @@ int main(int argc, char *argv[])
 	if(p_src[0] !=0)
 		cout << "Caught " << endl;
 	cout << "Debug at " << __FILE__ << " " << __LINE__ << endl;	
+	//------------------------------------------------------------------------------
+	// fstream fs;		
+	// // if(rank==0)
+	// // {
+	// fs.open(srcFile.c_str(), ios::in|ios::binary);						
+	// // cout << "Start read from " << rank << endl;
+	// if (!fs.is_open())														
+	// {																		
+		// printf("Cannot open file '%s' in file '%s' at line %i\n",			
+		// srcFile, __FILE__, __LINE__);										
+		// return 1;															
+	// }																		
+																
+	// // cout << "File opened from " << rank << endl;
+	// // cout << "Sub problem size: " << subDataDim.x << " "  << subDataDim.y << endl;
+	// // cout << "Dimension size: " << dimx << " "  << dimy << endl;
 	
-	//---------------------------------------------------------------------------
+	// processIdx.x = rank%clusterDim.x;
+	// processIdx.y = rank/clusterDim.x;
+	
+	// for(featureIdx.y=0; featureIdx.y<subDataDim.y; featureIdx.y++)
+	// {
+		// for(featureIdx.x=0; featureIdx.x<subDataDim.x; featureIdx.x++)
+		// {
+			// if(featureIdx.x == 0) // First position of row
+			// {
+				// //2D global index
+				// index_2d = make_int2(
+					// processIdx.x*subDataDim.x+featureIdx.x,
+					// processIdx.y*subDataDim.y+featureIdx.y);	
+				// // cout << "Global Index 2d: " << index_2d.x << " "  << index_2d.y << endl;
+				// if(index_2d.y<dimy) //For handling the boundary problem
+				// {					
+					// fs.seekg((index_2d.y*dimx + index_2d.x)*sizeof(float), ios::beg);					
+					// fs.read(reinterpret_cast<char*>(&p_src[featureIdx.y * subDataDim.x]), subDataDim.x*sizeof(float));
+					// // if(p_src[featureIdx.y * subDataDim.x] !=0)
+						// // cout << "Caught " << ++caught << endl;
+				// }
+			// }						
+		// }
+	// }	
+	
+	// fs.close();			
+	//------------------------------------------------------------------------------
+	
+	
+	
+		
+	MPI_Barrier(MPI_COMM_WORLD);	
+	cout << "Finish read from " << rank << endl;
+	double elapsed = MPI_Wtime() - start;
+	if(rank==master) cout << "Time : " << elapsed << " s " << endl;
 	
 	/// Debug, write partially
 	MPI_Barrier(MPI_COMM_WORLD);
@@ -324,14 +459,11 @@ int main(int argc, char *argv[])
 	// checkWriteFile(filename, h_tmp, subDataDim.x*subDataDim.y*sizeof(float));
 	// checkWriteFile(filename, p_src, processDim.x*processDim.y*sizeof(float));
 	checkWriteFile(filename, p_src, subDataDim.x*subDataDim.y*sizeof(float));
-	// MPI_Finalize(); return 0;
-	// MPI_Finalize(); return 0;
-	
-	//---------------------------------------------
+	MPI_Finalize(); return 0;
 	//================================================================================
 	///!!! Extend the memory to form another buffer
 	int3 extDataDim		{0, 0, 0};
-	int3 halo = {12, 12, 12};
+	int3 halo = {5, 5, 5};
 	// if(processIdx_2d.x !=0) halo.x = 5;
 	// if(processIdx_2d.y !=0) halo.y = 5;
 	int leftRank, rightRank;
@@ -592,7 +724,5 @@ int main(int argc, char *argv[])
 	
  	MPI_Finalize();
 	return 0;
-	
 }
 	
-

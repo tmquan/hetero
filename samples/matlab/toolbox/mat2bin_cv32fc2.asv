@@ -1,0 +1,21 @@
+function mat2bin_cv32fc2(data, filename)
+    dim   = size(data);
+    %%
+    total = numel(data);
+
+    interleaved = zeros(total);
+
+    %% Alternate real and imaginary data
+    newrow = 1;
+    for row = 1:dimx
+        interleaved(newrow + 0,:,:,:) = real(data(row,:,:,:));
+        interleaved(newrow + 1,:,:,:) = imag(data(row,:,:,:));
+        newrow = newrow + 2;
+    end
+
+    %% Create the file
+    fid = fopen(filename, 'wb');
+        fwrite(fid, interleaved, 'single');
+    fclose(fid);
+end
+
