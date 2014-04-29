@@ -18,17 +18,17 @@ public:
 	
 	void loadHostFile(string);
 	// void configureMaxProcesses();
-	// void setMaxProcess(int); //should be less than or equal to maxProcesses
-	void setNumProcess(int); //should be less than or equal to maxProcesses
-	void setNumTasks(int); // Can be greater than maxProcesses
+	// void setMaxProcess(int); //should be less than or equal to maxClusterProcesses
+	void setNumProcess(int); //should be less than or equal to maxClusterProcesses
+	void setNumTasks(int); // Can be greater than maxClusterProcesses
 	void printInfo(); 
 	void addApplication(string); 
 	void run(); 
 private:
-	int maxProcesses;
-	int numProcesses;
+	int maxClusterProcesses;
+	int numClusterProcesses;
 	int numNodes;
-	int numTasks;
+	int numVirtualProcesses;
 	
 	string command; 	// For application
 	string application; // For application
@@ -44,12 +44,12 @@ private:
 
 heteroSystem1D::heteroSystem1D()
 {
-	this->numTasks 		= 0;
-	this->numNodes 		= 0;
-	this->maxProcesses 	= 0;
-	this->numProcesses	= -1;
+	this->numNodes 				= 0;
+	this->numVirtualProcesses 	= 0;
+	this->maxClusterProcesses 	= 0;
+	this->numClusterProcesses	= -1;
 	this->nodeList.resize(this->numNodes);
-	// this->chunkDim		= this->numProcesses;
+	// this->chunkDim		= this->numClusterProcesses;
 	// this->chunkIdx		= 0;
 }
 
@@ -85,10 +85,10 @@ heteroSystem1D::heteroSystem1D(string hostFile)
 	// Read the hostfile and decode to system parameters
 	string line;
 	
-	this->numTasks 		= 0;
-	this->numNodes 		= 0;
-	this->maxProcesses 	= 0;
-	this->numProcesses	= -1;
+	this->numNodes 				= 0;
+	this->numVirtualProcesses 	= 0;
+	this->maxClusterProcesses 	= 0;
+	this->numClusterProcesses	= -1;
 	
 	cout << "Content of Host file   :	"  << endl;
 	getline(ifs,line);
@@ -122,14 +122,14 @@ heteroSystem1D::heteroSystem1D(string hostFile)
 				// ss << *(component.end());
 				ss << *(++component.begin());
 				ss >> slots;
-				this->maxProcesses += slots;
+				this->maxClusterProcesses += slots;
 			}
 		}
 	}
 
-	// Indicate that the number of processes will be the maxProcesses (full GPU utilizations)
-	this->numProcesses = this->maxProcesses;
-	// this->chunkDim	   = this->numProcesses;
+	// Indicate that the number of processes will be the maxClusterProcesses (full GPU utilizations)
+	this->numClusterProcesses = this->maxClusterProcesses;
+	// this->chunkDim	   = this->numClusterProcesses;
 	// this->chunkIdx	   = 0;
 	this->hostFile     = hostFile;
 	ifs.close();
@@ -142,8 +142,8 @@ heteroSystem1D::~heteroSystem1D()
 
 void heteroSystem1D::printInfo()
 {
-	cout << "Number of maxProcesses :	" << maxProcesses << endl;
-	cout << "Number of Processes    :	" << numProcesses << endl;
+	cout << "Number of maxClusterProcesses :	" << maxClusterProcesses << endl;
+	cout << "Number of Processes    :	" << numClusterProcesses << endl;
 	cout << "Number of Nodes        :	" << numNodes << endl;
 	
 	if(numNodes>0)
@@ -158,67 +158,67 @@ void heteroSystem1D::addApplication(string application)
 	this->application =  application;
 }
 
-void heteroSystem1D::setNumTasks(int numTasks)
+void heteroSystem1D::setNumTasks(int numVirtualProcesses)
 {
-	cout << "Number of tasks :" << numTasks << endl;
-	this->numTasks =  numTasks;
+	cout << "Number of tasks :" << numVirtualProcesses << endl;
+	this->numVirtualProcesses =  numVirtualProcesses;
 }
 
 void heteroSystem1D::run()
 {
-	// Declare hyper rank indices
-	// int global_rank_index = 0;
-	// int local_rank_index = 0;
-	int rankIdx  = 0;
-	int chunkDim = this->numProcesses;
+	// // Declare hyper rank indices
+	// // int global_rank_index = 0;
+	// // int local_rank_index = 0;
+	// int rankIdx  = 0;
+	// int chunkDim = this->numClusterProcesses;
 	
-	//Round up the chunk Dimension
-	int hyperDim = (numTasks/chunkDim + ((numTasks%chunkDim)?1:0));
-	// cout << "Hyper Dimension : " << hyperDim << endl;
+	// //Round up the chunk Dimension
+	// int hyperDim = (numVirtualProcesses/chunkDim + ((numVirtualProcesses%chunkDim)?1:0));
+	// // cout << "Hyper Dimension : " << hyperDim << endl;
 	
-	// int thisNumTasks=0;
-	int taskIdx = 0;
-	int chunkIdx = 0;
-	//
-	for(chunkIdx=0; chunkIdx<hyperDim; chunkIdx++)
-	{
-		for(rankIdx=0; rankIdx<chunkDim; rankIdx++)
-		{
-			//chunkIdx*chunkDim will be the offset to pass into the application
-			taskIdx = chunkIdx*chunkDim + rankIdx;
-			if(taskIdx==(numTasks-1)) break;
-		}
-		// cout << "Task Index " << taskIdx << endl;
-		// Count how many processes we need to launch
-		// thisNumTasks = ((taskIdx+1)%chunkDim)?((taskIdx+1)%chunkDim):chunkDim;
-		// cout << thisNumTasks << endl;
-		numProcesses = ((taskIdx+1)%chunkDim)?((taskIdx+1)%chunkDim):chunkDim;
-		//////////////////////////////////////////////////////////
-		stringstream ss;
-		ss << "mpirun ";
-		// ss << "  /cm/shared/custom/apps/openmpi-gpudirect/gcc/64/1.7.2/bin/mpirun ";
-		ss << " --np " << numProcesses;
-		// ss << " --np " << thisNumTasks;
-		ss << " --host ";
-		for(vector<string>::iterator it = nodeList.begin(); it!=nodeList.end(); ++it)
-		{
-			ss <<  *(it);
-			if(it!=nodeList.end()-1)
-			ss << ",";
-		}
-		// ss << " --byslot ";
-		// ss << " --machinefile " << hostFile;
-		ss << " " << application;
-		ss << " |sort";
+	// // int thisNumTasks=0;
+	// int taskIdx = 0;
+	// int chunkIdx = 0;
+	// //
+	// for(chunkIdx=0; chunkIdx<hyperDim; chunkIdx++)
+	// {
+		// for(rankIdx=0; rankIdx<chunkDim; rankIdx++)
+		// {
+			// //chunkIdx*chunkDim will be the offset to pass into the application
+			// taskIdx = chunkIdx*chunkDim + rankIdx;
+			// if(taskIdx==(numVirtualProcesses-1)) break;
+		// }
+		// // cout << "Task Index " << taskIdx << endl;
+		// // Count how many processes we need to launch
+		// // thisNumTasks = ((taskIdx+1)%chunkDim)?((taskIdx+1)%chunkDim):chunkDim;
+		// // cout << thisNumTasks << endl;
+		// numClusterProcesses = ((taskIdx+1)%chunkDim)?((taskIdx+1)%chunkDim):chunkDim;
+		// //////////////////////////////////////////////////////////
+		// stringstream ss;
+		// ss << "mpirun ";
+		// // ss << "  /cm/shared/custom/apps/openmpi-gpudirect/gcc/64/1.7.2/bin/mpirun ";
+		// ss << " --np " << numClusterProcesses;
+		// // ss << " --np " << thisNumTasks;
+		// ss << " --host ";
+		// for(vector<string>::iterator it = nodeList.begin(); it!=nodeList.end(); ++it)
+		// {
+			// ss <<  *(it);
+			// if(it!=nodeList.end()-1)
+			// ss << ",";
+		// }
+		// // ss << " --byslot ";
+		// // ss << " --machinefile " << hostFile;
+		// ss << " " << application;
+		// ss << " |sort";
 		
 		
-		ss >> command;
-		command = ss.str(); //Convert string stream to string
-		cout << "MPI Command Line :" << endl;
-		cout << "#" << command << endl; // Debug
-		// // system(command.c_str());
-		system(command.c_str());
-	}
+		// ss >> command;
+		// command = ss.str(); //Convert string stream to string
+		// cout << "MPI Command Line :" << endl;
+		// cout << "#" << command << endl; // Debug
+		// // // system(command.c_str());
+		// system(command.c_str());
+	// }
 }
 //----------------------------------------------------------------------------
 int main(int argc, char **argv)
