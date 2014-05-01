@@ -1,0 +1,5 @@
+message(${CMAKE_CURRENT_SOURCE_DIR})
+add_subdirectory(float_stencil_3d07)
+# add_subdirectory(float_stencil_3d13)
+# add_subdirectory(float_stencil_3d19)
+# add_subdirectory(float_stencil_3d27)

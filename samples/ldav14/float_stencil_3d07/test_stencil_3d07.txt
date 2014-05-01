@@ -1,0 +1,257 @@
+Finding nodes that are alive...
+pkilluser will be issued on nodes: node001 node002
+
+-> Are you sure? (y/n) Running pkilluser.
+
+[31m--------------------------------------------------------------------------------
+[0m[32mnode001:	[0mWorking directory: /home/tmquan/hetero/samples/ldav14/float_stencil_3d07
+[32mnode001:	[0mKilling 5 PIDs: 18041 18042 18072 18073 18074 18075 
+[31m--------------------------------------------------------------------------------
+[0m[32mnode002:	[0mWorking directory: /home/tmquan/hetero/samples/ldav14/float_stencil_3d07
+[32mnode002:	[0mKilling 11 PIDs: 33367 33368 33398 33399 33400 33402 33410 33411 33441 33442 33443 33444 
+[31m--------------------------------------------------------------------------------
+[0mFinding nodes that are alive...
+Running pexec.
+
+[31m--------------------------------------------------------------------------------
+[0m[32mnode001:	[0mWorking directory: /home/tmquan/hetero/samples/ldav14/float_stencil_3d07
+[31m--------------------------------------------------------------------------------
+[0m[32mnode002:	[0mWorking directory: /home/tmquan/hetero/samples/ldav14/float_stencil_3d07
+[31m--------------------------------------------------------------------------------
+[0mFinding nodes that are alive...
+Running pexec.
+
+[31m--------------------------------------------------------------------------------
+[0m[32mnode001:	[0mWorking directory: /home/tmquan/hetero/samples/ldav14/float_stencil_3d07
+[32mnode001:	[0mThu May  1 09:52:10 2014       
+[32mnode001:	[0m+------------------------------------------------------+                       
+[32mnode001:	[0m| NVIDIA-SMI 5.319.72   Driver Version: 319.72         |                       
+[32mnode001:	[0m|-------------------------------+----------------------+----------------------+
+[32mnode001:	[0m| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+[32mnode001:	[0m| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+[32mnode001:	[0m|===============================+======================+======================|
+[32mnode001:	[0m|   0  Tesla M2090         On   | 0000:0C:00.0     Off |                    0 |
+[32mnode001:	[0m| N/A   N/A    P1    77W /  N/A |       11MB /  5375MB |      0%      Default |
+[32mnode001:	[0m+-------------------------------+----------------------+----------------------+
+[32mnode001:	[0m|   1  Tesla M2090         On   | 0000:48:00.0     Off |                    0 |
+[32mnode001:	[0m| N/A   N/A    P1    78W /  N/A |       11MB /  5375MB |      0%      Default |
+[32mnode001:	[0m+-------------------------------+----------------------+----------------------+
+[32mnode001:	[0m|   2  Tesla M2090         On   | 0000:49:00.0     Off |                    0 |
+[32mnode001:	[0m| N/A   N/A    P1    76W /  N/A |       11MB /  5375MB |      0%      Default |
+[32mnode001:	[0m+-------------------------------+----------------------+----------------------+
+[32mnode001:	[0m|   3  Tesla M2090         On   | 0000:54:00.0     Off |                    0 |
+[32mnode001:	[0m| N/A   N/A    P1    79W /  N/A |       11MB /  5375MB |      0%      Default |
+[32mnode001:	[0m+-------------------------------+----------------------+----------------------+
+[32mnode001:	[0m|   4  Tesla M2090         On   | 0000:55:00.0     Off |                    0 |
+[32mnode001:	[0m| N/A   N/A    P1    78W /  N/A |       11MB /  5375MB |      0%      Default |
+[32mnode001:	[0m+-------------------------------+----------------------+----------------------+
+[32mnode001:	[0m|   5  Tesla M2090         On   | 0000:5B:00.0     Off |                    0 |
+[32mnode001:	[0m| N/A   N/A    P1    79W /  N/A |       11MB /  5375MB |      0%      Default |
+[32mnode001:	[0m+-------------------------------+----------------------+----------------------+
+[32mnode001:	[0m|   6  Tesla M2090         On   | 0000:5C:00.0     Off |                    0 |
+[32mnode001:	[0m| N/A   N/A    P1    79W /  N/A |       11MB /  5375MB |      0%      Default |
+[32mnode001:	[0m+-------------------------------+----------------------+----------------------+
+[32mnode001:	[0m                                                                               
+[32mnode001:	[0m+-----------------------------------------------------------------------------+
+[32mnode001:	[0m| Compute processes:                                               GPU Memory |
+[32mnode001:	[0m|  GPU       PID  Process name                                     Usage      |
+[32mnode001:	[0m|=============================================================================|
+[32mnode001:	[0m|  No running compute processes found                                         |
+[32mnode001:	[0m+-----------------------------------------------------------------------------+
+[31m--------------------------------------------------------------------------------
+[0m[32mnode002:	[0mWorking directory: /home/tmquan/hetero/samples/ldav14/float_stencil_3d07
+[32mnode002:	[0mThu May  1 09:52:11 2014       
+[32mnode002:	[0m+------------------------------------------------------+                       
+[32mnode002:	[0m| NVIDIA-SMI 5.319.72   Driver Version: 319.72         |                       
+[32mnode002:	[0m|-------------------------------+----------------------+----------------------+
+[32mnode002:	[0m| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+[32mnode002:	[0m| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+[32mnode002:	[0m|===============================+======================+======================|
+[32mnode002:	[0m|   0  Tesla M2090         On   | 0000:0B:00.0     Off |                    0 |
+[32mnode002:	[0m| N/A   N/A   P12    31W /  N/A |       11MB /  5375MB |      0%      Default |
+[32mnode002:	[0m+-------------------------------+----------------------+----------------------+
+[32mnode002:	[0m|   1  Tesla M2090         On   | 0000:0C:00.0     Off |                    0 |
+[32mnode002:	[0m| N/A   N/A   P12    31W /  N/A |       11MB /  5375MB |      0%      Default |
+[32mnode002:	[0m+-------------------------------+----------------------+----------------------+
+[32mnode002:	[0m|   2  Tesla M2090         On   | 0000:48:00.0     Off |                    0 |
+[32mnode002:	[0m| N/A   N/A   P12    31W /  N/A |       11MB /  5375MB |      0%      Default |
+[32mnode002:	[0m+-------------------------------+----------------------+----------------------+
+[32mnode002:	[0m|   3  Tesla M2090         On   | 0000:49:00.0     Off |                    0 |
+[32mnode002:	[0m| N/A   N/A    P2    76W /  N/A |       11MB /  5375MB |      0%      Default |
+[32mnode002:	[0m+-------------------------------+----------------------+----------------------+
+[32mnode002:	[0m|   4  Tesla M2090         On   | 0000:54:00.0     Off |                    0 |
+[32mnode002:	[0m| N/A   N/A    P7    75W /  N/A |       11MB /  5375MB |      0%      Default |
+[32mnode002:	[0m+-------------------------------+----------------------+----------------------+
+[32mnode002:	[0m|   5  Tesla M2090         On   | 0000:55:00.0     Off |                    0 |
+[32mnode002:	[0m| N/A   N/A   P12    32W /  N/A |       11MB /  5375MB |      0%      Default |
+[32mnode002:	[0m+-------------------------------+----------------------+----------------------+
+[32mnode002:	[0m|   6  Tesla M2090         On   | 0000:5B:00.0     Off |                    0 |
+[32mnode002:	[0m| N/A   N/A   P12    31W /  N/A |       11MB /  5375MB |      0%      Default |
+[32mnode002:	[0m+-------------------------------+----------------------+----------------------+
+[32mnode002:	[0m|   7  Tesla M2090         On   | 0000:5C:00.0     Off |                    0 |
+[32mnode002:	[0m| N/A   N/A   P12    32W /  N/A |       11MB /  5375MB |      0%      Default |
+[32mnode002:	[0m+-------------------------------+----------------------+----------------------+
+[32mnode002:	[0m                                                                               
+[32mnode002:	[0m+-----------------------------------------------------------------------------+
+[32mnode002:	[0m| Compute processes:                                               GPU Memory |
+[32mnode002:	[0m|  GPU       PID  Process name                                     Usage      |
+[32mnode002:	[0m|=============================================================================|
+[32mnode002:	[0m|  No running compute processes found                                         |
+[32mnode002:	[0m+-----------------------------------------------------------------------------+
+[31m--------------------------------------------------------------------------------
+[0mpexec -n=node001 -t=0 "nvprof --print-gpu-trace ../../../build/bin/test_float_stencil_3d07 -dx=512 -dy=512 -dz=512 -bx=$bx -by=$by -bz=$bz -num=1 "
+Timeout reset to 0 seconds
+Finding nodes that are alive...
+Running pexec.
+
+[31m--------------------------------------------------------------------------------
+[0m[32mnode001:	[0mWorking directory: /home/tmquan/hetero/samples/ldav14/float_stencil_3d07
+[31m--------------------------------------------------------------------------------
+[0m
+
+pexec -n=node002 -t=0 "nvprof --metrics flops_sp,gld_throughput,gst_throughput,sm_efficiency,achieved_occupancy ../../../build/bin/test_float_stencil_3d07 -dx=512 -dy=512 -dz=512 -bx=$bx -by=$by -bz=$bz -num=1 "
+Timeout reset to 0 seconds
+Finding nodes that are alive...
+Running pexec.
+
+[31m--------------------------------------------------------------------------------
+[0m[32mnode002:	[0mWorking directory: /home/tmquan/hetero/samples/ldav14/float_stencil_3d07
+[31m--------------------------------------------------------------------------------
+[0m
+
+pexec -n=node001 -t=0 "nvprof --print-gpu-trace ../../../build/bin/test_float_stencil_3d07 -dx=512 -dy=512 -dz=512 -bx=$bx -by=$by -bz=$bz -num=1 "
+Timeout reset to 0 seconds
+Finding nodes that are alive...
+Running pexec.
+
+[31m--------------------------------------------------------------------------------
+[0m[32mnode001:	[0mWorking directory: /home/tmquan/hetero/samples/ldav14/float_stencil_3d07
+[31m--------------------------------------------------------------------------------
+[0m
+
+pexec -n=node002 -t=0 "nvprof --metrics flops_sp,gld_throughput,gst_throughput,sm_efficiency,achieved_occupancy ../../../build/bin/test_float_stencil_3d07 -dx=512 -dy=512 -dz=512 -bx=$bx -by=$by -bz=$bz -num=1 "
+Timeout reset to 0 seconds
+Finding nodes that are alive...
+Running pexec.
+
+[31m--------------------------------------------------------------------------------
+[0m[32mnode002:	[0mWorking directory: /home/tmquan/hetero/samples/ldav14/float_stencil_3d07
+[31m--------------------------------------------------------------------------------
+[0m
+
+pexec -n=node001 -t=0 "nvprof --print-gpu-trace ../../../build/bin/test_float_stencil_3d07 -dx=512 -dy=512 -dz=512 -bx=$bx -by=$by -bz=$bz -num=1 "
+Timeout reset to 0 seconds
+Finding nodes that are alive...
+Running pexec.
+
+[31m--------------------------------------------------------------------------------
+[0m[32mnode001:	[0mWorking directory: /home/tmquan/hetero/samples/ldav14/float_stencil_3d07
+[31m--------------------------------------------------------------------------------
+[0m
+
+pexec -n=node002 -t=0 "nvprof --metrics flops_sp,gld_throughput,gst_throughput,sm_efficiency,achieved_occupancy ../../../build/bin/test_float_stencil_3d07 -dx=512 -dy=512 -dz=512 -bx=$bx -by=$by -bz=$bz -num=1 "
+Timeout reset to 0 seconds
+Finding nodes that are alive...
+Running pexec.
+
+[31m--------------------------------------------------------------------------------
+[0m[32mnode002:	[0mWorking directory: /home/tmquan/hetero/samples/ldav14/float_stencil_3d07
+[31m--------------------------------------------------------------------------------
+[0m
+
+pexec -n=node001 -t=0 "nvprof --print-gpu-trace ../../../build/bin/test_float_stencil_3d07 -dx=512 -dy=512 -dz=512 -bx=$bx -by=$by -bz=$bz -num=1 "
+Timeout reset to 0 seconds
+Finding nodes that are alive...
+Running pexec.
+
+[31m--------------------------------------------------------------------------------
+[0m[32mnode001:	[0mWorking directory: /home/tmquan/hetero/samples/ldav14/float_stencil_3d07
+[31m--------------------------------------------------------------------------------
+[0m
+
+pexec -n=node002 -t=0 "nvprof --metrics flops_sp,gld_throughput,gst_throughput,sm_efficiency,achieved_occupancy ../../../build/bin/test_float_stencil_3d07 -dx=512 -dy=512 -dz=512 -bx=$bx -by=$by -bz=$bz -num=1 "
+Timeout reset to 0 seconds
+Finding nodes that are alive...
+Running pexec.
+
+[31m--------------------------------------------------------------------------------
+[0m[32mnode002:	[0mWorking directory: /home/tmquan/hetero/samples/ldav14/float_stencil_3d07
+[31m--------------------------------------------------------------------------------
+[0m
+
+pexec -n=node001 -t=0 "nvprof --print-gpu-trace ../../../build/bin/test_float_stencil_3d07 -dx=512 -dy=512 -dz=512 -bx=$bx -by=$by -bz=$bz -num=1 "
+Timeout reset to 0 seconds
+Finding nodes that are alive...
+Running pexec.
+
+[31m--------------------------------------------------------------------------------
+[0m[32mnode001:	[0mWorking directory: /home/tmquan/hetero/samples/ldav14/float_stencil_3d07
+[31m--------------------------------------------------------------------------------
+[0m
+
+pexec -n=node002 -t=0 "nvprof --metrics flops_sp,gld_throughput,gst_throughput,sm_efficiency,achieved_occupancy ../../../build/bin/test_float_stencil_3d07 -dx=512 -dy=512 -dz=512 -bx=$bx -by=$by -bz=$bz -num=1 "
+Timeout reset to 0 seconds
+Finding nodes that are alive...
+Running pexec.
+
+[31m--------------------------------------------------------------------------------
+[0m[32mnode002:	[0mWorking directory: /home/tmquan/hetero/samples/ldav14/float_stencil_3d07
+[31m--------------------------------------------------------------------------------
+[0m
+
+pexec -n=node001 -t=0 "nvprof --print-gpu-trace ../../../build/bin/test_float_stencil_3d07 -dx=512 -dy=512 -dz=512 -bx=$bx -by=$by -bz=$bz -num=1 "
+Timeout reset to 0 seconds
+Finding nodes that are alive...
+Running pexec.
+
+[31m--------------------------------------------------------------------------------
+[0m[32mnode001:	[0mWorking directory: /home/tmquan/hetero/samples/ldav14/float_stencil_3d07
+[31m--------------------------------------------------------------------------------
+[0m
+
+pexec -n=node002 -t=0 "nvprof --metrics flops_sp,gld_throughput,gst_throughput,sm_efficiency,achieved_occupancy ../../../build/bin/test_float_stencil_3d07 -dx=512 -dy=512 -dz=512 -bx=$bx -by=$by -bz=$bz -num=1 "
+Timeout reset to 0 seconds
+Finding nodes that are alive...
+Running pexec.
+
+[31m--------------------------------------------------------------------------------
+[0m[32mnode002:	[0mWorking directory: /home/tmquan/hetero/samples/ldav14/float_stencil_3d07
+Error: received signal .. stop processing  
+
+
+pexec -n=node001 -t=0 "nvprof --print-gpu-trace ../../../build/bin/test_float_stencil_3d07 -dx=512 -dy=512 -dz=512 -bx=$bx -by=$by -bz=$bz -num=1 "
+Timeout reset to 0 seconds
+Finding nodes that are alive...
+Running pexec.
+
+[31m--------------------------------------------------------------------------------
+[0m[32mnode001:	[0mWorking directory: /home/tmquan/hetero/samples/ldav14/float_stencil_3d07
+Error: received signal .. stop processing  
+
+
+pexec -n=node002 -t=0 "nvprof --metrics flops_sp,gld_throughput,gst_throughput,sm_efficiency,achieved_occupancy ../../../build/bin/test_float_stencil_3d07 -dx=512 -dy=512 -dz=512 -bx=$bx -by=$by -bz=$bz -num=1 "
+Timeout reset to 0 seconds
+Finding nodes that are alive...
+Running pexec.
+
+[31m--------------------------------------------------------------------------------
+[0m[32mnode002:	[0mWorking directory: /home/tmquan/hetero/samples/ldav14/float_stencil_3d07
+Error: received signal .. stop processing  
+
+
+pexec -n=node001 -t=0 "nvprof --print-gpu-trace ../../../build/bin/test_float_stencil_3d07 -dx=512 -dy=512 -dz=512 -bx=$bx -by=$by -bz=$bz -num=1 "
+Timeout reset to 0 seconds
+Finding nodes that are alive...
+Running pexec.
+
+[31m--------------------------------------------------------------------------------
+[0mError: received signal .. stop processing  
+
+
+pexec -n=node002 -t=0 "nvprof --metrics flops_sp,gld_throughput,gst_throughput,sm_efficiency,achieved_occupancy ../../../build/bin/test_float_stencil_3d07 -dx=512 -dy=512 -dz=512 -bx=$bx -by=$by -bz=$bz -num=1 "
+Timeout reset to 0 seconds
+Finding nodes that are alive...
+Running pexec.
+
+[31m--------------------------------------------------------------------------------
+[0m

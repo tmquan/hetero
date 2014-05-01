@@ -255,8 +255,8 @@ int main(int argc, char **argv)
 	int dimx = 500;
 	int dimy = 450;
 	int dimz = 400;
-	// int3 processDim		{128, 128,  128};
-	// int3 processDim		{256, 256,  1};
+	// int3 processDim		{256, 256,  256};
+	// int3 processDim		{500, 225,  400};
 	int3 processDim		{300, 300,  300};
 	int3 virtualDim    	{(dimx/processDim.x + ((dimx%processDim.x)?1:0)),
 						 (dimy/processDim.y + ((dimy%processDim.y)?1:0)),
@@ -264,9 +264,10 @@ int main(int argc, char **argv)
 						 
 	int virtualSize = virtualDim.x*virtualDim.y*virtualDim.z;
 	int3 haloDim {12, 12, 12};
+	// int3 haloDim {0, 0, 0};
 	
 	system.setVirtualSize(virtualSize);
-	system.setNumProcesses(8);
+	system.setNumProcesses(5);
 	
 	system.getNumRun();
 

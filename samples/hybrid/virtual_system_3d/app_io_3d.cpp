@@ -14,6 +14,20 @@
 #include <assert.h>
 #include <hetero_cmdparser.hpp>
 
+float ReverseFloat( const float inFloat )
+{
+   float retVal;
+   char *floatToConvert = ( char* ) & inFloat;
+   char *returnFloat = ( char* ) & retVal;
+
+   // swap the bytes into a temporary buffer
+   returnFloat[0] = floatToConvert[3];
+   returnFloat[1] = floatToConvert[2];
+   returnFloat[2] = floatToConvert[1];
+   returnFloat[3] = floatToConvert[0];
+
+   return retVal;
+}
 
 using namespace std;
 // using namespace cv;
@@ -135,7 +149,7 @@ int main(int argc, char *argv[])
 	MPI_Get_processor_name(name, &length);
 	MPI_Barrier(MPI_COMM_WORLD);
 	//================================================================================
-	// Manually determine rank in 2d, comm2d will work in this case
+	// Manually determine rank in 3d, comm3d will work in this case
 	int virtualRank = execId * maxProcs + rank;
 	int3 virtualIdx = make_int3(virtualRank % (virtualDimx*virtualDimy) % virtualDimx,
 								virtualRank % (virtualDimx*virtualDimy) / virtualDimx,
@@ -210,15 +224,15 @@ int main(int argc, char *argv[])
 	
 	
 	///!Order is very important
-	bigsizes[0] = dimz;
-	bigsizes[1] = dimx;
-	bigsizes[2] = dimy;
+	bigsizes[0] = dimz; //0 2
+	bigsizes[1] = dimy; //1 0
+	bigsizes[2] = dimx;	//2 1
 	subsizes[0] = closedChunkDim.z;
-	subsizes[1] = closedChunkDim.x;
-	subsizes[2] = closedChunkDim.y;
+	subsizes[1] = closedChunkDim.y;
+	subsizes[2] = closedChunkDim.x;
 	starts[0] 	= index_3d.z;
-	starts[1] 	= index_3d.x;
-	starts[2] 	= index_3d.y;
+	starts[1] 	= index_3d.y;
+	starts[2] 	= index_3d.x;
 	MPI_Datatype closedChunkArray;		///!!! Declare the data type
 	MPI_Type_create_subarray(3, bigsizes, subsizes, starts, MPI_ORDER_C, MPI_FLOAT, &closedChunkArray);
 	MPI_Type_commit(&closedChunkArray);	///!!! Commit the data type
@@ -265,9 +279,9 @@ int main(int argc, char *argv[])
 	bool atBoundariesFrontBack = (frontRank<0)|(backRank>(virtualDimz-1));
 	
 	int3 openedChunkDim		{0, 0, 0};
-	openedChunkDim = make_int3(closedChunkDim.x + ((atBoundariesLeftRight)?(1*halo.x):(2*halo.x)),
-							   closedChunkDim.y + ((atBoundariesTopBottom)?(1*halo.y):(2*halo.y)),
-							   closedChunkDim.z + ((atBoundariesFrontBack)?(1*halo.z):(2*halo.z)));
+	openedChunkDim = make_int3(closedChunkDim.x + ((atBoundariesLeftRight)?((virtualDimx==1)?0*halo.x:1*halo.x):(2*halo.x)),
+							   closedChunkDim.y + ((atBoundariesTopBottom)?((virtualDimy==1)?0*halo.y:1*halo.y):(2*halo.y)),
+							   closedChunkDim.z + ((atBoundariesFrontBack)?((virtualDimz==1)?0*halo.z:1*halo.z):(2*halo.z)));
 	printf("Sub opened chunk size: openedChunkDim.x=%05d, openedChunkDim.y=%05d, openedChunkDim.z=%05d at virtualIdx.x=%02d, virtualIdx.y=%02d, virtualIdx.z=%02d (virtualRank=%02d)\n", 
 		openedChunkDim.x, openedChunkDim.y, openedChunkDim.z,
 	    virtualIdx.x, virtualIdx.y, virtualIdx.z, virtualRank, name);
@@ -275,14 +289,14 @@ int main(int argc, char *argv[])
 	
 	// Redefine the data type
 	bigsizes[0] = dimz;
-	bigsizes[1] = dimx;
-	bigsizes[2] = dimy;
+	bigsizes[1] = dimy;
+	bigsizes[2] = dimx;
 	subsizes[0] = openedChunkDim.z;
-	subsizes[1] = openedChunkDim.x;
-	subsizes[2] = openedChunkDim.y;
+	subsizes[1] = openedChunkDim.y;
+	subsizes[2] = openedChunkDim.x;
 	starts[0] 	= (frontRank<0)?0:(index_3d.z-halo.z);		///!!! Handle the boundary start indices
-	starts[1] 	= (leftRank<0)?0:(index_3d.x-halo.x);		///!!! Handle the boundary start indices	
-	starts[2] 	= (topRank<0)?0:(index_3d.y-halo.y);		///!!! Handle the boundary start indices	
+	starts[1] 	= (topRank<0)?0:(index_3d.y-halo.y);		///!!! Handle the boundary start indices	
+	starts[2] 	= (leftRank<0)?0:(index_3d.x-halo.x);		///!!! Handle the boundary start indices	
 	MPI_Datatype openedChunkArray;		///!!! Declare the data type
 	MPI_Type_create_subarray(3, bigsizes, subsizes, starts, MPI_ORDER_C, MPI_FLOAT, &openedChunkArray);
 	MPI_Type_commit(&openedChunkArray);	///!!! Commit the data type
@@ -300,6 +314,24 @@ int main(int argc, char *argv[])
 	//================================================================================
 	///!!! Processing with CUDA here
 	/// Allocate d_src, d_dst, copy back to p_openedChunk
+	float t;
+	
+	for(int k=0; k<openedChunkDim.x*openedChunkDim.y*openedChunkDim.z; k++)
+	{
+		// t = ReverseFloat(p_openedChunk[k]);
+		// if(virtualRank==0)
+			// p_openedChunk[k] = ReverseFloat(t/2);
+		// else
+			// p_openedChunk[k] = ReverseFloat(t);
+		t = p_openedChunk[k];
+		if(virtualRank==0)
+			p_openedChunk[k] = t/2;
+		else
+			p_openedChunk[k] = t;
+	}
+	// float t = ReverseFloat(120.0f);
+	// cout << t << " ";
+	// memset(p_openedChunk, t, openedChunkDim.x*openedChunkDim.y*openedChunkDim.z*sizeof(float));
 	//================================================================================
 	// int3 closedChunkDim		{0, 0, 0};
 	// closedChunkDim = make_int3(closedChunkDim.x,
@@ -314,14 +346,14 @@ int main(int argc, char *argv[])
 	
 	///!!! Act like shared memory, copy from read	
 	bigsizes[0]  = openedChunkDim.z;
-	bigsizes[1]  = openedChunkDim.x;
-	bigsizes[2]  = openedChunkDim.y;
+	bigsizes[1]  = openedChunkDim.y;
+	bigsizes[2]  = openedChunkDim.x;
 	subsizes[0]  = closedChunkDim.z;
-	subsizes[1]  = closedChunkDim.x;
-	subsizes[2]  = closedChunkDim.y;
+	subsizes[1]  = closedChunkDim.y;
+	subsizes[2]  = closedChunkDim.x;
 	starts[0] 	 = (frontRank<0)?0:halo.z;
-	starts[1] 	 = (leftRank<0)?0:halo.x;
-	starts[2] 	 = (topRank<0)?0:halo.y;
+	starts[1] 	 = (topRank<0)?0:halo.y;
+	starts[2] 	 = (leftRank<0)?0:halo.x;
 	MPI_Datatype subarray;
 	MPI_Type_create_subarray(3, bigsizes, subsizes, starts, MPI_ORDER_C, MPI_FLOAT, &subarray);
 	MPI_Type_commit(&subarray);	///!!! Commit the data type
@@ -351,6 +383,8 @@ int main(int argc, char *argv[])
 	MPI_File_close(&fh);
 	//================================================================================
 	// Close MPI
+	free(p_openedChunk);
+	free(p_closedChunk);
 	MPI_Finalize();
 	return 0;
 }

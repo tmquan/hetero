@@ -1,0 +1,500 @@
+==17414== NVPROF is profiling process 17414, command: ../../../build/bin/test_float_stencil_3d07 -bx=4 -by=4 -bz=4
+^CKilled by signal 2.
+
+^C
+^CKilled by signal 2.
+
+^CKilled by signal 2.
+
+^Zmpirun: Forwarding signal 20 to job
+[head:03169] [[46947,0],0] ORTE_ERROR_LOG: A message is attempting to be sent to a process whose contact information is unknown in file rml_oob_send.c at line 362
+[head:03169] [[46947,0],0] attempted to send to [[46947,0],1]: tag 15
+[head:03169] [[46947,0],0] ORTE_ERROR_LOG: A message is attempting to be sent to a process whose contact information is unknown in file base/grpcomm_base_xcast.c at line 166
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+
+^Zmpirun: Forwarding signal 20 to job
+[head:03171] [[46945,0],0] ORTE_ERROR_LOG: A message is attempting to be sent to a process whose contact information is unknown in file rml_oob_send.c at line 362
+[head:03171] [[46945,0],0] attempted to send to [[46945,0],1]: tag 15
+[head:03171] [[46945,0],0] ORTE_ERROR_LOG: A message is attempting to be sent to a process whose contact information is unknown in file base/grpcomm_base_xcast.c at line 166
+^Zmpirun: Forwarding signal 20 to job
+
+^Z^Z^Z^Z^Zmpirun: Forwarding signal 20 to job
+[head:03173] [[46951,0],0] ORTE_ERROR_LOG: A message is attempting to be sent to a process whose contact information is unknown in file rml_oob_send.c at line 362
+[head:03173] [[46951,0],0] attempted to send to [[46951,0],1]: tag 15
+[head:03173] [[46951,0],0] ORTE_ERROR_LOG: A message is attempting to be sent to a process whose contact information is unknown in file base/grpcomm_base_xcast.c at line 166
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+
+^Z^Z^Z^Z^Zmpirun: Forwarding signal 20 to job
+[head:03175] [[46949,0],0] ORTE_ERROR_LOG: A message is attempting to be sent to a process whose contact information is unknown in file rml_oob_send.c at line 362
+[head:03175] [[46949,0],0] attempted to send to [[46949,0],1]: tag 15
+[head:03175] [[46949,0],0] ORTE_ERROR_LOG: A message is attempting to be sent to a process whose contact information is unknown in file base/grpcomm_base_xcast.c at line 166
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+
+^Z^Z^Z^Z^Zmpirun: Forwarding signal 20 to job
+[head:03177] [[46955,0],0] ORTE_ERROR_LOG: A message is attempting to be sent to a process whose contact information is unknown in file rml_oob_send.c at line 362
+[head:03177] [[46955,0],0] attempted to send to [[46955,0],1]: tag 15
+[head:03177] [[46955,0],0] ORTE_ERROR_LOG: A message is attempting to be sent to a process whose contact information is unknown in file base/grpcomm_base_xcast.c at line 166
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+
+^Z^Z^Z^Z^Zmpirun: Forwarding signal 20 to job
+[head:03179] [[46953,0],0] ORTE_ERROR_LOG: A message is attempting to be sent to a process whose contact information is unknown in file rml_oob_send.c at line 362
+[head:03179] [[46953,0],0] attempted to send to [[46953,0],1]: tag 15
+[head:03179] [[46953,0],0] ORTE_ERROR_LOG: A message is attempting to be sent to a process whose contact information is unknown in file base/grpcomm_base_xcast.c at line 166
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+
+^Z^Z^Z^Z^Zmpirun: Forwarding signal 20 to job
+[head:03181] [[46959,0],0] ORTE_ERROR_LOG: A message is attempting to be sent to a process whose contact information is unknown in file rml_oob_send.c at line 362
+[head:03181] [[46959,0],0] attempted to send to [[46959,0],1]: tag 15
+[head:03181] [[46959,0],0] ORTE_ERROR_LOG: A message is attempting to be sent to a process whose contact information is unknown in file base/grpcomm_base_xcast.c at line 166
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+
+^Z^Z^Z^Z^Zmpirun: Forwarding signal 20 to job
+[head:03183] [[46957,0],0] ORTE_ERROR_LOG: A message is attempting to be sent to a process whose contact information is unknown in file rml_oob_send.c at line 362
+[head:03183] [[46957,0],0] attempted to send to [[46957,0],1]: tag 15
+[head:03183] [[46957,0],0] ORTE_ERROR_LOG: A message is attempting to be sent to a process whose contact information is unknown in file base/grpcomm_base_xcast.c at line 166
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^X
+^X^X^CKilled by signal 2.
+
+^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^C
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^C
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^CKilled by signal 2.
+
+^X^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^C
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^C
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^C
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^C
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^C
+^C^ZKilled by signal 2.
+mpirun: abort is already in progress...hit ctrl-c again to forcibly terminate
+
+
+^Zmpirun: Forwarding signal 20 to job
+[head:03449] [[46715,0],0] ORTE_ERROR_LOG: A message is attempting to be sent to a process whose contact information is unknown in file rml_oob_send.c at line 362
+[head:03449] [[46715,0],0] attempted to send to [[46715,0],1]: tag 15
+[head:03449] [[46715,0],0] ORTE_ERROR_LOG: A message is attempting to be sent to a process whose contact information is unknown in file base/grpcomm_base_xcast.c at line 166
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+
+^Z^Z^Z^Z^Zmpirun: Forwarding signal 20 to job
+[head:03451] [[46713,0],0] ORTE_ERROR_LOG: A message is attempting to be sent to a process whose contact information is unknown in file rml_oob_send.c at line 362
+[head:03451] [[46713,0],0] attempted to send to [[46713,0],1]: tag 15
+[head:03451] [[46713,0],0] ORTE_ERROR_LOG: A message is attempting to be sent to a process whose contact information is unknown in file base/grpcomm_base_xcast.c at line 166
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+
+^X^Zmpirun: Forwarding signal 20 to job
+[head:03456] [[46722,0],0] ORTE_ERROR_LOG: A message is attempting to be sent to a process whose contact information is unknown in file rml_oob_send.c at line 362
+[head:03456] [[46722,0],0] attempted to send to [[46722,0],1]: tag 15
+[head:03456] [[46722,0],0] ORTE_ERROR_LOG: A message is attempting to be sent to a process whose contact information is unknown in file base/grpcomm_base_xcast.c at line 166
+
+^X^Zmpirun: Forwarding signal 20 to job
+[head:03458] [[46720,0],0] ORTE_ERROR_LOG: A message is attempting to be sent to a process whose contact information is unknown in file rml_oob_send.c at line 362
+[head:03458] [[46720,0],0] attempted to send to [[46720,0],1]: tag 15
+[head:03458] [[46720,0],0] ORTE_ERROR_LOG: A message is attempting to be sent to a process whose contact information is unknown in file base/grpcomm_base_xcast.c at line 166
+^Zmpirun: Forwarding signal 20 to job
+^X
+^X^Z^Xmpirun: Forwarding signal 20 to job
+[head:03460] [[46726,0],0] ORTE_ERROR_LOG: A message is attempting to be sent to a process whose contact information is unknown in file rml_oob_send.c at line 362
+[head:03460] [[46726,0],0] attempted to send to [[46726,0],1]: tag 15
+[head:03460] [[46726,0],0] ORTE_ERROR_LOG: A message is attempting to be sent to a process whose contact information is unknown in file base/grpcomm_base_xcast.c at line 166
+^X^Zmpirun: Forwarding signal 20 to job
+
+^Z^C^XKilled by signal 2.
+mpirun: abort is already in progress...hit ctrl-c again to forcibly terminate
+
+
+^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^X^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal 2.
+
+^C^C^C^C^CKilled by signal ==18770== NVPROF is profiling process 18770, command: ../../../build/bin/test_float_stencil_3d07 -bx=4 -by=4 -bz=4 -num=1
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^X^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: Forwarding signal 20 to job
+^Zmpirun: 

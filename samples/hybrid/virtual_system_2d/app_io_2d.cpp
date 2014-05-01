@@ -240,8 +240,8 @@ int main(int argc, char *argv[])
 	bool atBoundariesTopBottom = (topRank<0)|(bottomRank>(virtualDimy-1));
 	
 	int3 openedChunkDim		{0, 0, 0};
-	openedChunkDim = make_int3(closedChunkDim.x + ((atBoundariesLeftRight)?(1*halo.x):(2*halo.x)),
-							   closedChunkDim.y + ((atBoundariesTopBottom)?(1*halo.y):(2*halo.y)),
+	openedChunkDim = make_int3(closedChunkDim.x + ((atBoundariesLeftRight)?((virtualDimx==1)?0*halo.x:1*halo.x):(2*halo.x)),
+							   closedChunkDim.y + ((atBoundariesTopBottom)?((virtualDimy==1)?0*halo.y:1*halo.y):(2*halo.y)),
 							   1);
 	printf("Sub opened chunk size: openedChunkDim.x=%05d, openedChunkDim.y=%05d at virtualIdx.x=%02d, virtualIdx.y=%02d (virtualRank=%02d)\n", 
 		openedChunkDim.x, openedChunkDim.y,
