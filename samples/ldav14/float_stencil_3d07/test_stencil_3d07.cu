@@ -34,16 +34,22 @@
 	}
 	
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+// extern __constant__ float alpha;
+// extern __constant__ float beta;
+////////////////////////////////////////////////////////////////////////////////////////////////////
 const char* key =
 	"{ h   |help    |      | print help message }"	
-	"{ dx  |dimx    | 256  | dimensionx }"
-	"{ dy  |dimy    | 256  | dimensiony }"
-	"{ dz  |dimz    | 256  | dimensionz }"
+	"{ dx  |dimx    | 512  | dimensionx }"
+	"{ dy  |dimy    | 512  | dimensiony }"
+	"{ dz  |dimz    | 512  | dimensionz }"
 	"{ bx  |blockx  | 4    | blockDimx }"
 	"{ by  |blocky  | 4    | blockDimy }"
 	"{ bz  |blockz  | 4    | blockDimz }"
+	"{ ilp |istrlp  | 1    | instruction parallelism factor }"
 	"{ num |num     | 20   | numLoops }"
 	;
+////////////////////////////////////////////////////////////////////////////////////////////////////
+texture<float, 3, cudaReadModeElementType> tex;         // 3D texture
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char **argv)
 {
@@ -51,6 +57,7 @@ int main(int argc, char **argv)
 	int numDevices;
 	cudaGetDeviceCount(&numDevices);
 	cudaSetDevice((int)rand()%numDevices);
+	cudaSetDevice(0);
 	cudaDeviceReset();
 	// Specify dimensions
 	// Parsing the arguments
@@ -65,13 +72,15 @@ int main(int argc, char **argv)
 	const int bx  			= cmd.get<int>("bx", false);
 	const int by  			= cmd.get<int>("by", false);
 	const int bz  			= cmd.get<int>("bz", false);
+	const int ilp  			= cmd.get<int>("ilp", false);
 	
 	// Allocate host memory
 	float *h_src = new float[total];
 	float *h_dst = new float[total];
 	
 	// Allocate device memory
-	float *d_src;
+	// float *d_src;
+	cudaArray *d_src = 0;
 	float *d_dst;
 	
 	cudaMalloc((void**)&d_src, total*sizeof(float));		checkLastError();
@@ -88,20 +97,51 @@ int main(int argc, char **argv)
 			}
 		}
 	}
+	cudaExtent volumeSize = make_cudaExtent(dimx, dimy, dimz);
 	// Transferring to the device memory
-	cudaMemcpy(d_src, h_src, total*sizeof(float), cudaMemcpyHostToDevice); checkLastError();
+	// cudaMemcpy(d_src, h_src, total*sizeof(float), cudaMemcpyHostToDevice); checkLastError();
+	// float a = -6.0f;
+	// float b = +0.1f;
+		 // set texture parameters
+    cudaChannelFormatDesc channelDesc = cudaCreateChannelDesc<float>();
+    cudaMalloc3DArray(&d_src, &channelDesc, volumeSize);
+	  // copy data to 3D array
+    cudaMemcpy3DParms copyParams = {0};
+    copyParams.srcPtr   = make_cudaPitchedPtr(h_src, volumeSize.width*sizeof(float), volumeSize.width, volumeSize.height);
+    copyParams.dstArray = d_src;
+    copyParams.extent   = volumeSize;
+    copyParams.kind     = cudaMemcpyHostToDevice;
+    cudaMemcpy3D(&copyParams);
+	
+	tex.normalized = true;                      // access with normalized texture coordinates
+    tex.filterMode = cudaFilterModePoint;      // linear interpolation
+    tex.addressMode[0] = cudaAddressModeClamp;  // clamp texture coordinates
+    tex.addressMode[1] = cudaAddressModeClamp;
+
+	// cudaChannelFormatDesc channelDesc = cudaCreateChannelDesc<int>();
+    // bind array to 3D texture
+    cudaBindTextureToArray(tex, d_src, channelDesc);
+	// create 3D array
+
+    // checkCudaErrors(cudaMalloc3DArray(&d_src, &channelDesc, volumeSize));
+	// // bind array to 3D texture
+    // checkCudaErrors(cudaBindTextureToArray(tex, d_volumeArray, channelDesc));
+
+	
+	// cudaMemcpyToSymbol(alpha, &a, sizeof(float), 0, cudaMemcpyHostToDevice);
+	// cudaMemcpyToSymbol(beta, &b, sizeof(float), 0, cudaMemcpyHostToDevice);
 	GpuTimer gpu_timer;
 	gpu_timer.Start();
 	for(int n=0; n<numTrials; n++)
-		stencil_3d07(d_src, d_dst, dimx, dimy, dimz, bx, by, bz, 1);
+		stencil_3d07(d_src, d_dst, dimx, dimy, dimz, bx, by, bz, ilp, 1);
 	gpu_timer.Stop();
 	
 	float ms = gpu_timer.Elapsed()/numTrials;
-	// printf("Time %4.3f ms\n", ms);	
+	printf("Time %4.3f ms\n", ms);	
 	int numOps = 8;
 	float gflops = (float)total*(float)numOps* 1.0e-9f/(ms*1.0e-3f);
-	// printf("Performance of %s with blockx (%02d), blocky (%02d), blockz (%02d) is %04.4f GFLOPS/s\n", argv[0], bx, by, bz, gflops); 
-	
+	printf("Performance of %s with blockx (%02d), blocky (%02d), blockz (%02d), ilp factor (%02d) is %04.4f   GFLOPS/s\n", argv[0], bx, by, bz, ilp, gflops); 
+	checkLastError();
 	  // Compute and print the performance
     // float msecPerMatrixMul = msecTotal / nIter;
     // double flopsPerMatrixMul = 2.0 * (double)dimsA.x * (double)dimsA.y * (double)dimsB.x;
