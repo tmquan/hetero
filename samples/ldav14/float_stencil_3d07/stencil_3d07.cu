@@ -1,17 +1,15 @@
 #include "stencil_3d07.hpp"
-#include <helper_cuda.h>
-#include <helper_math.h>
-texture<float, 3, cudaReadModeElementType> tex;         // 3D texture
-
-void stencil_3d07(cudaArray * deviceSrc, float* deviceDst, int dimx, int dimy, int dimz,  int blockx, int blocky, int blockz, int ilp, int halo, cudaStream_t stream);
+#include "helper_math.h" 
+#include "helper_cuda.h" 
+texture<float, 1, cudaReadModeElementType> tex;         // 3D texture
+void stencil_3d07(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dimz,  int blockx, int blocky, int blockz, int ilp, int halo, cudaStream_t stream);
 
 __global__ 
-void __stencil_3d07(cudaArray * deviceSrc, float* deviceDst, int dimx, int dimy, int dimz, int ilp, int halo);
+void __stencil_3d07(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dimz, int ilp, int halo);
 
-void stencil_3d07(cudaArray * deviceSrc, float* deviceDst, int dimx, int dimy, int dimz,  int blockx, int blocky, int blockz, int ilp, int halo, cudaStream_t stream)
+void stencil_3d07(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dimz,  int blockx, int blocky, int blockz, int ilp, int halo, cudaStream_t stream)
 {
-
-	
+	cudaBindTexture(NULL, tex, deviceSrc, dimx*dimy*dimz*sizeof(float));
     dim3 blockDim(blockx, blocky, blockz);
     dim3 gridDim(
         (dimx/blockDim.x + ((dimx%blockDim.x)?1:0)),
@@ -26,7 +24,7 @@ void stencil_3d07(cudaArray * deviceSrc, float* deviceDst, int dimx, int dimy, i
                                         clamp((int)(y), 0, dimy-1)*dimx +            \
                                         clamp((int)(x), 0, dimx-1) )                   
 __global__ 
-void __stencil_3d07(cudaArray * deviceSrc, float* deviceDst, int dimx, int dimy, int dimz, int ilp, int halo)
+void __stencil_3d07(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dimz, int ilp, int halo)
 {
     extern __shared__ float sharedMemSrc[];                     										
     int  shared_index_1d, global_index_1d, index_1d;                                      										
@@ -68,8 +66,8 @@ void __stencil_3d07(cudaArray * deviceSrc, float* deviceDst, int dimx, int dimy,
 					   global_index_3d.y >= 0 && global_index_3d.y < dimy &&                        									
 					   global_index_3d.x >= 0 && global_index_3d.x < dimx)                        										
 					{                                                                             										
-						// sharedMemSrc[at(shared_index_3d.x, shared_index_3d.y, shared_index_3d.z, sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)] = deviceSrc[global_index_1d];   
-						sharedMemSrc[at(shared_index_3d.x, shared_index_3d.y, shared_index_3d.z, sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)] = tex3D(tex, global_index_3d.x, global_index_3d.y, global_index_3d.z);
+						// sharedMemSrc[at(shared_index_3d.x, shared_index_3d.y, shared_index_3d.z, sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)] = deviceSrc[global_index_1d];  
+						sharedMemSrc[at(shared_index_3d.x, shared_index_3d.y, shared_index_3d.z, sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)] = tex1Dfetch(tex, global_index_1d);   
 					}                                                                             						
 					else                                                                          						
 					{                                                                             						

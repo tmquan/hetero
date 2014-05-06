@@ -44,7 +44,7 @@ endif()
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/include)
 LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/lib)
 # ----------------------------------------------------------------------------
-# cuda_add_executable(LDAV_float_stencil_3d07 test_stencil_3d07.cu stencil_3d07.cu)
+# cuda_add_executable(LDAV_float_stencil_3d test_stencil_3d.cu stencil_3d.cu)
 # add_executable(generator_make_stencil_3d make_stencil_3d.cpp)
 
 # target_link_libraries(generator_stencil_3d 
@@ -57,16 +57,16 @@ LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/lib)
 	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/generator_make_stencil_3d
 	# )
 	
-cuda_add_executable(test_float_stencil_3d07 test_stencil_3d07.cu stencil_3d07.cu)
-target_link_libraries(test_float_stencil_3d07
+cuda_add_executable(debug_stencil_3d test_stencil_3d.cu stencil_3d.cu)
+target_link_libraries(debug_stencil_3d
 	${MPI_LIBRARIES} 
 	${OpenMP_CXX_FLAGS}
 	hetero_cmdparser
 	)
-add_test(LDAV_float_stencil_3d07
+add_test(Debug_Stencil_3d
 	${MPIEXEC} 
 	${MPIEXEC_NUMPROC_FLAG} 1
 	${MPIEXEC_PREFLAGS} --host node001
-	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_float_stencil_3d07
+	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/debug_stencil_3d
 	${MPIEXEC_POSTFLAGS} |sort)
 	

@@ -262,7 +262,7 @@ int main(int argc, char **argv)
 						 (dimy/processDim.y + ((dimy%processDim.y)?1:0)),
 						 (dimz/processDim.z + ((dimz%processDim.z)?1:0))};
 						 
-	int  virtualSize = virtualDim.x*virtualDim.y*virtualDim.z;
+	int virtualSize = virtualDim.x*virtualDim.y*virtualDim.z;
 	int3 haloDim {12, 12, 12};
 	// int3 haloDim {0, 0, 0};
 	
@@ -274,7 +274,7 @@ int main(int argc, char **argv)
 	
 	
 	stringstream ssApp;	
-	ssApp << "../../../bin/hybrid-app_io_3d " 
+	ssApp << "../../../bin/hybrid-app_io_strip_3d " 
 		  << " --dimx=" << dimx
 		  << " --dimy=" << dimy
 		  << " --dimz=" << dimz

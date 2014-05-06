@@ -252,29 +252,36 @@ int main(int argc, char **argv)
 	// int virtualDimy = 5;
 	// int virtualSize = virtualDimx*virtualDimy;
 	
-	int dimx = 500;
-	int dimy = 450;
-	int dimz = 400;
+	int dimx = 4455;
+	int dimy = 3408;
+	int dimz = 64;
+	// int3 processDim		{1485, 1136, 128};
+	int3 processDim		{dimx/3, dimy/3, dimz/2};
+	
+	// int dimx = 500;
+	// int dimy = 450;
+	// int dimz = 400;
+	// int3 processDim		{250, 225,  200};
+	
 	// int3 processDim		{256, 256,  256};
-	// int3 processDim		{500, 225,  400};
-	int3 processDim		{300, 300,  300};
+
 	int3 virtualDim    	{(dimx/processDim.x + ((dimx%processDim.x)?1:0)),
 						 (dimy/processDim.y + ((dimy%processDim.y)?1:0)),
 						 (dimz/processDim.z + ((dimz%processDim.z)?1:0))};
 						 
-	int  virtualSize = virtualDim.x*virtualDim.y*virtualDim.z;
+	int virtualSize = virtualDim.x*virtualDim.y*virtualDim.z;
 	int3 haloDim {12, 12, 12};
 	// int3 haloDim {0, 0, 0};
 	
 	system.setVirtualSize(virtualSize);
-	system.setNumProcesses(5);
+	system.setNumProcesses(8);
 	
 	system.getNumRun();
 
 	
 	
 	stringstream ssApp;	
-	ssApp << "../../../bin/hybrid-app_io_3d " 
+	ssApp << "../../../bin/hybrid-app_segment_threshold " 
 		  << " --dimx=" << dimx
 		  << " --dimy=" << dimy
 		  << " --dimz=" << dimz
@@ -287,7 +294,8 @@ int main(int argc, char **argv)
 		  << " --haloDimx=" << haloDim.x
 		  << " --haloDimy=" << haloDim.y
 		  << " --haloDimz=" << haloDim.z
-		  << " --srcFile=" << "../../../../data/em_500x450x400.raw"
+		  << " --srcFile=" << "../../../../data/em_4455x3408x512.raw" 
+		  // << " --srcFile=" << "../../../../data/em_500x450x400.raw" 
 		  ;
 
 	system.addApplication(ssApp.str());
