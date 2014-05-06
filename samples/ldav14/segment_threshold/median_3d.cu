@@ -52,9 +52,10 @@ void __median_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dim
         shared_index_3d  =  make_int3((shared_index_1d % ((blockDim.y+2*halo)*(blockDim.x+2*halo))) % (blockDim.x+2*halo),		
                                       (shared_index_1d % ((blockDim.y+2*halo)*(blockDim.x+2*halo))) / (blockDim.x+2*halo),		
                                       (shared_index_1d / ((blockDim.y+2*halo)*(blockDim.x+2*halo))) );      					
-        global_index_3d  =  make_int3(blockIdx.x * blockDim.x + shared_index_3d.x - halo, 										
-                                      blockIdx.y * blockDim.y + shared_index_3d.y - halo, 										
-                                      blockIdx.z * blockDim.z + shared_index_3d.z - halo);										
+        global_index_3d  =  make_int3(clamp_mirror(blockIdx.x * blockDim.x + shared_index_3d.x - halo, 0, dimx),										
+                                      clamp_mirror(blockIdx.y * blockDim.y + shared_index_3d.y - halo, 0, dimy), 										
+                                      clamp_mirror(blockIdx.z * blockDim.z + shared_index_3d.z - halo, 0, dimz) );	
+		
         global_index_1d  =  global_index_3d.z * dimy * dimx +                                    								
                             global_index_3d.y * dimx +                                    										
                             global_index_3d.x;                                            										
@@ -68,12 +69,13 @@ void __median_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dim
             }                                                                             						
             else                                                                          						
             {                                                                             						
-                sharedMemSrc[at(shared_index_3d.x, shared_index_3d.y, shared_index_3d.z, sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)] = -1;                                                     
+                sharedMemSrc[at(shared_index_3d.x, shared_index_3d.y, shared_index_3d.z, sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)] = -100.0f;    
             }                                                                             
         }                                                                                 
         __syncthreads();                                                                  
-    }                                                                                     
-                                                                                          
+    }   
+
+                                                                               
     // Stencil  processing here                                                           
     float result = sharedMemSrc[at(threadIdx.x + halo, threadIdx.y + halo, threadIdx.z + halo, sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)];   
 	 // # Viola's method
@@ -117,15 +119,17 @@ void __median_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dim
 					val = sharedMemSrc[at(x, y, z, sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)];   
 					if(val>pivot)	
 						count++;
-					if(count < (2*radius+1)*(2*radius+1)*(2*radius+1)/2)
-						maxval = floorf(pivot);  
-					else
-						minval = floorf(pivot)+1;
-					pivot = (minval + maxval)/2.0f;
+					
 				}
 			}
 		}
+		if(count < (2*radius+1)*(2*radius+1)*(2*radius+1)/2)
+			maxval = floorf(pivot);  
+		else
+			minval = floorf(pivot)+1;
+		pivot = (minval + maxval)/2.0f;
 	}
+
 	result = floorf(pivot);
 	
     // Single pass writing here                                                           

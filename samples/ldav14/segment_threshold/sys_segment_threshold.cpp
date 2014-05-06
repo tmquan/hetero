@@ -252,16 +252,16 @@ int main(int argc, char **argv)
 	// int virtualDimy = 5;
 	// int virtualSize = virtualDimx*virtualDimy;
 	
-	int dimx = 4455;
-	int dimy = 3408;
-	int dimz = 64;
+	// int dimx = 4455;
+	// int dimy = 3408;
+	// int dimz = 64;
 	// int3 processDim		{1485, 1136, 128};
-	int3 processDim		{dimx/3, dimy/3, dimz/2};
+	// int3 processDim		{dimx/3, dimy/3, dimz/2};
 	
-	// int dimx = 500;
-	// int dimy = 450;
-	// int dimz = 400;
-	// int3 processDim		{250, 225,  200};
+	int dimx = 500;
+	int dimy = 450;
+	int dimz = 400;
+	int3 processDim		{250, 225,  200};
 	
 	// int3 processDim		{256, 256,  256};
 
@@ -294,8 +294,9 @@ int main(int argc, char **argv)
 		  << " --haloDimx=" << haloDim.x
 		  << " --haloDimy=" << haloDim.y
 		  << " --haloDimz=" << haloDim.z
-		  << " --srcFile=" << "../../../../data/em_4455x3408x512.raw" 
-		  // << " --srcFile=" << "../../../../data/em_500x450x400.raw" 
+		  // << " --srcFile=" << "../../../../data/em_4455x3408x512.raw" 
+		  << " --srcFile=" << "../../../../data/em_500x450x400.raw" 
+		  << " --dstFile=" << "../../../../data/median_500x450x400.raw" 
 		  ;
 
 	system.addApplication(ssApp.str());

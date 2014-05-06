@@ -50,7 +50,10 @@ add_test(Test_Generator_Make_Segment_3D
 	)
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
-cuda_add_executable(hybrid-app_segment_threshold app_segment_threshold.cu)
+cuda_add_executable(hybrid-app_segment_threshold 
+	app_segment_threshold.cu
+	median_3d.cu
+	)
 
 target_link_libraries(hybrid-app_segment_threshold ${MPI_LIBRARIES} 
 	hetero_cmdparser

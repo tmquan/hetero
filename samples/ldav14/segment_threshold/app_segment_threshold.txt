@@ -318,40 +318,39 @@ int main(int argc, char *argv[])
 	//================================================================================
 	///!!! Processing with CUDA here
 	/// Allocate d_src, d_dst, copy back to p_openedChunk
-	int numDevices;
-	cudaGetDeviceCount(&numDevices);
-	cudaSetDevice(rank%numDevices);
-	cudaDeviceReset();
-	cudaCheckLastError();
-	float *d_src, *d_dst;
-	int local_halo, local_radius;
-	int openedChunkDimxyz = openedChunkDim.x*openedChunkDim.y*openedChunkDim.z;
+	// int numDevices;
+	// cudaGetDeviceCount(&numDevices);
+	// cudaSetDevice(rank%numDevices);
+	// cudaDeviceReset();
+	// cudaCheckLastError();
+	// float *d_src, *d_dst;
+	// int local_halo, local_radius;
+	// int openedChunkDimxyz = openedChunkDim.x*openedChunkDim.y*openedChunkDim.z;
 	
-	cudaMalloc((void**)&d_src, (openedChunkDimxyz)*sizeof(float));
-	cudaMalloc((void**)&d_dst, (openedChunkDimxyz)*sizeof(float));
-	local_radius = 3;
-	local_halo   = 3;
+	// cudaMalloc((void**)&d_src, (openedChunkDimxyz)*sizeof(float));
+	// cudaMalloc((void**)&d_dst, (openedChunkDimxyz)*sizeof(float));
+	// local_halo   = 18;
+	// local_radius = 3;
 	
-	cudaMemcpy(d_src, p_openedChunk, (openedChunkDimxyz)*sizeof(float), cudaMemcpyHostToDevice);
-	// cudaMemcpy(d_dst, d_src, (openedChunkDimxyz)*sizeof(float), cudaMemcpyDeviceToDevice); // Debug purpose
-	median_3d(d_src, d_dst, openedChunkDim.x, openedChunkDim.y, openedChunkDim.z, local_radius, local_halo);
-	cudaDeviceSynchronize();
-	cudaMemcpy(p_openedChunk, d_dst, (openedChunkDimxyz)*sizeof(float), cudaMemcpyDeviceToHost);
-	// float t;
+	// cudaMemcpy(d_src, p_openedChunk, (openedChunkDimxyz)*sizeof(float), cudaMemcpyHostToDevice);
+	// median_3d(d_src, d_dst, openedChunkDim.x, openedChunkDim.y, openedChunkDim.z, local_radius, local_halo);
+	// cudaDeviceSynchronize();
+	// cudaMemcpy(p_openedChunk, d_dst, (openedChunkDimxyz)*sizeof(float), cudaMemcpyDeviceToHost);
+	float t;
 	
-	// for(int k=0; k<openedChunkDim.x*openedChunkDim.y*openedChunkDim.z; k++)
-	// {
-		// // t = ReverseFloat(p_openedChunk[k]);
-		// // if(virtualRank==0)
-			// // p_openedChunk[k] = ReverseFloat(t/2);
-		// // else
-			// // p_openedChunk[k] = ReverseFloat(t);
-		// t = p_openedChunk[k];
+	for(int k=0; k<openedChunkDim.x*openedChunkDim.y*openedChunkDim.z; k++)
+	{
+		// t = ReverseFloat(p_openedChunk[k]);
 		// if(virtualRank==0)
-			// p_openedChunk[k] = t/2;
+			// p_openedChunk[k] = ReverseFloat(t/2);
 		// else
-			// p_openedChunk[k] = t;
-	// }
+			// p_openedChunk[k] = ReverseFloat(t);
+		t = p_openedChunk[k];
+		if(virtualRank==0)
+			p_openedChunk[k] = t/2;
+		else
+			p_openedChunk[k] = t;
+	}
 	
 	//================================================================================
 	// int3 closedChunkDim		{0, 0, 0};
