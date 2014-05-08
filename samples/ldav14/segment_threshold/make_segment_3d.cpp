@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include <map>
+#include <vector>
 #include <string>
 
 using namespace std;
@@ -31,12 +31,12 @@ private:
 	
 	string strKernel; //Contain the stencil code only	
 	string dataType;
-	map <string, string> 	_srcArrayList; //name and type
-	map <string, string> 	_dstArrayList;
-	map <string, string> 	_attributeList;
-	map <string, string> 	_sharedMemList;
-	map <string, string> 	_variableList;
-	map <string, string> 	_registerList;
+	vector< pair<string, string> > 	_srcArrayList; //name and type
+	vector< pair<string, string> > 	_dstArrayList;
+	vector< pair<string, string> > 	_attributeList;
+	vector< pair<string, string> > 	_sharedMemList;
+	vector< pair<string, string> > 	_variableList;
+	vector< pair<string, string> > 	_registerList;
 };	
                   
 heteroGenerator3D::heteroGenerator3D()
@@ -79,32 +79,32 @@ heteroGenerator3D::~heteroGenerator3D()
 }
 void heteroGenerator3D::addSrcArray(pair<string, string> srcAndType) 
 {
-	_srcArrayList.insert(srcAndType);
+	_srcArrayList.push_back(srcAndType);
 }
 
 void heteroGenerator3D::addDstArray(pair<string, string> dstAndType)
 {
-	_dstArrayList.insert(dstAndType);
+	_dstArrayList.push_back(dstAndType);
 }
 
 void heteroGenerator3D::addAttribute(pair<string, string> attAndType)
 {
-	_attributeList.insert(attAndType);
+	_attributeList.push_back(attAndType);
 }
 
 void heteroGenerator3D::addSharedMem(pair<string, string> sMemAndType)
 {
-	_sharedMemList.insert(sMemAndType);
+	_sharedMemList.push_back(sMemAndType);
 }
 
 void heteroGenerator3D::addVariable(pair<string, string> varAndType)
 {
-	_variableList.insert(varAndType);
+	_variableList.push_back(varAndType);
 }
 
 void heteroGenerator3D::addRegister(pair<string, string> regAndType)
 {
-	_registerList.insert(regAndType);
+	_registerList.push_back(regAndType);
 }
 
 void heteroGenerator3D::generateHeaderFile(void)
@@ -115,13 +115,13 @@ void heteroGenerator3D::generateHeaderFile(void)
 	fs	<<	"#define _"	+ module +"_hpp\n";
 	fs	<<	"#include <cuda.h>\n";
 	fs	<<	"void " 	+ module +"(";
-	for( map<string, string>::iterator it=_srcArrayList.begin(); it!=_srcArrayList.end(); it++)
+	for( vector< pair<string, string> > ::iterator it=_srcArrayList.begin(); it!=_srcArrayList.end(); it++)
 		fs << (*it).second << " " << (*it).first << ", ";
-	for( map<string, string>::iterator it=_dstArrayList.begin(); it!=_dstArrayList.end(); it++)
+	for( vector< pair<string, string> > ::iterator it=_dstArrayList.begin(); it!=_dstArrayList.end(); it++)
 		fs << (*it).second << " " << (*it).first << ", ";
-	for( map<string, string>::iterator it=_variableList.begin(); it!=_variableList.end(); ++it)
+	for( vector< pair<string, string> > ::iterator it=_variableList.begin(); it!=_variableList.end(); ++it)
 		fs << (*it).second << " " << (*it).first << ", ";	
-	for( map<string, string>::iterator it=_attributeList.begin(); it!=_attributeList.end(); it++)
+	for( vector< pair<string, string> > ::iterator it=_attributeList.begin(); it!=_attributeList.end(); it++)
 		fs << (*it).second << " " << (*it).first << ", ";		
 	fs 	<< "int halo = 0, cudaStream_t stream = 0);\n\n";
 	fs 	<< "#endif\n";
@@ -139,38 +139,38 @@ void heteroGenerator3D::generateKernelFile(void)
 	
 	/// Interface of wrapper
 	fs	<<	"void " 	+ module +"(";
-for( map<string, string>::iterator it=_srcArrayList.begin(); it!=_srcArrayList.end(); it++)
+for( vector< pair<string, string> > ::iterator it=_srcArrayList.begin(); it!=_srcArrayList.end(); it++)
 	fs 	<< (*it).second << " " << (*it).first << ", ";
-for( map<string, string>::iterator it=_dstArrayList.begin(); it!=_dstArrayList.end(); it++)
+for( vector< pair<string, string> > ::iterator it=_dstArrayList.begin(); it!=_dstArrayList.end(); it++)
 	fs 	<< (*it).second << " " << (*it).first << ", ";
-for( map<string, string>::iterator it=_variableList.begin(); it!=_variableList.end(); ++it)
+for( vector< pair<string, string> > ::iterator it=_variableList.begin(); it!=_variableList.end(); ++it)
 	fs 	<< (*it).second << " " << (*it).first << ", ";	
-for( map<string, string>::iterator it=_attributeList.begin(); it!=_attributeList.end(); it++)
+for( vector< pair<string, string> > ::iterator it=_attributeList.begin(); it!=_attributeList.end(); it++)
 	fs 	<< (*it).second << " " << (*it).first << ", ";		
 	fs 	<< "int halo, cudaStream_t stream);\n\n";
 
 	/// Interface of kernel
 	fs	<<	"__global__ \n";
 	fs	<<	"void __" 	+ module +"(";
-for( map<string, string>::iterator it=_srcArrayList.begin(); it!=_srcArrayList.end(); it++)
+for( vector< pair<string, string> > ::iterator it=_srcArrayList.begin(); it!=_srcArrayList.end(); it++)
 	fs 	<< (*it).second << " " << (*it).first << ", ";
-for( map<string, string>::iterator it=_dstArrayList.begin(); it!=_dstArrayList.end(); it++)
+for( vector< pair<string, string> > ::iterator it=_dstArrayList.begin(); it!=_dstArrayList.end(); it++)
 	fs 	<< (*it).second << " " << (*it).first << ", ";
-for( map<string, string>::iterator it=_variableList.begin(); it!=_variableList.end(); ++it)
+for( vector< pair<string, string> > ::iterator it=_variableList.begin(); it!=_variableList.end(); ++it)
 	fs 	<< (*it).second << " " << (*it).first << ", ";	
-for( map<string, string>::iterator it=_attributeList.begin(); it!=_attributeList.end(); it++)
+for( vector< pair<string, string> > ::iterator it=_attributeList.begin(); it!=_attributeList.end(); it++)
 	fs 	<< (*it).second << " " << (*it).first << ", ";		
 	fs 	<< "int halo);\n\n";
 	
 	/// "Implement" the wrapper
 	fs	<<	"void " 	+ module +"(";
-for( map<string, string>::iterator it=_srcArrayList.begin(); it!=_srcArrayList.end(); it++)
+for( vector< pair<string, string> > ::iterator it=_srcArrayList.begin(); it!=_srcArrayList.end(); it++)
 	fs 	<< (*it).second << " " << (*it).first << ", ";
-for( map<string, string>::iterator it=_dstArrayList.begin(); it!=_dstArrayList.end(); it++)
+for( vector< pair<string, string> > ::iterator it=_dstArrayList.begin(); it!=_dstArrayList.end(); it++)
 	fs 	<< (*it).second << " " << (*it).first << ", ";
-for( map<string, string>::iterator it=_variableList.begin(); it!=_variableList.end(); ++it)
+for( vector< pair<string, string> > ::iterator it=_variableList.begin(); it!=_variableList.end(); ++it)
 	fs 	<< (*it).second << " " << (*it).first << ", ";	
-for( map<string, string>::iterator it=_attributeList.begin(); it!=_attributeList.end(); it++)
+for( vector< pair<string, string> > ::iterator it=_attributeList.begin(); it!=_attributeList.end(); it++)
 	fs 	<< (*it).second << " " << (*it).first << ", ";		
 	fs 	<< "int halo, cudaStream_t stream)\n";
 	fs	<< "{\n";
@@ -182,7 +182,7 @@ for( map<string, string>::iterator it=_attributeList.begin(); it!=_attributeList
 		<< 	"        (dimz/blockDim.z + ((dimz%blockDim.z)?1:0)) );"  	<< 	endl;
 	
 	// Shared memory configuration
-for( map<string, string>::iterator it=_sharedMemList.begin(); it!=_sharedMemList.end(); it++)
+for( vector< pair<string, string> > ::iterator it=_sharedMemList.begin(); it!=_sharedMemList.end(); it++)
 fs	<<	"    size_t " << "sharedMemSize" 
 	<<	"  = (blockDim.x+2*halo)*(blockDim.y+2*halo)*(blockDim.z+2*halo)*sizeof(" <<	(*it).second 
 	<<	");\n";
@@ -190,13 +190,13 @@ fs	<<	"    size_t " << "sharedMemSize"
 	// Invoke the kernel
 	fs	<<	"    __"+module+"<<<gridDim, blockDim, sharedMemSize, stream>>>\n";
 	fs	<<	"     (";
-for( map<string, string>::iterator it=_srcArrayList.begin(); it!=_srcArrayList.end(); it++)
+for( vector< pair<string, string> > ::iterator it=_srcArrayList.begin(); it!=_srcArrayList.end(); it++)
 	fs 	<< (*it).first << ", ";
-for( map<string, string>::iterator it=_dstArrayList.begin(); it!=_dstArrayList.end(); it++)
+for( vector< pair<string, string> > ::iterator it=_dstArrayList.begin(); it!=_dstArrayList.end(); it++)
 	fs 	<< (*it).first << ", ";
-for( map<string, string>::iterator it=_variableList.begin(); it!=_variableList.end(); ++it)
+for( vector< pair<string, string> > ::iterator it=_variableList.begin(); it!=_variableList.end(); ++it)
 	fs 	<< (*it).first << ", ";
-for( map<string, string>::iterator it=_attributeList.begin(); it!=_attributeList.end(); it++)
+for( vector< pair<string, string> > ::iterator it=_attributeList.begin(); it!=_attributeList.end(); it++)
 	fs 	<< (*it).first << ", ";
 	fs 	<< "halo);\n";
 	fs	<< "}\n\n";
@@ -218,18 +218,18 @@ for( map<string, string>::iterator it=_attributeList.begin(); it!=_attributeList
 
 	fs	<<	"__global__ \n";
 	fs	<<	"void __" 	+ module +"(";
-for( map<string, string>::iterator it=_srcArrayList.begin(); it!=_srcArrayList.end(); it++)
+for( vector< pair<string, string> > ::iterator it=_srcArrayList.begin(); it!=_srcArrayList.end(); it++)
 	fs 	<< (*it).second << " " << (*it).first << ", ";
-for( map<string, string>::iterator it=_dstArrayList.begin(); it!=_dstArrayList.end(); it++)
+for( vector< pair<string, string> > ::iterator it=_dstArrayList.begin(); it!=_dstArrayList.end(); it++)
 	fs 	<< (*it).second << " " << (*it).first << ", ";
-for( map<string, string>::iterator it=_variableList.begin(); it!=_variableList.end(); ++it)
+for( vector< pair<string, string> > ::iterator it=_variableList.begin(); it!=_variableList.end(); ++it)
 	fs 	<< (*it).second << " " << (*it).first << ", ";	
-for( map<string, string>::iterator it=_attributeList.begin(); it!=_attributeList.end(); it++)
+for( vector< pair<string, string> > ::iterator it=_attributeList.begin(); it!=_attributeList.end(); it++)
 	fs 	<< (*it).second << " " << (*it).first << ", ";		
 	fs 	<< "int halo)\n";
 	fs	<< "{\n";
 	// Shared memory declaration
-for( map<string, string>::iterator it=_sharedMemList.begin(); it!=_sharedMemList.end(); ++it) 
+for( vector< pair<string, string> > ::iterator it=_sharedMemList.begin(); it!=_sharedMemList.end(); ++it) 
 	fs 	<<  "    extern __shared__ " << (*it).second << " " << (*it).first << "[];                     										\n";
 	fs	<< 	"    int  shared_index_1d, global_index_1d, index_1d;                                      										\n";
 	fs	<< 	"    int3 shared_index_3d, global_index_3d, index_3d;                                      										\n";
@@ -252,9 +252,9 @@ for( map<string, string>::iterator it=_sharedMemList.begin(); it!=_sharedMemList
 	fs	<< 	"        shared_index_3d  =  make_int3((shared_index_1d % ((blockDim.y+2*halo)*(blockDim.x+2*halo))) % (blockDim.x+2*halo),		\n";
 	fs	<< 	"                                      (shared_index_1d % ((blockDim.y+2*halo)*(blockDim.x+2*halo))) / (blockDim.x+2*halo),		\n";
 	fs	<< 	"                                      (shared_index_1d / ((blockDim.y+2*halo)*(blockDim.x+2*halo))) );      					\n";
-	fs	<< 	"        global_index_3d  =  make_int3(blockIdx.x * blockDim.x + shared_index_3d.x - halo, 										\n";
-	fs	<< 	"                                      blockIdx.y * blockDim.y + shared_index_3d.y - halo, 										\n";
-	fs	<< 	"                                      blockIdx.z * blockDim.z + shared_index_3d.z - halo);										\n";
+	fs	<< 	"       global_index_3d  =  make_int3(clamp_mirror(blockIdx.x * blockDim.x + shared_index_3d.x - halo, 0, dimx-1),				\n";
+	fs	<< 	"                                     clamp_mirror(blockIdx.y * blockDim.y + shared_index_3d.y - halo, 0, dimy-1), 				\n";
+	fs	<< 	"                                     clamp_mirror(blockIdx.z * blockDim.z + shared_index_3d.z - halo, 0, dimz-1) );			\n";
 	fs	<< 	"        global_index_1d  =  global_index_3d.z * dimy * dimx +                                    								\n";
 	fs	<< 	"                            global_index_3d.y * dimx +                                    										\n";
 	fs	<< 	"                            global_index_3d.x;                                            										\n";
@@ -264,7 +264,7 @@ for( map<string, string>::iterator it=_sharedMemList.begin(); it!=_sharedMemList
 	fs	<< 	"               global_index_3d.y >= 0 && global_index_3d.y < dimy &&                        									\n";
 	fs	<< 	"               global_index_3d.x >= 0 && global_index_3d.x < dimx)                        										\n";
 	fs	<< 	"            {                                                                             										\n";
-	map<string, string>::iterator it1, it2; //Query the source (it2) to shared memory (it1)
+	vector< pair<string, string> > ::iterator it1, it2; //Query the source (it2) to shared memory (it1)
 	it1 = _sharedMemList.begin(); 	
 	it2 = _srcArrayList.begin();
 while(it1!=_sharedMemList.end() && it2!=_srcArrayList.end()) 
@@ -355,6 +355,8 @@ int main(int argc, char **argv)
 	
 	bilateral.addSrcArray(make_pair("deviceSrc","float*"));
 	bilateral.addDstArray(make_pair("deviceDst","float*"));
+	bilateral.addAttribute(make_pair("imageDensity","float"));
+	bilateral.addAttribute(make_pair("colorDensity","float"));
 	bilateral.addAttribute(make_pair("radius","int"));
 	
 	bilateral.addRegister(make_pair("result"   ,"float"));

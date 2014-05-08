@@ -6,13 +6,15 @@ if(CUDA_FOUND)
     message("CUDA is found on this system.")
 	include_directories(${CUDA_INCLUDE_DIRS})
 	set(CUDA_NVCC_FLAGS "
-		# -gencode;arch=compute_35,code=sm_35; 
-		# -gencode;arch=compute_30,code=sm_30; 
+		-gencode;arch=compute_35,code=sm_35; 
+		-gencode;arch=compute_30,code=sm_30; 
 		-gencode;arch=compute_20,code=sm_20; 
 		# -gencode;arch=compute_11,code=sm_11; 
 		# -gencode;arch=compute_12,code=sm_12;
 		# -gencode;arch=compute_13,code=sm_13;
 		-lineinfo;
+		-G;
+		-g;
 		# -Xptxas -dlcm=cg;
 		")
 
@@ -59,16 +61,21 @@ LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/lib)
 	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/generator_make_stencil_3d
 	# )
 	
-cuda_add_executable(debug_stencil_3d test_stencil_3d.cu stencil_3d.cu)
-target_link_libraries(debug_stencil_3d
+cuda_add_executable(ref_stencil_3d 
+	ref_stencil_3d.cu
+	trid.h
+	utilities.h
+	)
+target_link_libraries(ref_stencil_3d
 	${MPI_LIBRARIES} 
 	${OpenMP_CXX_FLAGS}
 	hetero_cmdparser
 	)
-add_test(Debug_Stencil_3d
+add_test(Ref_Stencil_3d
 	${MPIEXEC} 
 	${MPIEXEC_NUMPROC_FLAG} 1
 	${MPIEXEC_PREFLAGS} --host node001
-	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/debug_stencil_3d
+	# cuda-memcheck
+	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/ref_stencil_3d 
 	${MPIEXEC_POSTFLAGS} |sort)
 	

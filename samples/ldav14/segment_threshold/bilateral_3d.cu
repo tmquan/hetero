@@ -1,12 +1,12 @@
 #include "bilateral_3d.hpp"
 #include "helper_math.h" 
 
-void bilateral_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dimz, int radius, int halo, cudaStream_t stream);
+void bilateral_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dimz, float imageDensity, float colorDensity, int radius, int halo, cudaStream_t stream);
 
 __global__ 
-void __bilateral_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dimz, int radius, int halo);
+void __bilateral_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dimz, float imageDensity, float colorDensity, int radius, int halo);
 
-void bilateral_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dimz, int radius, int halo, cudaStream_t stream)
+void bilateral_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dimz, float imageDensity, float colorDensity, int radius, int halo, cudaStream_t stream)
 {
     dim3 blockDim(8, 8, 8);
     dim3 gridDim(
@@ -15,7 +15,7 @@ void bilateral_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int di
         (dimz/blockDim.z + ((dimz%blockDim.z)?1:0)) );
     size_t sharedMemSize  = (blockDim.x+2*halo)*(blockDim.y+2*halo)*(blockDim.z+2*halo)*sizeof(float);
     __bilateral_3d<<<gridDim, blockDim, sharedMemSize, stream>>>
-     (deviceSrc, deviceDst, dimx, dimy, dimz, radius, halo);
+     (deviceSrc, deviceDst, dimx, dimy, dimz, imageDensity, colorDensity, radius, halo);
 }
 
 inline __device__ __host__ int clamp_mirror(int f, int a, int b)      				
@@ -28,7 +28,7 @@ inline __device__ __host__ int clamp_mirror(int f, int a, int b)
                                         clamp_mirror((int)y, 0, dimy-1)*dimx +            \
                                         clamp_mirror((int)x, 0, dimx-1) )                   
 __global__ 
-void __bilateral_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dimz, int radius, int halo)
+void __bilateral_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dimz, float imageDensity, float colorDensity, int radius, int halo)
 {
     extern __shared__ float sharedMemSrc[];                     										
     int  shared_index_1d, global_index_1d, index_1d;                                      										
@@ -52,9 +52,9 @@ void __bilateral_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int 
         shared_index_3d  =  make_int3((shared_index_1d % ((blockDim.y+2*halo)*(blockDim.x+2*halo))) % (blockDim.x+2*halo),		
                                       (shared_index_1d % ((blockDim.y+2*halo)*(blockDim.x+2*halo))) / (blockDim.x+2*halo),		
                                       (shared_index_1d / ((blockDim.y+2*halo)*(blockDim.x+2*halo))) );      					
-        global_index_3d  =  make_int3(blockIdx.x * blockDim.x + shared_index_3d.x - halo, 										
-                                      blockIdx.y * blockDim.y + shared_index_3d.y - halo, 										
-                                      blockIdx.z * blockDim.z + shared_index_3d.z - halo);										
+       global_index_3d  =  make_int3(clamp_mirror(blockIdx.x * blockDim.x + shared_index_3d.x - halo, 0, dimx-1),				
+                                     clamp_mirror(blockIdx.y * blockDim.y + shared_index_3d.y - halo, 0, dimy-1), 				
+                                     clamp_mirror(blockIdx.z * blockDim.z + shared_index_3d.z - halo, 0, dimz-1) );			
         global_index_1d  =  global_index_3d.z * dimy * dimx +                                    								
                             global_index_3d.y * dimx +                                    										
                             global_index_3d.x;                                            										
@@ -75,8 +75,36 @@ void __bilateral_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int 
     }                                                                                     
                                                                                           
     // Stencil  processing here                                                           
-    float result = sharedMemSrc[at(threadIdx.x + halo, threadIdx.y + halo, threadIdx.z + halo, sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)];                         
-	                                                                                       
+    float result = sharedMemSrc[at(threadIdx.x + halo, threadIdx.y + halo, threadIdx.z + halo, sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)];
+	float imageWeight, colorWeight, weight, totalWeight = 0.0f, pixel = 0.0f;         
+	for(int z=threadIdx.z+halo-radius; z<=threadIdx.z+halo+radius; z++)
+	{
+		for(int y=threadIdx.y+halo-radius; y<=threadIdx.y+halo+radius; y++)
+		{
+			for(int x=threadIdx.x+halo-radius; x<=threadIdx.x+halo+radius; x++)
+			{
+				
+				
+				imageWeight	= expf(-0.5f* ( (threadIdx.z+halo-z)*(threadIdx.z+halo-z) + 
+											(threadIdx.y+halo-y)*(threadIdx.y+halo-y) + 
+											(threadIdx.x+halo-x)*(threadIdx.x+halo-x) ) /(imageDensity*imageDensity));
+				colorWeight	= expf(-0.5f* ( (sharedMemSrc[at(threadIdx.x+halo, threadIdx.y+halo, threadIdx.z+halo, 
+										                  sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)] - 
+											 sharedMemSrc[at(x, y, z, 
+														  sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)]) * 
+											(sharedMemSrc[at(threadIdx.x+halo, threadIdx.y+halo, threadIdx.z+halo, 
+											   			  sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)] - 
+											 sharedMemSrc[at(x, y, z, 
+														  sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)])  ) /(colorDensity*colorDensity));
+				weight = imageWeight * colorWeight;
+
+				result += (weight)* sharedMemSrc[at(x, y, z, sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)];
+				totalWeight += weight;
+			}
+		}
+	}                         
+	result /= totalWeight;   
+	
     // Single pass writing here                                                           
     index_3d       =  make_int3(blockIdx.x * blockDim.x + threadIdx.x,                    
                                 blockIdx.y * blockDim.y + threadIdx.y,                    
@@ -84,7 +112,7 @@ void __bilateral_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int 
     index_1d       =  index_3d.z * dimy * dimx +                                          
                       index_3d.y * dimx +                                                 
                       index_3d.x;                                                         
-	                                                                                       
+	
     if (index_3d.z < dimz &&                                                              
         index_3d.y < dimy &&                                                              
         index_3d.x < dimx)                                                                

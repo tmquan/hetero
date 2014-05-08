@@ -50,22 +50,40 @@ add_test(Test_Generator_Make_Segment_3D
 	)
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
-cuda_add_executable(hybrid-app_segment_threshold 
-	app_segment_threshold.cu
+cuda_add_executable(hybrid-app_median 
+	app_median.cu
 	median_3d.cu
 	)
 
-target_link_libraries(hybrid-app_segment_threshold ${MPI_LIBRARIES} 
+target_link_libraries(hybrid-app_median ${MPI_LIBRARIES} 
 	hetero_cmdparser
 	)
 # ----------------------------------------------------------------------------
-add_executable(hybrid-sys_segment_threshold sys_segment_threshold.cpp)
+cuda_add_executable(hybrid-app_stddev 
+	app_stddev.cu
+	stddev_3d.cu
+	)
 
-target_link_libraries(hybrid-sys_segment_threshold
+target_link_libraries(hybrid-app_stddev ${MPI_LIBRARIES} 
+	hetero_cmdparser
+	)
+# ----------------------------------------------------------------------------
+cuda_add_executable(hybrid-app_bilateral  
+	app_bilateral.cu
+	bilateral_3d.cu
+	)
+
+target_link_libraries(hybrid-app_bilateral ${MPI_LIBRARIES} 
+	hetero_cmdparser
+	)
+# ----------------------------------------------------------------------------
+add_executable(hybrid-sys_segment sys_segment.cpp)
+
+target_link_libraries(hybrid-sys_segment
 	hetero_cmdparser
 	)
 
 add_test(Test_Hybrid_Segment_Threshold_3D
-	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-sys_segment_threshold 
+	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-sys_segment 
 	${RESOURCE_INPUT_PATH}/garnet.unist.ac.kr
 	)

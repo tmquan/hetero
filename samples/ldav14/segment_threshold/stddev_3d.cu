@@ -1,6 +1,6 @@
 #include "stddev_3d.hpp"
 #include "helper_math.h" 
-
+#include <stdio.h>
 void stddev_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dimz, int radius, int halo, cudaStream_t stream);
 
 __global__ 
@@ -52,9 +52,10 @@ void __stddev_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dim
         shared_index_3d  =  make_int3((shared_index_1d % ((blockDim.y+2*halo)*(blockDim.x+2*halo))) % (blockDim.x+2*halo),		
                                       (shared_index_1d % ((blockDim.y+2*halo)*(blockDim.x+2*halo))) / (blockDim.x+2*halo),		
                                       (shared_index_1d / ((blockDim.y+2*halo)*(blockDim.x+2*halo))) );      					
-        global_index_3d  =  make_int3(blockIdx.x * blockDim.x + shared_index_3d.x - halo, 										
-                                      blockIdx.y * blockDim.y + shared_index_3d.y - halo, 										
-                                      blockIdx.z * blockDim.z + shared_index_3d.z - halo);										
+        global_index_3d  =  make_int3(clamp_mirror(blockIdx.x * blockDim.x + shared_index_3d.x - halo, 0, dimx-1), 	
+                                      clamp_mirror(blockIdx.y * blockDim.y + shared_index_3d.y - halo, 0, dimy-1),		
+                                      clamp_mirror(blockIdx.z * blockDim.z + shared_index_3d.z - halo, 0, dimz-1)  );		
+									  
         global_index_1d  =  global_index_3d.z * dimy * dimx +                                    								
                             global_index_3d.y * dimx +                                    										
                             global_index_3d.x;                                            										
@@ -68,15 +69,73 @@ void __stddev_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dim
             }                                                                             						
             else                                                                          						
             {                                                                             						
-                sharedMemSrc[at(shared_index_3d.x, shared_index_3d.y, shared_index_3d.z, sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)] = -1;                                                     
-            }                                                                             
+                sharedMemSrc[at(shared_index_3d.x, shared_index_3d.y, shared_index_3d.z, sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)] = -100.0f; 
+			}                                                                             
         }                                                                                 
         __syncthreads();                                                                  
     }                                                                                     
                                                                                           
     // Stencil  processing here                                                           
     float result = sharedMemSrc[at(threadIdx.x + halo, threadIdx.y + halo, threadIdx.z + halo, sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)];                         
-	                                                                                       
+	// # Calculate the average
+	// sum = 0
+	// total = 0
+	// for point in cube_iter:
+		// sum = sum + point_query_3d(volume, point)
+		// total += 1
+
+	// mean = sum/(total)
+
+	// # Calculate the population
+	// cube_iter = make_cube_iter(x,y,z, radius)
+	// tmp   = 0
+	// stdev = 0
+	// for point in cube_iter:
+		// tmp = point_query_3d(volume, point) - mean
+		// stdev += sqrt(tmp*tmp)
+
+	// # Calculate the standard deviation
+	// stdev /= mean
+	// stdev = sqrt(stdev)                                                                                 
+	// float sum, sum2;
+	
+	
+	int total = 0;// = (2*radius+1)*(2*radius+1)*(2*radius+1);
+	float sum, mean, tmp, stddev;
+	sum = 0.0f; mean = 0.0f; stddev = 0.0f;
+	
+	// float sum = 0.0f;
+	for(int z=threadIdx.z+halo-radius; z<=threadIdx.z+halo+radius; z++)
+	{
+		for(int y=threadIdx.y+halo-radius; y<=threadIdx.y+halo+radius; y++)
+		{
+			for(int x=threadIdx.x+halo-radius; x<=threadIdx.x+halo+radius; x++)
+			{
+				sum +=   sharedMemSrc[at(x, y, z, sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)];   
+				total++;
+			}
+		}
+	}
+	
+	mean = sum/total;
+	for(int z=threadIdx.z+halo-radius; z<=threadIdx.z+halo+radius; z++)
+	{
+		for(int y=threadIdx.y+halo-radius; y<=threadIdx.y+halo+radius; y++)
+		{
+			for(int x=threadIdx.x+halo-radius; x<=threadIdx.x+halo+radius; x++)
+			{
+				tmp     = sharedMemSrc[at(x, y, z, sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)] - mean;  
+				stddev += sqrt(tmp*tmp);				
+			}
+		}
+	}
+	stddev /= mean;
+	result  = sqrt(stddev);
+	// result  = mean;
+	// result  = sum / ((2*radius+1)*(2*radius+1)*(2*radius+1));
+	// result = sum/((2*radius+1)*(2*radius+1)*(2*radius+1));
+	
+	
     // Single pass writing here                                                           
     index_3d       =  make_int3(blockIdx.x * blockDim.x + threadIdx.x,                    
                                 blockIdx.y * blockDim.y + threadIdx.y,                    
@@ -84,11 +143,14 @@ void __stddev_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dim
     index_1d       =  index_3d.z * dimy * dimx +                                          
                       index_3d.y * dimx +                                                 
                       index_3d.x;                                                         
-	                                                                                       
-    if (index_3d.z < dimz &&                                                              
-        index_3d.y < dimy &&                                                              
-        index_3d.x < dimx)                                                                
+	
+    if (index_3d.z >= dimz ||                                                              
+        index_3d.y >= dimy ||                                                              
+        index_3d.x >= dimx)  
+		return;
+	if(index_1d == (dimx-1)*(dimy-1)*(dimz-1)) printf("Total (%d)\n", total);                                                     
     {                                                                                     
         deviceDst[index_1d] = result;                                        
     }                                                                                     
 }                                                                                         
+

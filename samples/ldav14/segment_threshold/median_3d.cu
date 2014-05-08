@@ -52,9 +52,9 @@ void __median_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dim
         shared_index_3d  =  make_int3((shared_index_1d % ((blockDim.y+2*halo)*(blockDim.x+2*halo))) % (blockDim.x+2*halo),		
                                       (shared_index_1d % ((blockDim.y+2*halo)*(blockDim.x+2*halo))) / (blockDim.x+2*halo),		
                                       (shared_index_1d / ((blockDim.y+2*halo)*(blockDim.x+2*halo))) );      					
-        global_index_3d  =  make_int3(clamp_mirror(blockIdx.x * blockDim.x + shared_index_3d.x - halo, 0, dimx),										
-                                      clamp_mirror(blockIdx.y * blockDim.y + shared_index_3d.y - halo, 0, dimy), 										
-                                      clamp_mirror(blockIdx.z * blockDim.z + shared_index_3d.z - halo, 0, dimz) );	
+        global_index_3d  =  make_int3(clamp_mirror(blockIdx.x * blockDim.x + shared_index_3d.x - halo, 0, dimx-1),										
+                                      clamp_mirror(blockIdx.y * blockDim.y + shared_index_3d.y - halo, 0, dimy-1), 										
+                                      clamp_mirror(blockIdx.z * blockDim.z + shared_index_3d.z - halo, 0, dimz-1) );	
 		
         global_index_1d  =  global_index_3d.z * dimy * dimx +                                    								
                             global_index_3d.y * dimx +                                    										
@@ -69,8 +69,8 @@ void __median_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dim
             }                                                                             						
             else                                                                          						
             {                                                                             						
-                sharedMemSrc[at(shared_index_3d.x, shared_index_3d.y, shared_index_3d.z, sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)] = -100.0f;    
-            }                                                                             
+                sharedMemSrc[at(shared_index_3d.x, shared_index_3d.y, shared_index_3d.z, sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)] = -100.0f; 
+			}                                                                             
         }                                                                                 
         __syncthreads();                                                                  
     }   
