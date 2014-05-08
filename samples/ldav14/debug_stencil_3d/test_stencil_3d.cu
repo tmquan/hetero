@@ -115,7 +115,7 @@ int main(int argc, char **argv)
 	printf("Time %4.3f ms\n", ms);	
 
 
-	int numOps = 8;
+	int numOps = 30;
 	float gflops = (float)total*(float)numOps* 1.0e-9f/(ms*1.0e-3f);
 	printf("Performance of %s is %04.4f   GFLOPS/s\n", argv[0],  gflops); 
 

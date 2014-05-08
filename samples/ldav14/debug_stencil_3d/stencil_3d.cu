@@ -8,7 +8,7 @@ void __stencil_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int di
 
 void stencil_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dimz, int halo, cudaStream_t stream)
 {
-    dim3 blockDim(16, 8, 1);
+    dim3 blockDim(32, 8, 1);
     dim3 gridDim(
         (dimx/blockDim.x+((dimx%blockDim.x)?1:0)),
         (dimy/blockDim.y+((dimy%blockDim.y)?1:0)),
