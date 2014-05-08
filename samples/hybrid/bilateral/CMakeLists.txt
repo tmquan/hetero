@@ -33,6 +33,9 @@ else(MPI_FOUND)
     message(FATAL_ERROR "MPI is not installed on this system.")
 endif()
 # ----------------------------------------------------------------------------
+INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/include)
+LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/lib)
+# ----------------------------------------------------------------------------
 cuda_add_executable(hybrid-bilateral 
 					bilateral.cu)
 target_link_libraries(hybrid-bilateral 
