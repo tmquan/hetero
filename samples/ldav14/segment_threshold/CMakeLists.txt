@@ -77,6 +77,42 @@ target_link_libraries(hybrid-app_bilateral ${MPI_LIBRARIES}
 	hetero_cmdparser
 	)
 # ----------------------------------------------------------------------------
+cuda_add_executable(hybrid-app_minimum  
+	app_minimum.cu
+	minimum_3d.cu
+	)
+
+target_link_libraries(hybrid-app_minimum ${MPI_LIBRARIES} 
+	hetero_cmdparser
+	)
+# ----------------------------------------------------------------------------
+cuda_add_executable(hybrid-app_threshold  
+	app_threshold.cu
+	threshold_3d.cu
+	)
+
+target_link_libraries(hybrid-app_threshold ${MPI_LIBRARIES} 
+	hetero_cmdparser
+	)
+# ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+cuda_add_executable(hybrid-app_segment  
+	app_segment.cu
+	median_3d.cu
+	stddev_3d.cu
+	bilateral_3d.cu
+	minimum_3d.cu
+	threshold_3d.cu
+	)
+
+target_link_libraries(hybrid-app_segment ${MPI_LIBRARIES} 
+	hetero_cmdparser
+	)
+# ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 add_executable(hybrid-sys_segment sys_segment.cpp)
 
 target_link_libraries(hybrid-sys_segment
@@ -85,5 +121,16 @@ target_link_libraries(hybrid-sys_segment
 
 add_test(Test_Hybrid_Segment_Threshold_3D
 	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-sys_segment 
+	${RESOURCE_INPUT_PATH}/garnet.unist.ac.kr
+	)
+# ----------------------------------------------------------------------------
+add_executable(hybrid-sys_copy sys_copy.cpp)
+
+target_link_libraries(hybrid-sys_copy
+	hetero_cmdparser
+	)
+
+add_test(Test_Hybrid_Copy_3D
+	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/hybrid-sys_copy 
 	${RESOURCE_INPUT_PATH}/garnet.unist.ac.kr
 	)

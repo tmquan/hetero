@@ -76,7 +76,22 @@ void __minimum_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int di
                                                                                           
     // Stencil  processing here                                                           
     float result = sharedMemSrc[at(threadIdx.x + halo, threadIdx.y + halo, threadIdx.z + halo, sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)];                         
-	                                                                                       
+	        
+	float minVal = result;
+	float  thisVal;
+	for(int z=threadIdx.z+halo-radius; z<=threadIdx.z+halo+radius; z++)
+	{
+		for(int y=threadIdx.y+halo-radius; y<=threadIdx.y+halo+radius; y++)
+		{
+			for(int x=threadIdx.x+halo-radius; x<=threadIdx.x+halo+radius; x++)
+			{
+				thisVal = sharedMemSrc[at(threadIdx.x+halo, threadIdx.y+halo, threadIdx.z+halo, 
+										  sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)];
+				if (thisVal < minVal) minVal = thisVal;
+			}
+		}
+	}                         
+	result = minVal; 
     // Single pass writing here                                                           
     index_3d       =  make_int3(blockIdx.x * blockDim.x + threadIdx.x,                    
                                 blockIdx.y * blockDim.y + threadIdx.y,                    

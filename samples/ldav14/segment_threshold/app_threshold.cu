@@ -14,7 +14,7 @@
 #include <assert.h>
 #include <hetero_cmdparser.hpp>
 
-#include "bilateral_3d.hpp"
+#include "threshold_3d.hpp"
 
 float ReverseFloat( const float inFloat )
 {
@@ -339,13 +339,11 @@ int main(int argc, char *argv[])
 	cudaMalloc((void**)&d_src, (openedChunkDimxyz)*sizeof(float));
 	cudaMalloc((void**)&d_dst, (openedChunkDimxyz)*sizeof(float));
 	local_radius = 5;
-	local_halo   = 7;
-	imageDensity = 10.0f;
-	colorDensity = 1.0f;
-	
+	local_halo   = 5;
+	float thresh = 1.8f;
 	cudaMemcpy(d_src, p_openedChunk, (openedChunkDimxyz)*sizeof(float), cudaMemcpyHostToDevice);
 	// cudaMemcpy(d_dst, d_src, (openedChunkDimxyz)*sizeof(float), cudaMemcpyDeviceToDevice); // Debug purpose
-	bilateral_3d(d_src, d_dst, openedChunkDim.x, openedChunkDim.y, openedChunkDim.z, imageDensity, colorDensity, local_radius, local_halo);
+	threshold_3d(d_src, d_dst, openedChunkDim.x, openedChunkDim.y, openedChunkDim.z, local_radius, thresh, local_halo);
 	cudaDeviceSynchronize();
 	cudaMemcpy(p_openedChunk, d_dst, (openedChunkDimxyz)*sizeof(float), cudaMemcpyDeviceToHost);
 	

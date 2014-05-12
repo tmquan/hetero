@@ -248,43 +248,40 @@ int main(int argc, char **argv)
 	heteroSystem system(hostFile);
 	system.printInfo();
 	
-	// int virtualDimx = 5;
-	// int virtualDimy = 5;
-	// int virtualSize = virtualDimx*virtualDimy;
-	
+
 	// int dimx = 4455;
 	// int dimy = 3408;
 	// int dimz = 64;
-	// int3 processDim		{1485, 1136, 128};
+	// // int3 processDim		{1485, 1136, 128};
 	// int3 processDim		{dimx/3, dimy/3, dimz/2};
 	
-	int dimx = 500;
-	int dimy = 450;
-	int dimz = 400;
-	int3 processDim		{250, 225,  200};
+	// // int dimx = 500;
+	// // int dimy = 450;
+	// // int dimz = 400;
+	// // int3 processDim		{250, 225,  200};
 	
-	// int3 processDim		{256, 256,  256};
+	// // int3 processDim		{256, 256,  256};
 
-	int3 virtualDim    	{(dimx/processDim.x + ((dimx%processDim.x)?1:0)),
-						 (dimy/processDim.y + ((dimy%processDim.y)?1:0)),
-						 (dimz/processDim.z + ((dimz%processDim.z)?1:0))};
+	// int3 virtualDim    	{(dimx/processDim.x + ((dimx%processDim.x)?1:0)),
+						 // (dimy/processDim.y + ((dimy%processDim.y)?1:0)),
+						 // (dimz/processDim.z + ((dimz%processDim.z)?1:0))};
 						 
-	int virtualSize = virtualDim.x*virtualDim.y*virtualDim.z;
-	int3 haloDim {12, 12, 12};
-	// int3 haloDim {0, 0, 0};
+	// int virtualSize = virtualDim.x*virtualDim.y*virtualDim.z;
+	// int3 haloDim {12, 12, 12};
+	// // int3 haloDim {0, 0, 0};
 	
-	system.setVirtualSize(virtualSize);
-	system.setNumProcesses(8);
+	// system.setVirtualSize(virtualSize);
+	// system.setNumProcesses(8);
 	
-	system.getNumRun();
+	// system.getNumRun();
 
 	
 	
-	stringstream ssApp;	
+	// stringstream ssApp;	
 	
 	// Median
-	ssApp.str("");
-	// ssApp << "../../../bin/hybrid-app_median " 
+	// ssApp.str("");
+	// ssApp << "../../../../bin/hybrid-app_median " 
 		  // << " --dimx=" << dimx
 		  // << " --dimy=" << dimy
 		  // << " --dimz=" << dimz
@@ -306,8 +303,8 @@ int main(int argc, char **argv)
 	// system.run();
 	
 	// Median
-	ssApp.str("");
-	// ssApp << "../../../bin/hybrid-app_stddev " 
+	// ssApp.str("");
+	// ssApp << "../../../../bin/hybrid-app_stddev " 
 		  // << " --dimx=" << dimx
 		  // << " --dimy=" << dimy
 		  // << " --dimz=" << dimz
@@ -326,26 +323,295 @@ int main(int argc, char **argv)
 		  // // << " --srcFile=" << "../../../../data/ones_500x450x400.raw" 
 		  // << " --dstFile=" << "../../../../data/stddev_500x450x400.raw" 
 		  // ;
-	// Bilateral
-	ssApp.str("");
-	ssApp << "../../../bin/hybrid-app_bilateral " 
-	  << " --dimx=" << dimx
-	  << " --dimy=" << dimy
-	  << " --dimz=" << dimz
-	  << " --virtualDimx=" << virtualDim.x
-	  << " --virtualDimy=" << virtualDim.y
-	  << " --virtualDimz=" << virtualDim.z
-	  << " --processDimx=" << processDim.x
-	  << " --processDimy=" << processDim.y
-	  << " --processDimz=" << processDim.z
-	  << " --haloDimx=" << haloDim.x
-	  << " --haloDimy=" << haloDim.y
-	  << " --haloDimz=" << haloDim.z 
-	  << " --srcFile=" << "../../../../data/stddev_500x450x400.raw" 
-	  << " --dstFile=" << "../../../../data/bilateral_500x450x400.raw" 
-	  ;
+	// // Bilateral
+	// ssApp.str("");
+	// ssApp << "../../../../bin/hybrid-app_bilateral " 
+	  // << " --dimx=" << dimx
+	  // << " --dimy=" << dimy
+	  // << " --dimz=" << dimz
+	  // << " --virtualDimx=" << virtualDim.x
+	  // << " --virtualDimy=" << virtualDim.y
+	  // << " --virtualDimz=" << virtualDim.z
+	  // << " --processDimx=" << processDim.x
+	  // << " --processDimy=" << processDim.y
+	  // << " --processDimz=" << processDim.z
+	  // << " --haloDimx=" << haloDim.x
+	  // << " --haloDimy=" << haloDim.y
+	  // << " --haloDimz=" << haloDim.z 
+	  // << " --srcFile=" << "../../../../data/stddev_500x450x400.raw" 
+	  // << " --dstFile=" << "../../../../data/bilateral_500x450x400.raw" 
+	  // ;
 	
+	// system.addApplication(ssApp.str());
+	// system.run();
+	
+	
+	// // Minimum
+	// ssApp.str("");
+	// ssApp << "../../../../bin/hybrid-app_minimum " 
+	  // << " --dimx=" << dimx
+	  // << " --dimy=" << dimy
+	  // << " --dimz=" << dimz
+	  // << " --virtualDimx=" << virtualDim.x
+	  // << " --virtualDimy=" << virtualDim.y
+	  // << " --virtualDimz=" << virtualDim.z
+	  // << " --processDimx=" << processDim.x
+	  // << " --processDimy=" << processDim.y
+	  // << " --processDimz=" << processDim.z
+	  // << " --haloDimx=" << haloDim.x
+	  // << " --haloDimy=" << haloDim.y
+	  // << " --haloDimz=" << haloDim.z 
+	  // << " --srcFile=" << "../../../../data/bilateral_500x450x400.raw" 
+	  // << " --dstFile=" << "../../../../data/minimum_500x450x400.raw" 
+	  // ;
+	
+	// system.addApplication(ssApp.str());
+	// system.run();
+	
+	
+	// // Threshold
+	// ssApp.str("");
+	// ssApp << "../../../../bin/hybrid-app_threshold " 
+	  // << " --dimx=" << dimx
+	  // << " --dimy=" << dimy
+	  // << " --dimz=" << dimz
+	  // << " --virtualDimx=" << virtualDim.x
+	  // << " --virtualDimy=" << virtualDim.y
+	  // << " --virtualDimz=" << virtualDim.z
+	  // << " --processDimx=" << processDim.x
+	  // << " --processDimy=" << processDim.y
+	  // << " --processDimz=" << processDim.z
+	  // << " --haloDimx=" << haloDim.x
+	  // << " --haloDimy=" << haloDim.y
+	  // << " --haloDimz=" << haloDim.z 
+	  // << " --srcFile=" << "../../../../data/minimum_500x450x400.raw" 
+	  // << " --dstFile=" << "../../../../data/threshold_500x450x400.raw" 
+	  // ;
+	
+	// system.addApplication(ssApp.str());
+	// system.run();
+	
+	
+	// /// 29 GB here
+	// int dimx = 4455;
+	// int dimy = 3408;
+	// int dimz = 512;
+	
+	// int3 processDim		{dimx/3, dimy/3, dimz/8};
+	
+
+	// int3 virtualDim    	{(dimx/processDim.x + ((dimx%processDim.x)?1:0)),
+						 // (dimy/processDim.y + ((dimy%processDim.y)?1:0)),
+						 // (dimz/processDim.z + ((dimz%processDim.z)?1:0))};
+						 
+	// int virtualSize = virtualDim.x*virtualDim.y*virtualDim.z;
+	// int3 haloDim {12, 12, 12};
+	// // int3 haloDim {0, 0, 0};
+	
+	// system.setVirtualSize(virtualSize);
+	// system.setNumProcesses(8);
+	
+	// system.getNumRun();
+
+	
+	
+	// stringstream ssApp;	
+	
+	
+	// // Median
+	// ssApp.str("");
+	// ssApp << "../../../../bin/hybrid-app_median " 
+		  // << " --dimx=" << dimx
+		  // << " --dimy=" << dimy
+		  // << " --dimz=" << dimz
+		  // << " --virtualDimx=" << virtualDim.x
+		  // << " --virtualDimy=" << virtualDim.y
+		  // << " --virtualDimz=" << virtualDim.z
+		  // << " --processDimx=" << processDim.x
+		  // << " --processDimy=" << processDim.y
+		  // << " --processDimz=" << processDim.z
+		  // << " --haloDimx=" << haloDim.x
+		  // << " --haloDimy=" << haloDim.y
+		  // << " --haloDimz=" << haloDim.z
+		  // << " --srcFile=" << "../../../../data/em_4455x3408x512.raw" 
+		  // << " --dstFile=" << "../../../../data/median_4455x3408x512.raw" 
+		  // ;
+
+	// system.addApplication(ssApp.str());
+	// system.run();
+	
+	// // Stddev
+	// ssApp.str("");
+	// ssApp << "../../../../bin/hybrid-app_stddev " 
+		  // << " --dimx=" << dimx
+		  // << " --dimy=" << dimy
+		  // << " --dimz=" << dimz
+		  // << " --virtualDimx=" << virtualDim.x
+		  // << " --virtualDimy=" << virtualDim.y
+		  // << " --virtualDimz=" << virtualDim.z
+		  // << " --processDimx=" << processDim.x
+		  // << " --processDimy=" << processDim.y
+		  // << " --processDimz=" << processDim.z
+		  // << " --haloDimx=" << haloDim.x
+		  // << " --haloDimy=" << haloDim.y
+		  // << " --haloDimz=" << haloDim.z
+		  // << " --srcFile=" << "../../../../data/median_4455x3408x512.raw" 
+		  // << " --dstFile=" << "../../../../data/stddev_4455x3408x512.raw" 
+		  // ;
+	// system.addApplication(ssApp.str());
+	// system.run();
+	
+	// // Bilateral
+	// ssApp.str("");
+	// ssApp << "../../../../bin/hybrid-app_bilateral " 
+	  // << " --dimx=" << dimx
+	  // << " --dimy=" << dimy
+	  // << " --dimz=" << dimz
+	  // << " --virtualDimx=" << virtualDim.x
+	  // << " --virtualDimy=" << virtualDim.y
+	  // << " --virtualDimz=" << virtualDim.z
+	  // << " --processDimx=" << processDim.x
+	  // << " --processDimy=" << processDim.y
+	  // << " --processDimz=" << processDim.z
+	  // << " --haloDimx=" << haloDim.x
+	  // << " --haloDimy=" << haloDim.y
+	  // << " --haloDimz=" << haloDim.z 
+	  // << " --srcFile=" << "../../../../data/stddev_4455x3408x512.raw" 
+	  // << " --dstFile=" << "../../../../data/bilateral_4455x3408x512.raw" 
+	  // ;
+	
+	// system.addApplication(ssApp.str());
+	// system.run();
+	
+	
+	// // Minimum
+	// ssApp.str("");
+	// ssApp << "../../../../bin/hybrid-app_minimum " 
+	  // << " --dimx=" << dimx
+	  // << " --dimy=" << dimy
+	  // << " --dimz=" << dimz
+	  // << " --virtualDimx=" << virtualDim.x
+	  // << " --virtualDimy=" << virtualDim.y
+	  // << " --virtualDimz=" << virtualDim.z
+	  // << " --processDimx=" << processDim.x
+	  // << " --processDimy=" << processDim.y
+	  // << " --processDimz=" << processDim.z
+	  // << " --haloDimx=" << haloDim.x
+	  // << " --haloDimy=" << haloDim.y
+	  // << " --haloDimz=" << haloDim.z 
+	  // << " --srcFile=" << "../../../../data/bilateral_4455x3408x512.raw" 
+	  // << " --dstFile=" << "../../../../data/minimum_4455x3408x512.raw" 
+	  // ;
+	
+	// system.addApplication(ssApp.str());
+	// system.run();
+	
+	
+	// // Threshold
+	// ssApp.str("");
+	// ssApp << "../../../../bin/hybrid-app_threshold " 
+	  // << " --dimx=" << dimx
+	  // << " --dimy=" << dimy
+	  // << " --dimz=" << dimz
+	  // << " --virtualDimx=" << virtualDim.x
+	  // << " --virtualDimy=" << virtualDim.y
+	  // << " --virtualDimz=" << virtualDim.z
+	  // << " --processDimx=" << processDim.x
+	  // << " --processDimy=" << processDim.y
+	  // << " --processDimz=" << processDim.z
+	  // << " --haloDimx=" << haloDim.x
+	  // << " --haloDimy=" << haloDim.y
+	  // << " --haloDimz=" << haloDim.z 
+	  // << " --srcFile=" << "../../../../data/minimum_4455x3408x512.raw" 
+	  // << " --dstFile=" << "../../../../data/threshold_4455x3408x512.raw" 
+	  // ;
+	
+	// system.addApplication(ssApp.str());
+	// system.run();
+	
+	
+	// 29 GB, 1 time launched here
+	int dimx = 4455;
+	int dimy = 3408;
+	int dimz = 512;
+	
+	// int3 processDim		{dimx/3, dimy/3, dimz/8};
+	int3 processDim		{dimx/1, dimy/1, 1};
+	int3 virtualDim    	{(dimx/processDim.x + ((dimx%processDim.x)?1:0)),
+						 (dimy/processDim.y + ((dimy%processDim.y)?1:0)),
+						 (dimz/processDim.z + ((dimz%processDim.z)?1:0))};
+						 
+	int virtualSize = virtualDim.x*virtualDim.y*virtualDim.z;
+	int3 haloDim {12, 12, 12};
+	
+	system.setVirtualSize(virtualSize);
+	system.setNumProcesses(1); 
+	system.getNumRun();	
+	stringstream ssApp;	
+	
+	
+	// Segment
+	ssApp.str("");
+	ssApp << "../../../../bin/hybrid-app_segment " 
+		  << " --dimx=" << dimx
+		  << " --dimy=" << dimy
+		  << " --dimz=" << dimz
+		  << " --virtualDimx=" << virtualDim.x
+		  << " --virtualDimy=" << virtualDim.y
+		  << " --virtualDimz=" << virtualDim.z
+		  << " --processDimx=" << processDim.x
+		  << " --processDimy=" << processDim.y
+		  << " --processDimz=" << processDim.z
+		  << " --haloDimx=" << haloDim.x
+		  << " --haloDimy=" << haloDim.y
+		  << " --haloDimz=" << haloDim.z
+		  << " --srcFile=" << "../../../../data/em_4455x3408x512.raw" 
+		  << " --dstFile=" << "../../../../data/segment_4455x3408x512.raw" 
+		  ;
 	system.addApplication(ssApp.str());
 	system.run();
+
+	
+	
+	// // 936 GB, 1 time launched here
+	// int dimx = 21494;
+	// int dimy = 25790;
+	// // int dimz = 1850;
+	// int dimz = 36;
+	
+	// int3 processDim		{1000, 1000, 36};
+	// int3 virtualDim    	{(dimx/processDim.x + ((dimx%processDim.x)?1:0)),
+						 // (dimy/processDim.y + ((dimy%processDim.y)?1:0)),
+						 // (dimz/processDim.z + ((dimz%processDim.z)?1:0))};
+						 
+	// int virtualSize = virtualDim.x*virtualDim.y*virtualDim.z;
+	// int3 haloDim {12, 12, 12};
+	
+	// system.setVirtualSize(virtualSize);
+	// system.setNumProcesses(8);
+	// system.getNumRun();	
+	// stringstream ssApp;	
+	
+	
+	// // Segment
+	// ssApp.str("");
+	// ssApp << "../../../../bin/hybrid-app_segment " 
+		  // << " --dimx=" << dimx
+		  // << " --dimy=" << dimy
+		  // << " --dimz=" << dimz
+		  // << " --virtualDimx=" << virtualDim.x
+		  // << " --virtualDimy=" << virtualDim.y
+		  // << " --virtualDimz=" << virtualDim.z
+		  // << " --processDimx=" << processDim.x
+		  // << " --processDimy=" << processDim.y
+		  // << " --processDimz=" << processDim.z
+		  // << " --haloDimx=" << haloDim.x
+		  // << " --haloDimy=" << haloDim.y
+		  // << " --haloDimz=" << haloDim.z
+		  // << " --srcFile=" << "../../../../data/em_21494x25790x1850.raw" 
+		  // << " --dstFile=" << "../../../../data/segment_21494x25790x1850.raw" 
+		  // ;
+	// system.addApplication(ssApp.str());
+	// system.run();
 	return 0;
 }

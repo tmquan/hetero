@@ -14,6 +14,7 @@
 #include <assert.h>
 #include <hetero_cmdparser.hpp>
 
+#include "median_3d.hpp"
 #include "bilateral_3d.hpp"
 
 float ReverseFloat( const float inFloat )
@@ -219,7 +220,7 @@ int main(int argc, char *argv[])
 	cout << srcChar << endl;
 	
 	MPI_Datatype etype;
-	etype = MPI_FLOAT;
+	etype = MPI_UNSIGNED_CHAR;
 	//================================================================================
 	index_3d = make_int3(
 		(virtualRank%(virtualDimx*virtualDimy)%virtualDimx)*processDim.x+0,
@@ -238,7 +239,7 @@ int main(int argc, char *argv[])
 	starts[1] 	= index_3d.y;
 	starts[2] 	= index_3d.x;
 	MPI_Datatype closedChunkArray;		///!!! Declare the data type
-	MPI_Type_create_subarray(3, bigsizes, subsizes, starts, MPI_ORDER_C, MPI_FLOAT, &closedChunkArray);
+	MPI_Type_create_subarray(3, bigsizes, subsizes, starts, MPI_ORDER_C, MPI_UNSIGNED_CHAR, &closedChunkArray);
 	MPI_Type_commit(&closedChunkArray);	///!!! Commit the data type
 	
 	// Check correctness here
@@ -248,17 +249,17 @@ int main(int argc, char *argv[])
 	
 	MPI_File_set_view(fh, 0, etype, closedChunkArray, "native", MPI_INFO_NULL);
 	
-	float *p_closedChunk;
-	p_closedChunk = (float*)malloc(closedChunkDim.x*closedChunkDim.y*closedChunkDim.z*sizeof(float));
+	unsigned char *p_closedChunk;
+	p_closedChunk = (unsigned char*)malloc(closedChunkDim.x*closedChunkDim.y*closedChunkDim.z*sizeof(unsigned char));
 	
-	MPI_File_read(fh, p_closedChunk, closedChunkDim.x*closedChunkDim.y*closedChunkDim.z, MPI_FLOAT, MPI_STATUS_IGNORE); 
+	MPI_File_read(fh, p_closedChunk, closedChunkDim.x*closedChunkDim.y*closedChunkDim.z, MPI_UNSIGNED_CHAR, MPI_STATUS_IGNORE); 
 	MPI_File_close(&fh);
 	//================================================================================
 	///!!! Write globally
 	errCode = MPI_File_open(MPI_COMM_WORLD, "closedSubArray.raw",	MPI_MODE_RDWR|MPI_MODE_CREATE,  MPI_INFO_NULL, &fh);
 	if (errCode != MPI_SUCCESS) handle_error(errCode, "MPI_File_open");
 	MPI_File_set_view(fh, 0, etype, closedChunkArray, "native", MPI_INFO_NULL);
-	MPI_File_write_all(fh, p_closedChunk, closedChunkDim.x*closedChunkDim.y*closedChunkDim.z, MPI_FLOAT, MPI_STATUS_IGNORE); 	
+	MPI_File_write_all(fh, p_closedChunk, closedChunkDim.x*closedChunkDim.y*closedChunkDim.z, MPI_UNSIGNED_CHAR, MPI_STATUS_IGNORE); 	
 	MPI_File_close(&fh);
 	*/
 	// MPI_Finalize();		return 0;
@@ -302,7 +303,7 @@ int main(int argc, char *argv[])
 	starts[1] 	= (topRank<0)?0:(index_3d.y-halo.y);		///!!! Handle the boundary start indices	
 	starts[2] 	= (leftRank<0)?0:(index_3d.x-halo.x);		///!!! Handle the boundary start indices	
 	MPI_Datatype openedChunkArray;		///!!! Declare the data type
-	MPI_Type_create_subarray(3, bigsizes, subsizes, starts, MPI_ORDER_C, MPI_FLOAT, &openedChunkArray);
+	MPI_Type_create_subarray(3, bigsizes, subsizes, starts, MPI_ORDER_C, MPI_UNSIGNED_CHAR, &openedChunkArray);
 	MPI_Type_commit(&openedChunkArray);	///!!! Commit the data type
 	
 	errCode = MPI_File_open(MPI_COMM_WORLD, srcChar,	MPI_MODE_RDONLY,  MPI_INFO_NULL, &fh);
@@ -310,10 +311,10 @@ int main(int argc, char *argv[])
 	
 	MPI_File_set_view(fh, 0, etype, openedChunkArray, "native", MPI_INFO_NULL);
 	
-	float *p_openedChunk;
-	p_openedChunk = (float*)malloc(openedChunkDim.x*openedChunkDim.y*openedChunkDim.z*sizeof(float));
+	unsigned char *p_openedChunk;
+	p_openedChunk = (unsigned char*)malloc(openedChunkDim.x*openedChunkDim.y*openedChunkDim.z*sizeof(unsigned char));
 	
-	MPI_File_read(fh, p_openedChunk, openedChunkDim.x*openedChunkDim.y*openedChunkDim.z, MPI_FLOAT, MPI_STATUS_IGNORE); 
+	MPI_File_read(fh, p_openedChunk, openedChunkDim.x*openedChunkDim.y*openedChunkDim.z, MPI_UNSIGNED_CHAR, MPI_STATUS_IGNORE); 
 	MPI_File_close(&fh);
 	//================================================================================
 	///!!! Processing with CUDA here
@@ -323,38 +324,30 @@ int main(int argc, char *argv[])
 	cudaSetDevice(rank%numDevices);
 	cudaDeviceReset();
 	cudaCheckLastError();
-	float *d_src, *d_dst;
+	unsigned char *d_src, *d_dst;
 	int local_halo, local_radius;
 	float imageDensity, colorDensity;
 	int openedChunkDimxyz = openedChunkDim.x*openedChunkDim.y*openedChunkDim.z;
 	
+	cudaMalloc((void**)&d_src, (openedChunkDimxyz)*sizeof(unsigned char));
+	cudaMalloc((void**)&d_dst, (openedChunkDimxyz)*sizeof(unsigned char));
+	local_radius = 3;
+	local_halo   = 3;
 	
-	// /// Debug
-	// MPI_Barrier(MPI_COMM_WORLD);
-	// char *filename = new char[100];
-	// sprintf(filename, "before_%02d_%02d_%02d.raw", virtualIdx.x, virtualIdx.y, virtualIdx.z);
-	// printf("%s\n", filename);
-	// checkWriteFile(filename, p_openedChunk, openedChunkDimxyz*sizeof(float));
+	cudaMemcpy(d_src, p_openedChunk, (openedChunkDimxyz)*sizeof(unsigned char), cudaMemcpyHostToDevice);
+	// cudaMemcpy(d_dst, d_src, (openedChunkDimxyz)*sizeof(unsigned char), cudaMemcpyDeviceToDevice); // Debug purpose
+	median_3d(d_src, d_dst, openedChunkDim.x, openedChunkDim.y, openedChunkDim.z, local_radius, local_halo);
+	// local_radius = 7;
+	// local_halo   = 7;
+	// imageDensity = 10.0f;
+	// colorDensity = 1.0f;
 	
-	cudaMalloc((void**)&d_src, (openedChunkDimxyz)*sizeof(float));
-	cudaMalloc((void**)&d_dst, (openedChunkDimxyz)*sizeof(float));
-	local_radius = 5;
-	local_halo   = 7;
-	imageDensity = 10.0f;
-	colorDensity = 1.0f;
+	// bilateral_3d(d_src, d_dst, openedChunkDim.x, openedChunkDim.y, openedChunkDim.z, imageDensity, colorDensity, local_radius, local_halo);
+	cudaDeviceSynchronize(); std::swap(d_src, d_dst); cudaCheckLastError();
 	
-	cudaMemcpy(d_src, p_openedChunk, (openedChunkDimxyz)*sizeof(float), cudaMemcpyHostToDevice);
-	// cudaMemcpy(d_dst, d_src, (openedChunkDimxyz)*sizeof(float), cudaMemcpyDeviceToDevice); // Debug purpose
-	bilateral_3d(d_src, d_dst, openedChunkDim.x, openedChunkDim.y, openedChunkDim.z, imageDensity, colorDensity, local_radius, local_halo);
 	cudaDeviceSynchronize();
-	cudaMemcpy(p_openedChunk, d_dst, (openedChunkDimxyz)*sizeof(float), cudaMemcpyDeviceToHost);
-	
-	// // / debug
-	// sprintf(filename, "after_%02d_%02d_%02d.raw", virtualIdx.x, virtualIdx.y, virtualIdx.z);
-	// printf("%s\n", filename);
-	// checkWriteFile(filename, p_openedChunk, openedChunkDimxyz*sizeof(float));
-	
-	// float t;
+	cudaMemcpy(p_openedChunk, d_dst, (openedChunkDimxyz)*sizeof(unsigned char), cudaMemcpyDeviceToHost);
+	// unsigned char t;
 	
 	// for(int k=0; k<openedChunkDim.x*openedChunkDim.y*openedChunkDim.z; k++)
 	// {
@@ -379,8 +372,8 @@ int main(int argc, char *argv[])
 		// closedChunkDim.x, closedChunkDim.y,
 	    // virtualIdx.x, virtualIdx.y, virtualRank, name);
 		
-	float *p_closedChunk;
-	p_closedChunk = (float*)malloc(closedChunkDim.x*closedChunkDim.y*closedChunkDim.z*sizeof(float));	
+	unsigned char *p_closedChunk;
+	p_closedChunk = (unsigned char*)malloc(closedChunkDim.x*closedChunkDim.y*closedChunkDim.z*sizeof(unsigned char));	
 	
 	///!!! Act like shared memory, copy from read	
 	bigsizes[0]  = openedChunkDim.z;
@@ -395,11 +388,11 @@ int main(int argc, char *argv[])
 	
 	
 	MPI_Datatype subarray;
-	MPI_Type_create_subarray(3, bigsizes, subsizes, starts, MPI_ORDER_C, MPI_FLOAT, &subarray);
+	MPI_Type_create_subarray(3, bigsizes, subsizes, starts, MPI_ORDER_C, MPI_UNSIGNED_CHAR, &subarray);
 	MPI_Type_commit(&subarray);	///!!! Commit the data type
 	//Self copy
 	MPI_Isend(p_openedChunk, 1, subarray, rank, 0, MPI_COMM_WORLD, &request);	
-	MPI_Recv(p_closedChunk, closedChunkDim.x*closedChunkDim.y*closedChunkDim.z , MPI_FLOAT, rank, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+	MPI_Recv(p_closedChunk, closedChunkDim.x*closedChunkDim.y*closedChunkDim.z , MPI_UNSIGNED_CHAR, rank, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 	
 	
 	///!Order is very important
@@ -411,7 +404,7 @@ int main(int argc, char *argv[])
 	// starts[1] 	= index_2d.x;
 	// MPI_Datatype closedChunkArray;		///!!! Declare the data type
 	// MPI_Type_create_subarray(2, bigsizes, subsizes, starts,
-        // MPI_ORDER_C, MPI_FLOAT, &closedChunkArray);
+        // MPI_ORDER_C, MPI_UNSIGNED_CHAR, &closedChunkArray);
 	
 	// MPI_Type_commit(&closedChunkArray);	///!!! Commit the data type
 	char *dstChar = strdup(dstFile.c_str());
@@ -421,7 +414,7 @@ int main(int argc, char *argv[])
 	errCode = MPI_File_open(MPI_COMM_WORLD, dstChar,	MPI_MODE_RDWR|MPI_MODE_CREATE,  MPI_INFO_NULL, &fh);
 	if (errCode != MPI_SUCCESS) handle_error(errCode, "MPI_File_open");
 	MPI_File_set_view(fh, 0, etype, closedChunkArray, "native", MPI_INFO_NULL);
-	MPI_File_write_all(fh, p_closedChunk, closedChunkDim.x*closedChunkDim.y*closedChunkDim.z, MPI_FLOAT, MPI_STATUS_IGNORE); 	
+	MPI_File_write_all(fh, p_closedChunk, closedChunkDim.x*closedChunkDim.y*closedChunkDim.z, MPI_UNSIGNED_CHAR, MPI_STATUS_IGNORE); 	
 	MPI_File_close(&fh);
 	//================================================================================
 	// Close MPI

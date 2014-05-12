@@ -1,12 +1,12 @@
 #include "threshold_3d.hpp"
 #include "helper_math.h" 
 
-void threshold_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dimz, int radius, int halo, cudaStream_t stream);
+void threshold_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dimz, int radius, float thresh, int halo, cudaStream_t stream);
 
 __global__ 
-void __threshold_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dimz, int radius, int halo);
+void __threshold_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dimz, int radius, float thresh, int halo);
 
-void threshold_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dimz, int radius, int halo, cudaStream_t stream)
+void threshold_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dimz, int radius, float thresh, int halo, cudaStream_t stream)
 {
     dim3 blockDim(8, 8, 8);
     dim3 gridDim(
@@ -15,7 +15,7 @@ void threshold_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int di
         (dimz/blockDim.z + ((dimz%blockDim.z)?1:0)) );
     size_t sharedMemSize  = (blockDim.x+2*halo)*(blockDim.y+2*halo)*(blockDim.z+2*halo)*sizeof(float);
     __threshold_3d<<<gridDim, blockDim, sharedMemSize, stream>>>
-     (deviceSrc, deviceDst, dimx, dimy, dimz, radius, halo);
+     (deviceSrc, deviceDst, dimx, dimy, dimz, radius, thresh, halo);
 }
 
 inline __device__ __host__ int clamp_mirror(int f, int a, int b)      				
@@ -28,7 +28,7 @@ inline __device__ __host__ int clamp_mirror(int f, int a, int b)
                                         clamp_mirror((int)y, 0, dimy-1)*dimx +            \
                                         clamp_mirror((int)x, 0, dimx-1) )                   
 __global__ 
-void __threshold_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dimz, int radius, int halo)
+void __threshold_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int dimz, int radius, float thresh, int halo)
 {
     extern __shared__ float sharedMemSrc[];                     										
     int  shared_index_1d, global_index_1d, index_1d;                                      										
@@ -76,7 +76,29 @@ void __threshold_3d(float* deviceSrc, float* deviceDst, int dimx, int dimy, int 
                                                                                           
     // Stencil  processing here                                                           
     float result = sharedMemSrc[at(threadIdx.x + halo, threadIdx.y + halo, threadIdx.z + halo, sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)];                         
-	                                                                                       
+
+	int total = 0;// = (2*radius+1)*(2*radius+1)*(2*radius+1);
+	float sum, mean, tmp, stddev;
+	sum = 0.0f; mean = 0.0f; stddev = 0.0f;
+	
+	// float sum = 0.0f;
+	for(int z=threadIdx.z+halo-radius; z<=threadIdx.z+halo+radius; z++)
+	{
+		for(int y=threadIdx.y+halo-radius; y<=threadIdx.y+halo+radius; y++)
+		{
+			for(int x=threadIdx.x+halo-radius; x<=threadIdx.x+halo+radius; x++)
+			{
+				sum +=   sharedMemSrc[at(x, y, z, sharedMemDim.x, sharedMemDim.y, sharedMemDim.z)];   
+				total++;
+			}
+		}
+	}
+	
+	mean = sum/total;
+	
+	if(mean<thresh) result = 1.0f;
+	else			result = 0.0f;
+	
     // Single pass writing here                                                           
     index_3d       =  make_int3(blockIdx.x * blockDim.x + threadIdx.x,                    
                                 blockIdx.y * blockDim.y + threadIdx.y,                    
