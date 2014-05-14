@@ -545,7 +545,7 @@ int main(int argc, char **argv)
 	int3 haloDim {12, 12, 12};
 	
 	system.setVirtualSize(virtualSize);
-	system.setNumProcesses(1); 
+	system.setNumProcesses(8); 
 	system.getNumRun();	
 	stringstream ssApp;	
 	

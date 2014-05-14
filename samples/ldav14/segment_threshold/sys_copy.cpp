@@ -260,10 +260,11 @@ int main(int argc, char **argv)
 						 (dimz/processDim.z + ((dimz%processDim.z)?1:0))};
 						 
 	int virtualSize = virtualDim.x*virtualDim.y*virtualDim.z;
-	int3 haloDim {0, 0, 0};
+	// int3 haloDim {0, 0, 0};
+	int3 haloDim {12, 12, 12};
 	
 	system.setVirtualSize(virtualSize);
-	system.setNumProcesses(8);
+	system.setNumProcesses(1);
 	system.getNumRun();	
 	stringstream ssApp;	
 	
@@ -284,7 +285,7 @@ int main(int argc, char **argv)
 		  << " --haloDimy=" << haloDim.y
 		  << " --haloDimz=" << haloDim.z
 		  << " --srcFile=" << "../../../../data/em_4455x3408x512.raw" 
-		  << " --dstFile=" << "../../../../data/segment_4455x3408x512.raw" 
+		  << " --dstFile=" << "../../../../data/copy_4455x3408x512.raw" 
 		  ;
 	system.addApplication(ssApp.str());
 	system.run();

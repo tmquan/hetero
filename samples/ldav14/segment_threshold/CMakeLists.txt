@@ -124,6 +124,17 @@ add_test(Test_Hybrid_Segment_Threshold_3D
 	${RESOURCE_INPUT_PATH}/garnet.unist.ac.kr
 	)
 # ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+cuda_add_executable(hybrid-app_copy  
+	app_copy.cu
+	)
+
+target_link_libraries(hybrid-app_copy ${MPI_LIBRARIES} 
+	hetero_cmdparser
+	)
+	
 add_executable(hybrid-sys_copy sys_copy.cpp)
 
 target_link_libraries(hybrid-sys_copy

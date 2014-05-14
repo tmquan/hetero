@@ -59,7 +59,11 @@ LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/lib)
 	# ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/generator_make_stencil_3d
 	# )
 	
-cuda_add_executable(debug_stencil_3d test_stencil_3d.cu stencil_3d.cu)
+cuda_add_executable(debug_stencil_3d 
+	test_stencil_3d.cu 
+	stencil_3d.cu
+	stencil_3d_naive_7points.cu
+	)
 target_link_libraries(debug_stencil_3d
 	${MPI_LIBRARIES} 
 	${OpenMP_CXX_FLAGS}
@@ -70,5 +74,21 @@ add_test(Debug_Stencil_3d
 	${MPIEXEC_NUMPROC_FLAG} 1
 	${MPIEXEC_PREFLAGS} --host node001
 	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/debug_stencil_3d
+	${MPIEXEC_POSTFLAGS} |sort)
+# ----------------------------------------------------------------------------
+cuda_add_executable(debug_real_stencil_3d 
+	test_real_stencil_3d.cu 
+	stencil_3d_naive_7points.cu
+	)
+target_link_libraries(debug_real_stencil_3d
+	${MPI_LIBRARIES} 
+	${OpenMP_CXX_FLAGS}
+	hetero_cmdparser
+	)
+add_test(Debug_Real_Stencil_3d
+	${MPIEXEC} 
+	${MPIEXEC_NUMPROC_FLAG} 1
+	${MPIEXEC_PREFLAGS} --host node001
+	${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/debug_real_stencil_3d
 	${MPIEXEC_POSTFLAGS} |sort)
 	
