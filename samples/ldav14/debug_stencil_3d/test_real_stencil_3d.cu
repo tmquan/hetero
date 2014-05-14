@@ -108,11 +108,12 @@ int main(int argc, char **argv)
 		{
 			for(int x=0; x<dimx; x++)
 			{
-				h_src[z*dimy*dimx+y*dimx+x] = (float)rand();
+				h_src[z*dimy*dimx+y*dimx+x] = 1.0f;
 			}
 		}
 	}
-	
+	// checkReadFile("../../../../data/barbara_512x512x512.raw", h_src, total*sizeof(float));
+	checkWriteFile("../../../../data/src_512x512x512.raw", h_src, total*sizeof(float));
 	// ----------------------------------------------------------------------------------------
 	// Allocate device memory
 	// float *d_src;
@@ -143,11 +144,14 @@ int main(int argc, char **argv)
 	copyParams.dstPtr.ysize	= dimy;
 	copyParams.extent.width = dimx*sizeof(float);
 	copyParams.extent.height= dimx;
-	copyParams.extent.depth	= dimy;
+	copyParams.extent.depth	= dimz;
 	copyParams.kind			= cudaMemcpyHostToDevice;
 	
 	cudaMemcpy3D(&copyParams);
 	checkLastError();
+	// ----------------------------------------------------------------------------------------
+	GpuTimer gpu_timer;
+	gpu_timer.Start();
 	// ----------------------------------------------------------------------------------------
 	// Debug: Direct copy, will be comment out later
 	// copyParams.srcPtr.ptr 	= d_pitchSrc.ptr;
@@ -160,12 +164,23 @@ int main(int argc, char **argv)
 	// copyParams.dstPtr.ysize	= dimy;
 	// copyParams.extent.width = dimx*sizeof(float);
 	// copyParams.extent.height= dimx;
-	// copyParams.extent.depth	= dimy;
+	// copyParams.extent.depth	= dimz;
 	// copyParams.kind			= cudaMemcpyDeviceToDevice;
 	
 	// cudaMemcpy3D(&copyParams);
 	
 	stencil_3d_naive_7points(d_pitchSrc, d_pitchDst, dimx, dimy, dimz, 1);
+	
+	// ----------------------------------------------------------------------------------------
+	gpu_timer.Stop();
+	float ms = gpu_timer.Elapsed()/numTrials;
+	printf("Time %4.3f ms\n", ms);	
+
+
+	int numOps = 8;
+	float gflops = (float)total*(float)numOps* 1.0e-9f/(ms*1.0e-3f);
+	printf("Performance of %s is %04.4f   GFLOPS/s\n", argv[0],  gflops); 
+
 	checkLastError();
 	// ----------------------------------------------------------------------------------------
 
@@ -181,12 +196,14 @@ int main(int argc, char **argv)
 
 	copyParams.extent.width = dimx*sizeof(float);
 	copyParams.extent.height= dimx;
-	copyParams.extent.depth	= dimy;
+	copyParams.extent.depth	= dimz;
 	copyParams.kind			= cudaMemcpyDeviceToHost;
 	
 	cudaMemcpy3D(&copyParams);
 	
 	checkLastError();
+	// ----------------------------------------------------------------------------------------
+	checkWriteFile("../../../../data/defuse_512x512x512.raw", h_dst, total*sizeof(float));
 	// ----------------------------------------------------------------------------------------
 	for(int z=0; z<dimz; z++)
 	{
