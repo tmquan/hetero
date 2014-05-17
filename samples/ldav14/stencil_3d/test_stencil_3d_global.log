@@ -1,0 +1,41 @@
+-------------------------------------------------------------------------------------------------------------------
+BLKX (1), BLKY (512), BLKZ (1), ILP (8)
+Computing time : 9321.159 msec, Device memory bandwidth : 8.583 GB/s, GFLOPS : 2.146
+BLKX (2), BLKY (256), BLKZ (1), ILP (8)
+Computing time : 4768.690 msec, Device memory bandwidth : 16.776 GB/s, GFLOPS : 4.194
+BLKX (4), BLKY (128), BLKZ (1), ILP (8)
+Computing time : 1948.644 msec, Device memory bandwidth : 41.054 GB/s, GFLOPS : 10.264
+BLKX (8), BLKY (64), BLKZ (1), ILP (8)
+Computing time : 881.087 msec, Device memory bandwidth : 90.797 GB/s, GFLOPS : 22.699
+BLKX (16), BLKY (32), BLKZ (1), ILP (8)
+Computing time : 514.198 msec, Device memory bandwidth : 155.582 GB/s, GFLOPS : 38.896
+BLKX (32), BLKY (16), BLKZ (1), ILP (8)
+Computing time : 298.241 msec, Device memory bandwidth : 268.240 GB/s, GFLOPS : 67.060
+BLKX (64), BLKY (8), BLKZ (1), ILP (8)
+Computing time : 350.031 msec, Device memory bandwidth : 228.551 GB/s, GFLOPS : 57.138
+BLKX (128), BLKY (4), BLKZ (1), ILP (8)
+Computing time : 293.521 msec, Device memory bandwidth : 272.553 GB/s, GFLOPS : 68.138
+BLKX (256), BLKY (2), BLKZ (1), ILP (8)
+Computing time : 232.771 msec, Device memory bandwidth : 343.685 GB/s, GFLOPS : 85.921
+BLKX (512), BLKY (1), BLKZ (1), ILP (8)
+Computing time : 230.666 msec, Device memory bandwidth : 346.821 GB/s, GFLOPS : 86.705
+BLKX (1), BLKY (512), BLKZ (1), ILP (16)
+Computing time : 13751.889 msec, Device memory bandwidth : 5.817 GB/s, GFLOPS : 1.454
+BLKX (2), BLKY (256), BLKZ (1), ILP (16)
+Computing time : 6715.339 msec, Device memory bandwidth : 11.913 GB/s, GFLOPS : 2.978
+BLKX (4), BLKY (128), BLKZ (1), ILP (16)
+Computing time : 2696.150 msec, Device memory bandwidth : 29.672 GB/s, GFLOPS : 7.418
+BLKX (8), BLKY (64), BLKZ (1), ILP (16)
+Computing time : 938.698 msec, Device memory bandwidth : 85.224 GB/s, GFLOPS : 21.306
+BLKX (16), BLKY (32), BLKZ (1), ILP (16)
+Computing time : 516.449 msec, Device memory bandwidth : 154.904 GB/s, GFLOPS : 38.726
+BLKX (32), BLKY (16), BLKZ (1), ILP (16)
+Computing time : 306.619 msec, Device memory bandwidth : 260.910 GB/s, GFLOPS : 65.228
+BLKX (64), BLKY (8), BLKZ (1), ILP (16)
+Computing time : 343.978 msec, Device memory bandwidth : 232.573 GB/s, GFLOPS : 58.143
+BLKX (128), BLKY (4), BLKZ (1), ILP (16)
+Computing time : 295.256 msec, Device memory bandwidth : 270.951 GB/s, GFLOPS : 67.738
+BLKX (256), BLKY (2), BLKZ (1), ILP (16)
+Computing time : 228.209 msec, Device memory bandwidth : 350.556 GB/s, GFLOPS : 87.639
+BLKX (512), BLKY (1), BLKZ (1), ILP (16)
+Computing time : 228.329 msec, Device memory bandwidth : 350.372 GB/s, GFLOPS : 87.593
