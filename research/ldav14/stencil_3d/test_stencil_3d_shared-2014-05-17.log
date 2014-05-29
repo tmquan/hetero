@@ -1,0 +1,741 @@
+ 
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 001, 001);
+Computing time : 10602.753 msec, Device memory bandwidth : 7.545 GB/s, GFLOPS : 1.886
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 001, 001);
+Computing time : 8092.763 msec, Device memory bandwidth : 9.885 GB/s, GFLOPS : 2.471
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (064, 001, 001);
+Computing time : 7567.465 msec, Device memory bandwidth : 10.572 GB/s, GFLOPS : 2.643
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (128, 001, 001);
+Computing time : 7395.139 msec, Device memory bandwidth : 10.818 GB/s, GFLOPS : 2.704
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (256, 001, 001);
+Computing time : 11519.188 msec, Device memory bandwidth : 6.945 GB/s, GFLOPS : 1.736
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (512, 001, 001);
+Computing time : 28540.535 msec, Device memory bandwidth : 2.803 GB/s, GFLOPS : 0.701
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 002, 001);
+Computing time : 7083.640 msec, Device memory bandwidth : 11.294 GB/s, GFLOPS : 2.823
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 002, 001);
+Computing time : 5677.192 msec, Device memory bandwidth : 14.091 GB/s, GFLOPS : 3.523
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (064, 002, 001);
+Computing time : 5311.598 msec, Device memory bandwidth : 15.061 GB/s, GFLOPS : 3.765
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (128, 002, 001);
+Computing time : 5948.497 msec, Device memory bandwidth : 13.449 GB/s, GFLOPS : 3.362
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (256, 002, 001);
+Computing time : 13588.935 msec, Device memory bandwidth : 5.887 GB/s, GFLOPS : 1.472
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (512, 002, 001);
+Computing time : 40650.180 msec, Device memory bandwidth : 1.968 GB/s, GFLOPS : 0.492
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 004, 001);
+Computing time : 5458.087 msec, Device memory bandwidth : 14.657 GB/s, GFLOPS : 3.664
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 004, 001);
+Computing time : 4468.392 msec, Device memory bandwidth : 17.904 GB/s, GFLOPS : 4.476
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (064, 004, 001);
+Computing time : 4156.595 msec, Device memory bandwidth : 19.247 GB/s, GFLOPS : 4.812
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (128, 004, 001);
+Computing time : 6484.826 msec, Device memory bandwidth : 12.336 GB/s, GFLOPS : 3.084
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (256, 004, 001);
+Computing time : 15938.125 msec, Device memory bandwidth : 5.019 GB/s, GFLOPS : 1.255
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (512, 004, 001);
+Computing time : 31959.725 msec, Device memory bandwidth : 2.503 GB/s, GFLOPS : 0.626
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 008, 001);
+Computing time : 4737.960 msec, Device memory bandwidth : 16.885 GB/s, GFLOPS : 4.221
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 008, 001);
+Computing time : 3807.897 msec, Device memory bandwidth : 21.009 GB/s, GFLOPS : 5.252
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (064, 008, 001);
+Computing time : 4696.881 msec, Device memory bandwidth : 17.033 GB/s, GFLOPS : 4.258
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (128, 008, 001);
+Computing time : 9241.556 msec, Device memory bandwidth : 8.657 GB/s, GFLOPS : 2.164
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (256, 008, 001);
+Computing time : 27643.912 msec, Device memory bandwidth : 2.894 GB/s, GFLOPS : 0.723
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (256, 008, 001);
+Computing time : 27644.041 msec, Device memory bandwidth : 2.894 GB/s, GFLOPS : 0.723
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 016, 001);
+Computing time : 4480.294 msec, Device memory bandwidth : 17.856 GB/s, GFLOPS : 4.464
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 016, 001);
+Computing time : 4817.195 msec, Device memory bandwidth : 16.607 GB/s, GFLOPS : 4.152
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (064, 016, 001);
+Computing time : 8971.100 msec, Device memory bandwidth : 8.918 GB/s, GFLOPS : 2.229
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (128, 016, 001);
+Computing time : 26725.494 msec, Device memory bandwidth : 2.993 GB/s, GFLOPS : 0.748
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (128, 016, 001);
+Computing time : 26725.432 msec, Device memory bandwidth : 2.993 GB/s, GFLOPS : 0.748
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (128, 016, 001);
+Computing time : 26739.025 msec, Device memory bandwidth : 2.992 GB/s, GFLOPS : 0.748
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 032, 001);
+Computing time : 5691.755 msec, Device memory bandwidth : 14.055 GB/s, GFLOPS : 3.514
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 032, 001);
+Computing time : 9074.098 msec, Device memory bandwidth : 8.816 GB/s, GFLOPS : 2.204
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (064, 032, 001);
+Computing time : 25757.977 msec, Device memory bandwidth : 3.106 GB/s, GFLOPS : 0.776
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (064, 032, 001);
+Computing time : 25758.023 msec, Device memory bandwidth : 3.106 GB/s, GFLOPS : 0.776
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (064, 032, 001);
+Computing time : 25750.670 msec, Device memory bandwidth : 3.107 GB/s, GFLOPS : 0.777
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (064, 032, 001);
+Computing time : 25750.643 msec, Device memory bandwidth : 3.107 GB/s, GFLOPS : 0.777
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 064, 001);
+Computing time : 11054.288 msec, Device memory bandwidth : 7.237 GB/s, GFLOPS : 1.809
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 064, 001);
+Computing time : 26548.859 msec, Device memory bandwidth : 3.013 GB/s, GFLOPS : 0.753
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 064, 001);
+Computing time : 26548.920 msec, Device memory bandwidth : 3.013 GB/s, GFLOPS : 0.753
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 064, 001);
+Computing time : 26551.473 msec, Device memory bandwidth : 3.013 GB/s, GFLOPS : 0.753
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 064, 001);
+Computing time : 26560.029 msec, Device memory bandwidth : 3.012 GB/s, GFLOPS : 0.753
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 064, 001);
+Computing time : 26559.795 msec, Device memory bandwidth : 3.012 GB/s, GFLOPS : 0.753
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 001);
+Computing time : 32798.629 msec, Device memory bandwidth : 2.439 GB/s, GFLOPS : 0.610
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 001);
+Computing time : 32777.285 msec, Device memory bandwidth : 2.441 GB/s, GFLOPS : 0.610
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 001);
+Computing time : 32802.582 msec, Device memory bandwidth : 2.439 GB/s, GFLOPS : 0.610
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 001);
+Computing time : 32789.859 msec, Device memory bandwidth : 2.440 GB/s, GFLOPS : 0.610
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 001);
+Computing time : 32784.168 msec, Device memory bandwidth : 2.440 GB/s, GFLOPS : 0.610
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 001);
+Computing time : 32785.148 msec, Device memory bandwidth : 2.440 GB/s, GFLOPS : 0.610
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 001);
+Computing time : 32781.941 msec, Device memory bandwidth : 2.440 GB/s, GFLOPS : 0.610
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 001);
+Computing time : 32782.496 msec, Device memory bandwidth : 2.440 GB/s, GFLOPS : 0.610
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 001);
+Computing time : 32781.828 msec, Device memory bandwidth : 2.440 GB/s, GFLOPS : 0.610
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 001);
+Computing time : 32781.074 msec, Device memory bandwidth : 2.440 GB/s, GFLOPS : 0.610
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 001);
+Computing time : 32781.902 msec, Device memory bandwidth : 2.440 GB/s, GFLOPS : 0.610
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 001);
+Computing time : 32775.789 msec, Device memory bandwidth : 2.441 GB/s, GFLOPS : 0.610
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 001);
+Computing time : 32774.582 msec, Device memory bandwidth : 2.441 GB/s, GFLOPS : 0.610
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 001);
+Computing time : 32773.934 msec, Device memory bandwidth : 2.441 GB/s, GFLOPS : 0.610
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 001);
+Computing time : 32774.547 msec, Device memory bandwidth : 2.441 GB/s, GFLOPS : 0.610
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 001);
+Computing time : 32775.219 msec, Device memory bandwidth : 2.441 GB/s, GFLOPS : 0.610
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 001);
+Computing time : 32772.840 msec, Device memory bandwidth : 2.441 GB/s, GFLOPS : 0.610
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 001);
+Computing time : 32776.645 msec, Device memory bandwidth : 2.441 GB/s, GFLOPS : 0.610
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 001, 002);
+Computing time : 6763.137 msec, Device memory bandwidth : 11.829 GB/s, GFLOPS : 2.957
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 001, 002);
+Computing time : 5515.473 msec, Device memory bandwidth : 14.505 GB/s, GFLOPS : 3.626
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (064, 001, 002);
+Computing time : 5072.906 msec, Device memory bandwidth : 15.770 GB/s, GFLOPS : 3.943
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (128, 001, 002);
+Computing time : 5653.694 msec, Device memory bandwidth : 14.150 GB/s, GFLOPS : 3.538
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (256, 001, 002);
+Computing time : 12923.753 msec, Device memory bandwidth : 6.190 GB/s, GFLOPS : 1.548
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (512, 001, 002);
+Computing time : 38655.109 msec, Device memory bandwidth : 2.070 GB/s, GFLOPS : 0.517
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 002, 002);
+Computing time : 4734.692 msec, Device memory bandwidth : 16.897 GB/s, GFLOPS : 4.224
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 002, 002);
+Computing time : 3863.406 msec, Device memory bandwidth : 20.707 GB/s, GFLOPS : 5.177
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (064, 002, 002);
+Computing time : 3592.736 msec, Device memory bandwidth : 22.267 GB/s, GFLOPS : 5.567
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (128, 002, 002);
+Computing time : 5659.721 msec, Device memory bandwidth : 14.135 GB/s, GFLOPS : 3.534
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (256, 002, 002);
+Computing time : 13880.182 msec, Device memory bandwidth : 5.764 GB/s, GFLOPS : 1.441
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (512, 002, 002);
+Computing time : 28030.891 msec, Device memory bandwidth : 2.854 GB/s, GFLOPS : 0.713
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 004, 002);
+Computing time : 3704.700 msec, Device memory bandwidth : 21.594 GB/s, GFLOPS : 5.399
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 004, 002);
+Computing time : 3054.123 msec, Device memory bandwidth : 26.194 GB/s, GFLOPS : 6.549
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (064, 004, 002);
+Computing time : 3277.358 msec, Device memory bandwidth : 24.410 GB/s, GFLOPS : 6.102
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (128, 004, 002);
+Computing time : 7462.575 msec, Device memory bandwidth : 10.720 GB/s, GFLOPS : 2.680
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (256, 004, 002);
+Computing time : 22357.225 msec, Device memory bandwidth : 3.578 GB/s, GFLOPS : 0.895
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (256, 004, 002);
+Computing time : 22362.078 msec, Device memory bandwidth : 3.577 GB/s, GFLOPS : 0.894
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 008, 002);
+Computing time : 3249.444 msec, Device memory bandwidth : 24.620 GB/s, GFLOPS : 6.155
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 008, 002);
+Computing time : 2775.235 msec, Device memory bandwidth : 28.826 GB/s, GFLOPS : 7.207
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (064, 008, 002);
+Computing time : 4959.290 msec, Device memory bandwidth : 16.131 GB/s, GFLOPS : 4.033
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (128, 008, 002);
+Computing time : 10190.590 msec, Device memory bandwidth : 7.850 GB/s, GFLOPS : 1.963
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (256, 008, 002);
+Computing time : 19629.338 msec, Device memory bandwidth : 4.076 GB/s, GFLOPS : 1.019
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (256, 008, 002);
+Computing time : 19635.705 msec, Device memory bandwidth : 4.074 GB/s, GFLOPS : 1.019
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 016, 002);
+Computing time : 3026.408 msec, Device memory bandwidth : 26.434 GB/s, GFLOPS : 6.608
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 016, 002);
+Computing time : 4882.573 msec, Device memory bandwidth : 16.385 GB/s, GFLOPS : 4.096
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (064, 016, 002);
+Computing time : 9180.691 msec, Device memory bandwidth : 8.714 GB/s, GFLOPS : 2.178
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (128, 016, 002);
+Computing time : 18320.010 msec, Device memory bandwidth : 4.367 GB/s, GFLOPS : 1.092
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (128, 016, 002);
+Computing time : 18319.578 msec, Device memory bandwidth : 4.367 GB/s, GFLOPS : 1.092
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (128, 016, 002);
+Computing time : 18324.516 msec, Device memory bandwidth : 4.366 GB/s, GFLOPS : 1.091
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 032, 002);
+Computing time : 5766.262 msec, Device memory bandwidth : 13.874 GB/s, GFLOPS : 3.468
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 032, 002);
+Computing time : 9632.528 msec, Device memory bandwidth : 8.305 GB/s, GFLOPS : 2.076
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (064, 032, 002);
+Computing time : 17753.590 msec, Device memory bandwidth : 4.506 GB/s, GFLOPS : 1.127
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (064, 032, 002);
+Computing time : 17753.467 msec, Device memory bandwidth : 4.506 GB/s, GFLOPS : 1.127
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (064, 032, 002);
+Computing time : 17761.697 msec, Device memory bandwidth : 4.504 GB/s, GFLOPS : 1.126
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (064, 032, 002);
+Computing time : 17761.805 msec, Device memory bandwidth : 4.504 GB/s, GFLOPS : 1.126
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 064, 002);
+Computing time : 11287.187 msec, Device memory bandwidth : 7.088 GB/s, GFLOPS : 1.772
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 064, 002);
+Computing time : 18320.092 msec, Device memory bandwidth : 4.367 GB/s, GFLOPS : 1.092
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 064, 002);
+Computing time : 18320.207 msec, Device memory bandwidth : 4.367 GB/s, GFLOPS : 1.092
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 064, 002);
+Computing time : 18325.520 msec, Device memory bandwidth : 4.365 GB/s, GFLOPS : 1.091
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 064, 002);
+Computing time : 18319.834 msec, Device memory bandwidth : 4.367 GB/s, GFLOPS : 1.092
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 064, 002);
+Computing time : 18319.904 msec, Device memory bandwidth : 4.367 GB/s, GFLOPS : 1.092
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 002);
+Computing time : 22419.010 msec, Device memory bandwidth : 3.568 GB/s, GFLOPS : 0.892
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 002);
+Computing time : 22418.512 msec, Device memory bandwidth : 3.568 GB/s, GFLOPS : 0.892
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 002);
+Computing time : 22418.764 msec, Device memory bandwidth : 3.568 GB/s, GFLOPS : 0.892
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 002);
+Computing time : 22416.996 msec, Device memory bandwidth : 3.569 GB/s, GFLOPS : 0.892
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 002);
+Computing time : 22417.465 msec, Device memory bandwidth : 3.569 GB/s, GFLOPS : 0.892
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 002);
+Computing time : 22420.508 msec, Device memory bandwidth : 3.568 GB/s, GFLOPS : 0.892
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 002);
+Computing time : 22420.045 msec, Device memory bandwidth : 3.568 GB/s, GFLOPS : 0.892
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 002);
+Computing time : 22437.836 msec, Device memory bandwidth : 3.565 GB/s, GFLOPS : 0.891
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 002);
+Computing time : 22437.193 msec, Device memory bandwidth : 3.566 GB/s, GFLOPS : 0.891
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 002);
+Computing time : 22435.494 msec, Device memory bandwidth : 3.566 GB/s, GFLOPS : 0.891
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 002);
+Computing time : 22418.021 msec, Device memory bandwidth : 3.569 GB/s, GFLOPS : 0.892
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 002);
+Computing time : 22419.164 msec, Device memory bandwidth : 3.568 GB/s, GFLOPS : 0.892
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 002);
+Computing time : 22419.098 msec, Device memory bandwidth : 3.568 GB/s, GFLOPS : 0.892
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 002);
+Computing time : 22417.822 msec, Device memory bandwidth : 3.569 GB/s, GFLOPS : 0.892
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 002);
+Computing time : 22418.553 msec, Device memory bandwidth : 3.568 GB/s, GFLOPS : 0.892
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 002);
+Computing time : 22419.156 msec, Device memory bandwidth : 3.568 GB/s, GFLOPS : 0.892
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 002);
+Computing time : 22437.361 msec, Device memory bandwidth : 3.565 GB/s, GFLOPS : 0.891
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 128, 002);
+Computing time : 22435.455 msec, Device memory bandwidth : 3.566 GB/s, GFLOPS : 0.891
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 001, 004);
+Computing time : 5111.695 msec, Device memory bandwidth : 15.650 GB/s, GFLOPS : 3.913
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 001, 004);
+Computing time : 4146.190 msec, Device memory bandwidth : 19.295 GB/s, GFLOPS : 4.824
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (064, 001, 004);
+Computing time : 3880.508 msec, Device memory bandwidth : 20.616 GB/s, GFLOPS : 5.154
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (128, 001, 004);
+Computing time : 6049.210 msec, Device memory bandwidth : 13.225 GB/s, GFLOPS : 3.306
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (256, 001, 004);
+Computing time : 14936.579 msec, Device memory bandwidth : 5.356 GB/s, GFLOPS : 1.339
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (512, 001, 004);
+Computing time : 29677.469 msec, Device memory bandwidth : 2.696 GB/s, GFLOPS : 0.674
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 002, 004);
+Computing time : 3639.522 msec, Device memory bandwidth : 21.981 GB/s, GFLOPS : 5.495
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 002, 004);
+Computing time : 3006.621 msec, Device memory bandwidth : 26.608 GB/s, GFLOPS : 6.652
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (064, 002, 004);
+Computing time : 3224.360 msec, Device memory bandwidth : 24.811 GB/s, GFLOPS : 6.203
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (128, 002, 004);
+Computing time : 7367.312 msec, Device memory bandwidth : 10.859 GB/s, GFLOPS : 2.715
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (256, 002, 004);
+Computing time : 21931.652 msec, Device memory bandwidth : 3.648 GB/s, GFLOPS : 0.912
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (256, 002, 004);
+Computing time : 21933.219 msec, Device memory bandwidth : 3.647 GB/s, GFLOPS : 0.912
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 004, 004);
+Computing time : 3029.686 msec, Device memory bandwidth : 26.405 GB/s, GFLOPS : 6.601
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 004, 004);
+Computing time : 2528.925 msec, Device memory bandwidth : 31.634 GB/s, GFLOPS : 7.909
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (064, 004, 004);
+Computing time : 3776.158 msec, Device memory bandwidth : 21.186 GB/s, GFLOPS : 5.296
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (128, 004, 004);
+Computing time : 9283.602 msec, Device memory bandwidth : 8.617 GB/s, GFLOPS : 2.154
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (256, 004, 004);
+Computing time : 18550.910 msec, Device memory bandwidth : 4.312 GB/s, GFLOPS : 1.078
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (256, 004, 004);
+Computing time : 18551.318 msec, Device memory bandwidth : 4.312 GB/s, GFLOPS : 1.078
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 008, 004);
+Computing time : 2569.444 msec, Device memory bandwidth : 31.135 GB/s, GFLOPS : 7.784
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 008, 004);
+Computing time : 2815.902 msec, Device memory bandwidth : 28.410 GB/s, GFLOPS : 7.103
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (064, 008, 004);
+Computing time : 5308.132 msec, Device memory bandwidth : 15.071 GB/s, GFLOPS : 3.768
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (128, 008, 004);
+Computing time : 15762.556 msec, Device memory bandwidth : 5.075 GB/s, GFLOPS : 1.269
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (128, 008, 004);
+Computing time : 15762.173 msec, Device memory bandwidth : 5.075 GB/s, GFLOPS : 1.269
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (128, 008, 004);
+Computing time : 15761.886 msec, Device memory bandwidth : 5.076 GB/s, GFLOPS : 1.269
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 016, 004);
+Computing time : 3221.594 msec, Device memory bandwidth : 24.832 GB/s, GFLOPS : 6.208
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 016, 004);
+Computing time : 5302.858 msec, Device memory bandwidth : 15.086 GB/s, GFLOPS : 3.772
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (064, 016, 004);
+Computing time : 15018.255 msec, Device memory bandwidth : 5.327 GB/s, GFLOPS : 1.332
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (064, 016, 004);
+Computing time : 15018.183 msec, Device memory bandwidth : 5.327 GB/s, GFLOPS : 1.332
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (064, 016, 004);
+Computing time : 15016.232 msec, Device memory bandwidth : 5.328 GB/s, GFLOPS : 1.332
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (064, 016, 004);
+Computing time : 15016.059 msec, Device memory bandwidth : 5.328 GB/s, GFLOPS : 1.332
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 032, 004);
+Computing time : 6207.299 msec, Device memory bandwidth : 12.888 GB/s, GFLOPS : 3.222
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 032, 004);
+Computing time : 15191.678 msec, Device memory bandwidth : 5.266 GB/s, GFLOPS : 1.317
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 032, 004);
+Computing time : 15192.455 msec, Device memory bandwidth : 5.266 GB/s, GFLOPS : 1.316
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 032, 004);
+Computing time : 15191.710 msec, Device memory bandwidth : 5.266 GB/s, GFLOPS : 1.317
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 032, 004);
+Computing time : 15191.804 msec, Device memory bandwidth : 5.266 GB/s, GFLOPS : 1.316
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 032, 004);
+Computing time : 15191.564 msec, Device memory bandwidth : 5.266 GB/s, GFLOPS : 1.317
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 064, 004);
+Computing time : 18191.916 msec, Device memory bandwidth : 4.398 GB/s, GFLOPS : 1.099
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 064, 004);
+Computing time : 18200.025 msec, Device memory bandwidth : 4.396 GB/s, GFLOPS : 1.099
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 064, 004);
+Computing time : 18194.904 msec, Device memory bandwidth : 4.397 GB/s, GFLOPS : 1.099
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 064, 004);
+Computing time : 18198.850 msec, Device memory bandwidth : 4.396 GB/s, GFLOPS : 1.099
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 064, 004);
+Computing time : 18200.006 msec, Device memory bandwidth : 4.396 GB/s, GFLOPS : 1.099
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 064, 004);
+Computing time : 18198.422 msec, Device memory bandwidth : 4.396 GB/s, GFLOPS : 1.099
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 064, 004);
+Computing time : 18196.758 msec, Device memory bandwidth : 4.396 GB/s, GFLOPS : 1.099
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 064, 004);
+Computing time : 18194.668 msec, Device memory bandwidth : 4.397 GB/s, GFLOPS : 1.099
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 064, 004);
+Computing time : 18190.121 msec, Device memory bandwidth : 4.398 GB/s, GFLOPS : 1.099
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 064, 004);
+Computing time : 18187.783 msec, Device memory bandwidth : 4.399 GB/s, GFLOPS : 1.100
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 064, 004);
+Computing time : 18196.162 msec, Device memory bandwidth : 4.397 GB/s, GFLOPS : 1.099
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 064, 004);
+Computing time : 18196.068 msec, Device memory bandwidth : 4.397 GB/s, GFLOPS : 1.099
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 064, 004);
+Computing time : 18196.576 msec, Device memory bandwidth : 4.396 GB/s, GFLOPS : 1.099
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 064, 004);
+Computing time : 18186.725 msec, Device memory bandwidth : 4.399 GB/s, GFLOPS : 1.100
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 064, 004);
+Computing time : 18190.002 msec, Device memory bandwidth : 4.398 GB/s, GFLOPS : 1.100
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 064, 004);
+Computing time : 18192.297 msec, Device memory bandwidth : 4.397 GB/s, GFLOPS : 1.099
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 064, 004);
+Computing time : 18187.676 msec, Device memory bandwidth : 4.399 GB/s, GFLOPS : 1.100
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 064, 004);
+Computing time : 18193.283 msec, Device memory bandwidth : 4.397 GB/s, GFLOPS : 1.099
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 064, 004);
+Computing time : 18191.852 msec, Device memory bandwidth : 4.398 GB/s, GFLOPS : 1.099
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 064, 004);
+Computing time : 18193.309 msec, Device memory bandwidth : 4.397 GB/s, GFLOPS : 1.099
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 064, 004);
+Computing time : 18201.730 msec, Device memory bandwidth : 4.395 GB/s, GFLOPS : 1.099
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 064, 004);
+Computing time : 18193.949 msec, Device memory bandwidth : 4.397 GB/s, GFLOPS : 1.099
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 064, 004);
+Computing time : 18199.404 msec, Device memory bandwidth : 4.396 GB/s, GFLOPS : 1.099
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 064, 004);
+Computing time : 18202.125 msec, Device memory bandwidth : 4.395 GB/s, GFLOPS : 1.099
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (016, 001, 008);
+Computing time : 4247.447 msec, Device memory bandwidth : 18.835 GB/s, GFLOPS : 4.709
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (032, 001, 008);
+Computing time : 3479.184 msec, Device memory bandwidth : 22.994 GB/s, GFLOPS : 5.748
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (064, 001, 008);
+Computing time : 4330.073 msec, Device memory bandwidth : 18.475 GB/s, GFLOPS : 4.619
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (128, 001, 008);
+Computing time : 8471.227 msec, Device memory bandwidth : 9.444 GB/s, GFLOPS : 2.361
+
+-----------------------------------------------------------------------
+Blockdim (016, 001, 001); Blocksize (256, 001, 008);
+Computing time : 25267.555 msec, Device memory bandwidth : 3.166 GB/s, GFLOPS : 0.792
+

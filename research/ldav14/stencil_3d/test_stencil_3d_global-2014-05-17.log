@@ -1,0 +1,993 @@
+ 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 001, 001); Blocksize (032, 002, 001);
+Computing time : 1277.706 msec, Device memory bandwidth : 62.612 GB/s, GFLOPS : 15.653
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 001, 001); Blocksize (064, 002, 001);
+Computing time : 757.249 msec, Device memory bandwidth : 105.646 GB/s, GFLOPS : 26.411
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 001, 001); Blocksize (128, 002, 001);
+Computing time : 506.551 msec, Device memory bandwidth : 157.931 GB/s, GFLOPS : 39.483
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 001, 001); Blocksize (256, 002, 001);
+Computing time : 402.188 msec, Device memory bandwidth : 198.912 GB/s, GFLOPS : 49.728
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 001, 001); Blocksize (512, 002, 001);
+Computing time : 432.796 msec, Device memory bandwidth : 184.845 GB/s, GFLOPS : 46.211
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 001, 001); Blocksize (1024, 002, 001);
+Computing time : 510.731 msec, Device memory bandwidth : 156.638 GB/s, GFLOPS : 39.160
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 002, 001); Blocksize (032, 004, 001);
+Computing time : 762.544 msec, Device memory bandwidth : 104.912 GB/s, GFLOPS : 26.228
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 002, 001); Blocksize (064, 004, 001);
+Computing time : 497.245 msec, Device memory bandwidth : 160.886 GB/s, GFLOPS : 40.222
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 002, 001); Blocksize (128, 004, 001);
+Computing time : 398.429 msec, Device memory bandwidth : 200.789 GB/s, GFLOPS : 50.197
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 002, 001); Blocksize (256, 004, 001);
+Computing time : 407.870 msec, Device memory bandwidth : 196.141 GB/s, GFLOPS : 49.035
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 002, 001); Blocksize (512, 004, 001);
+Computing time : 435.412 msec, Device memory bandwidth : 183.734 GB/s, GFLOPS : 45.934
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 002, 001); Blocksize (1024, 004, 001);
+Computing time : 604.153 msec, Device memory bandwidth : 132.417 GB/s, GFLOPS : 33.104
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 003, 001); Blocksize (032, 006, 001);
+Computing time : 611.932 msec, Device memory bandwidth : 130.733 GB/s, GFLOPS : 32.683
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 003, 001); Blocksize (064, 006, 001);
+Computing time : 428.816 msec, Device memory bandwidth : 186.560 GB/s, GFLOPS : 46.640
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 003, 001); Blocksize (128, 006, 001);
+Computing time : 415.058 msec, Device memory bandwidth : 192.744 GB/s, GFLOPS : 48.186
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 003, 001); Blocksize (256, 006, 001);
+Computing time : 423.860 msec, Device memory bandwidth : 188.742 GB/s, GFLOPS : 47.185
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 003, 001); Blocksize (512, 006, 001);
+Computing time : 467.095 msec, Device memory bandwidth : 171.271 GB/s, GFLOPS : 42.818
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 003, 001); Blocksize (1024, 006, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 004, 001); Blocksize (032, 008, 001);
+Computing time : 511.817 msec, Device memory bandwidth : 156.306 GB/s, GFLOPS : 39.076
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 004, 001); Blocksize (064, 008, 001);
+Computing time : 413.110 msec, Device memory bandwidth : 193.653 GB/s, GFLOPS : 48.413
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 004, 001); Blocksize (128, 008, 001);
+Computing time : 414.110 msec, Device memory bandwidth : 193.186 GB/s, GFLOPS : 48.296
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 004, 001); Blocksize (256, 008, 001);
+Computing time : 430.346 msec, Device memory bandwidth : 185.897 GB/s, GFLOPS : 46.474
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 004, 001); Blocksize (512, 008, 001);
+Computing time : 443.866 msec, Device memory bandwidth : 180.235 GB/s, GFLOPS : 45.059
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 004, 001); Blocksize (1024, 008, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 005, 001); Blocksize (032, 010, 001);
+Computing time : 507.165 msec, Device memory bandwidth : 157.740 GB/s, GFLOPS : 39.435
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 005, 001); Blocksize (064, 010, 001);
+Computing time : 417.974 msec, Device memory bandwidth : 191.399 GB/s, GFLOPS : 47.850
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 005, 001); Blocksize (128, 010, 001);
+Computing time : 424.345 msec, Device memory bandwidth : 188.526 GB/s, GFLOPS : 47.131
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 005, 001); Blocksize (256, 010, 001);
+Computing time : 421.206 msec, Device memory bandwidth : 189.931 GB/s, GFLOPS : 47.483
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 005, 001); Blocksize (512, 010, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 005, 001); Blocksize (1024, 010, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 006, 001); Blocksize (032, 012, 001);
+Computing time : 442.550 msec, Device memory bandwidth : 180.771 GB/s, GFLOPS : 45.193
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 006, 001); Blocksize (064, 012, 001);
+Computing time : 421.103 msec, Device memory bandwidth : 189.977 GB/s, GFLOPS : 47.494
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 006, 001); Blocksize (128, 012, 001);
+Computing time : 443.587 msec, Device memory bandwidth : 180.348 GB/s, GFLOPS : 45.087
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 006, 001); Blocksize (256, 012, 001);
+Computing time : 486.839 msec, Device memory bandwidth : 164.325 GB/s, GFLOPS : 41.081
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 006, 001); Blocksize (512, 012, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 006, 001); Blocksize (1024, 012, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 007, 001); Blocksize (032, 014, 001);
+Computing time : 486.249 msec, Device memory bandwidth : 164.525 GB/s, GFLOPS : 41.131
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 007, 001); Blocksize (064, 014, 001);
+Computing time : 422.228 msec, Device memory bandwidth : 189.471 GB/s, GFLOPS : 47.368
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 007, 001); Blocksize (128, 014, 001);
+Computing time : 428.434 msec, Device memory bandwidth : 186.727 GB/s, GFLOPS : 46.682
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 007, 001); Blocksize (256, 014, 001);
+Computing time : 474.704 msec, Device memory bandwidth : 168.526 GB/s, GFLOPS : 42.131
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 007, 001); Blocksize (512, 014, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 007, 001); Blocksize (1024, 014, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 008, 001); Blocksize (032, 016, 001);
+Computing time : 433.348 msec, Device memory bandwidth : 184.609 GB/s, GFLOPS : 46.152
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 008, 001); Blocksize (064, 016, 001);
+Computing time : 426.518 msec, Device memory bandwidth : 187.565 GB/s, GFLOPS : 46.891
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 008, 001); Blocksize (128, 016, 001);
+Computing time : 459.554 msec, Device memory bandwidth : 174.082 GB/s, GFLOPS : 43.520
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 008, 001); Blocksize (256, 016, 001);
+Computing time : 465.811 msec, Device memory bandwidth : 171.743 GB/s, GFLOPS : 42.936
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 008, 001); Blocksize (512, 016, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 008, 001); Blocksize (1024, 016, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 009, 001); Blocksize (032, 018, 001);
+Computing time : 476.621 msec, Device memory bandwidth : 167.848 GB/s, GFLOPS : 41.962
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 009, 001); Blocksize (064, 018, 001);
+Computing time : 428.636 msec, Device memory bandwidth : 186.639 GB/s, GFLOPS : 46.660
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 009, 001); Blocksize (128, 018, 001);
+Computing time : 456.402 msec, Device memory bandwidth : 175.284 GB/s, GFLOPS : 43.821
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 009, 001); Blocksize (256, 018, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 009, 001); Blocksize (512, 018, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 009, 001); Blocksize (1024, 018, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 010, 001); Blocksize (032, 020, 001);
+Computing time : 423.836 msec, Device memory bandwidth : 188.752 GB/s, GFLOPS : 47.188
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 010, 001); Blocksize (064, 020, 001);
+Computing time : 436.555 msec, Device memory bandwidth : 183.253 GB/s, GFLOPS : 45.813
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 010, 001); Blocksize (128, 020, 001);
+Computing time : 448.276 msec, Device memory bandwidth : 178.462 GB/s, GFLOPS : 44.615
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 010, 001); Blocksize (256, 020, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 010, 001); Blocksize (512, 020, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 010, 001); Blocksize (1024, 020, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 011, 001); Blocksize (032, 022, 001);
+Computing time : 474.499 msec, Device memory bandwidth : 168.599 GB/s, GFLOPS : 42.150
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 011, 001); Blocksize (064, 022, 001);
+Computing time : 438.686 msec, Device memory bandwidth : 182.363 GB/s, GFLOPS : 45.591
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 011, 001); Blocksize (128, 022, 001);
+Computing time : 447.257 msec, Device memory bandwidth : 178.868 GB/s, GFLOPS : 44.717
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 011, 001); Blocksize (256, 022, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 011, 001); Blocksize (512, 022, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 011, 001); Blocksize (1024, 022, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 012, 001); Blocksize (032, 024, 001);
+Computing time : 427.455 msec, Device memory bandwidth : 187.154 GB/s, GFLOPS : 46.789
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 012, 001); Blocksize (064, 024, 001);
+Computing time : 458.844 msec, Device memory bandwidth : 174.351 GB/s, GFLOPS : 43.588
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 012, 001); Blocksize (128, 024, 001);
+Computing time : 532.303 msec, Device memory bandwidth : 150.290 GB/s, GFLOPS : 37.573
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 012, 001); Blocksize (256, 024, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 012, 001); Blocksize (512, 024, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 012, 001); Blocksize (1024, 024, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 013, 001); Blocksize (032, 026, 001);
+Computing time : 481.937 msec, Device memory bandwidth : 165.997 GB/s, GFLOPS : 41.499
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 013, 001); Blocksize (064, 026, 001);
+Computing time : 458.020 msec, Device memory bandwidth : 174.665 GB/s, GFLOPS : 43.666
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 013, 001); Blocksize (128, 026, 001);
+Computing time : 521.547 msec, Device memory bandwidth : 153.390 GB/s, GFLOPS : 38.347
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 013, 001); Blocksize (256, 026, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 013, 001); Blocksize (512, 026, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 013, 001); Blocksize (1024, 026, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 014, 001); Blocksize (032, 028, 001);
+Computing time : 442.097 msec, Device memory bandwidth : 180.956 GB/s, GFLOPS : 45.239
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 014, 001); Blocksize (064, 028, 001);
+Computing time : 461.740 msec, Device memory bandwidth : 173.258 GB/s, GFLOPS : 43.314
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 014, 001); Blocksize (128, 028, 001);
+Computing time : 520.237 msec, Device memory bandwidth : 153.776 GB/s, GFLOPS : 38.444
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 014, 001); Blocksize (256, 028, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 014, 001); Blocksize (512, 028, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 014, 001); Blocksize (1024, 028, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 015, 001); Blocksize (032, 030, 001);
+Computing time : 504.754 msec, Device memory bandwidth : 158.493 GB/s, GFLOPS : 39.623
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 015, 001); Blocksize (064, 030, 001);
+Computing time : 456.636 msec, Device memory bandwidth : 175.194 GB/s, GFLOPS : 43.799
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 015, 001); Blocksize (128, 030, 001);
+Computing time : 516.321 msec, Device memory bandwidth : 154.942 GB/s, GFLOPS : 38.736
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 015, 001); Blocksize (256, 030, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 015, 001); Blocksize (512, 030, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 015, 001); Blocksize (1024, 030, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 016, 001); Blocksize (032, 032, 001);
+Computing time : 485.155 msec, Device memory bandwidth : 164.896 GB/s, GFLOPS : 41.224
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 016, 001); Blocksize (064, 032, 001);
+Computing time : 571.797 msec, Device memory bandwidth : 139.910 GB/s, GFLOPS : 34.977
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 016, 001); Blocksize (128, 032, 001);
+Computing time : 519.136 msec, Device memory bandwidth : 154.102 GB/s, GFLOPS : 38.526
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 016, 001); Blocksize (256, 032, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 016, 001); Blocksize (512, 032, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 016, 001); Blocksize (1024, 032, 001);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 001, 001); Blocksize (032, 002, 002);
+Computing time : 1274.294 msec, Device memory bandwidth : 62.780 GB/s, GFLOPS : 15.695
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 001, 001); Blocksize (064, 002, 002);
+Computing time : 746.900 msec, Device memory bandwidth : 107.109 GB/s, GFLOPS : 26.777
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 001, 001); Blocksize (128, 002, 002);
+Computing time : 461.165 msec, Device memory bandwidth : 173.474 GB/s, GFLOPS : 43.368
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 001, 001); Blocksize (256, 002, 002);
+Computing time : 373.302 msec, Device memory bandwidth : 214.304 GB/s, GFLOPS : 53.576
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 001, 001); Blocksize (512, 002, 002);
+Computing time : 399.590 msec, Device memory bandwidth : 200.205 GB/s, GFLOPS : 50.051
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 001, 001); Blocksize (1024, 002, 002);
+Computing time : 474.068 msec, Device memory bandwidth : 168.752 GB/s, GFLOPS : 42.188
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 002, 001); Blocksize (032, 004, 002);
+Computing time : 749.498 msec, Device memory bandwidth : 106.738 GB/s, GFLOPS : 26.685
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 002, 001); Blocksize (064, 004, 002);
+Computing time : 457.489 msec, Device memory bandwidth : 174.868 GB/s, GFLOPS : 43.717
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 002, 001); Blocksize (128, 004, 002);
+Computing time : 371.776 msec, Device memory bandwidth : 215.183 GB/s, GFLOPS : 53.796
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 002, 001); Blocksize (256, 004, 002);
+Computing time : 394.465 msec, Device memory bandwidth : 202.806 GB/s, GFLOPS : 50.702
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 002, 001); Blocksize (512, 004, 002);
+Computing time : 386.723 msec, Device memory bandwidth : 206.867 GB/s, GFLOPS : 51.717
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 002, 001); Blocksize (1024, 004, 002);
+Computing time : 551.984 msec, Device memory bandwidth : 144.932 GB/s, GFLOPS : 36.233
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 003, 001); Blocksize (032, 006, 002);
+Computing time : 585.179 msec, Device memory bandwidth : 136.710 GB/s, GFLOPS : 34.178
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 003, 001); Blocksize (064, 006, 002);
+Computing time : 392.535 msec, Device memory bandwidth : 203.803 GB/s, GFLOPS : 50.951
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 003, 001); Blocksize (128, 006, 002);
+Computing time : 403.406 msec, Device memory bandwidth : 198.311 GB/s, GFLOPS : 49.578
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 003, 001); Blocksize (256, 006, 002);
+Computing time : 395.184 msec, Device memory bandwidth : 202.437 GB/s, GFLOPS : 50.609
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 003, 001); Blocksize (512, 006, 002);
+Computing time : 416.500 msec, Device memory bandwidth : 192.077 GB/s, GFLOPS : 48.019
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 003, 001); Blocksize (1024, 006, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 004, 001); Blocksize (032, 008, 002);
+Computing time : 463.199 msec, Device memory bandwidth : 172.712 GB/s, GFLOPS : 43.178
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 004, 001); Blocksize (064, 008, 002);
+Computing time : 390.934 msec, Device memory bandwidth : 204.638 GB/s, GFLOPS : 51.160
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 004, 001); Blocksize (128, 008, 002);
+Computing time : 399.281 msec, Device memory bandwidth : 200.360 GB/s, GFLOPS : 50.090
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 004, 001); Blocksize (256, 008, 002);
+Computing time : 400.452 msec, Device memory bandwidth : 199.774 GB/s, GFLOPS : 49.944
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 004, 001); Blocksize (512, 008, 002);
+Computing time : 399.910 msec, Device memory bandwidth : 200.045 GB/s, GFLOPS : 50.011
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 004, 001); Blocksize (1024, 008, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 005, 001); Blocksize (032, 010, 002);
+Computing time : 470.168 msec, Device memory bandwidth : 170.152 GB/s, GFLOPS : 42.538
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 005, 001); Blocksize (064, 010, 002);
+Computing time : 403.910 msec, Device memory bandwidth : 198.064 GB/s, GFLOPS : 49.516
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 005, 001); Blocksize (128, 010, 002);
+Computing time : 407.139 msec, Device memory bandwidth : 196.493 GB/s, GFLOPS : 49.123
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 005, 001); Blocksize (256, 010, 002);
+Computing time : 404.843 msec, Device memory bandwidth : 197.607 GB/s, GFLOPS : 49.402
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 005, 001); Blocksize (512, 010, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 005, 001); Blocksize (1024, 010, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 006, 001); Blocksize (032, 012, 002);
+Computing time : 401.917 msec, Device memory bandwidth : 199.046 GB/s, GFLOPS : 49.762
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 006, 001); Blocksize (064, 012, 002);
+Computing time : 407.886 msec, Device memory bandwidth : 196.133 GB/s, GFLOPS : 49.033
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 006, 001); Blocksize (128, 012, 002);
+Computing time : 414.829 msec, Device memory bandwidth : 192.851 GB/s, GFLOPS : 48.213
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 006, 001); Blocksize (256, 012, 002);
+Computing time : 422.078 msec, Device memory bandwidth : 189.538 GB/s, GFLOPS : 47.385
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 006, 001); Blocksize (512, 012, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 006, 001); Blocksize (1024, 012, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 007, 001); Blocksize (032, 014, 002);
+Computing time : 457.675 msec, Device memory bandwidth : 174.797 GB/s, GFLOPS : 43.699
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 007, 001); Blocksize (064, 014, 002);
+Computing time : 409.295 msec, Device memory bandwidth : 195.458 GB/s, GFLOPS : 48.864
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 007, 001); Blocksize (128, 014, 002);
+Computing time : 412.875 msec, Device memory bandwidth : 193.763 GB/s, GFLOPS : 48.441
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 007, 001); Blocksize (256, 014, 002);
+Computing time : 415.687 msec, Device memory bandwidth : 192.453 GB/s, GFLOPS : 48.113
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 007, 001); Blocksize (512, 014, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 007, 001); Blocksize (1024, 014, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 008, 001); Blocksize (032, 016, 002);
+Computing time : 404.711 msec, Device memory bandwidth : 197.672 GB/s, GFLOPS : 49.418
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 008, 001); Blocksize (064, 016, 002);
+Computing time : 413.389 msec, Device memory bandwidth : 193.522 GB/s, GFLOPS : 48.381
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 008, 001); Blocksize (128, 016, 002);
+Computing time : 419.175 msec, Device memory bandwidth : 190.851 GB/s, GFLOPS : 47.713
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 008, 001); Blocksize (256, 016, 002);
+Computing time : 421.964 msec, Device memory bandwidth : 189.590 GB/s, GFLOPS : 47.397
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 008, 001); Blocksize (512, 016, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 008, 001); Blocksize (1024, 016, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 009, 001); Blocksize (032, 018, 002);
+Computing time : 456.141 msec, Device memory bandwidth : 175.384 GB/s, GFLOPS : 43.846
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 009, 001); Blocksize (064, 018, 002);
+Computing time : 415.844 msec, Device memory bandwidth : 192.380 GB/s, GFLOPS : 48.095
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 009, 001); Blocksize (128, 018, 002);
+Computing time : 423.182 msec, Device memory bandwidth : 189.044 GB/s, GFLOPS : 47.261
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 009, 001); Blocksize (256, 018, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 009, 001); Blocksize (512, 018, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 009, 001); Blocksize (1024, 018, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 010, 001); Blocksize (032, 020, 002);
+Computing time : 408.069 msec, Device memory bandwidth : 196.045 GB/s, GFLOPS : 49.011
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 010, 001); Blocksize (064, 020, 002);
+Computing time : 419.979 msec, Device memory bandwidth : 190.486 GB/s, GFLOPS : 47.621
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 010, 001); Blocksize (128, 020, 002);
+Computing time : 428.891 msec, Device memory bandwidth : 186.528 GB/s, GFLOPS : 46.632
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 010, 001); Blocksize (256, 020, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 010, 001); Blocksize (512, 020, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 010, 001); Blocksize (1024, 020, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 011, 001); Blocksize (032, 022, 002);
+Computing time : 466.551 msec, Device memory bandwidth : 171.471 GB/s, GFLOPS : 42.868
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 011, 001); Blocksize (064, 022, 002);
+Computing time : 423.135 msec, Device memory bandwidth : 189.065 GB/s, GFLOPS : 47.266
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 011, 001); Blocksize (128, 022, 002);
+Computing time : 431.697 msec, Device memory bandwidth : 185.315 GB/s, GFLOPS : 46.329
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 011, 001); Blocksize (256, 022, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 011, 001); Blocksize (512, 022, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 011, 001); Blocksize (1024, 022, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 012, 001); Blocksize (032, 024, 002);
+Computing time : 413.889 msec, Device memory bandwidth : 193.289 GB/s, GFLOPS : 48.322
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 012, 001); Blocksize (064, 024, 002);
+Computing time : 431.905 msec, Device memory bandwidth : 185.226 GB/s, GFLOPS : 46.306
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 012, 001); Blocksize (128, 024, 002);
+Computing time : 464.313 msec, Device memory bandwidth : 172.298 GB/s, GFLOPS : 43.074
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 012, 001); Blocksize (256, 024, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 012, 001); Blocksize (512, 024, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 012, 001); Blocksize (1024, 024, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 013, 001); Blocksize (032, 026, 002);
+Computing time : 460.511 msec, Device memory bandwidth : 173.720 GB/s, GFLOPS : 43.430
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 013, 001); Blocksize (064, 026, 002);
+Computing time : 430.776 msec, Device memory bandwidth : 185.711 GB/s, GFLOPS : 46.428
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 013, 001); Blocksize (128, 026, 002);
+Computing time : 451.798 msec, Device memory bandwidth : 177.070 GB/s, GFLOPS : 44.268
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 013, 001); Blocksize (256, 026, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 013, 001); Blocksize (512, 026, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 013, 001); Blocksize (1024, 026, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 014, 001); Blocksize (032, 028, 002);
+Computing time : 423.140 msec, Device memory bandwidth : 189.063 GB/s, GFLOPS : 47.266
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 014, 001); Blocksize (064, 028, 002);
+Computing time : 436.789 msec, Device memory bandwidth : 183.155 GB/s, GFLOPS : 45.789
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 014, 001); Blocksize (128, 028, 002);
+Computing time : 458.505 msec, Device memory bandwidth : 174.480 GB/s, GFLOPS : 43.620
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 014, 001); Blocksize (256, 028, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 014, 001); Blocksize (512, 028, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 014, 001); Blocksize (1024, 028, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 015, 001); Blocksize (032, 030, 002);
+Computing time : 475.734 msec, Device memory bandwidth : 168.161 GB/s, GFLOPS : 42.040
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (032, 015, 001); Blocksize (064, 030, 002);
+Computing time : 434.236 msec, Device memory bandwidth : 184.232 GB/s, GFLOPS : 46.058
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (064, 015, 001); Blocksize (128, 030, 002);
+Computing time : 464.924 msec, Device memory bandwidth : 172.071 GB/s, GFLOPS : 43.018
+Solution is correct.
+
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (128, 015, 001); Blocksize (256, 030, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (256, 015, 001); Blocksize (512, 030, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (512, 015, 001); Blocksize (1024, 030, 002);
+Cuda failure error in file 'global_mem.cu' in line 247: 'invalid configuration argument' at device 2 
+-----------------------------------------------------------------------
+Data is correct.
+Blockdim (016, 016, 001); Blocksize (032, 032, 002);
+Computing time : 446.273 msec, Device memory bandwidth : 179.262 GB/s, GFLOPS : 44.816
+Solution is correct.
+
